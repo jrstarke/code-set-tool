@@ -14,10 +14,10 @@ public class HistorySet implements IStructuredContentProvider {
 	public void add(ISourceReference entity) {
 		entities.add(entity);
 	}
-
 	// methods required by IStructuredContentProvider
 	
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+		
 	}
 	public void dispose() {
 	}

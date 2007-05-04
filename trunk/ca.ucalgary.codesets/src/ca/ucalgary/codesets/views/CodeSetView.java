@@ -33,9 +33,17 @@ import ca.ucalgary.codesets.*;
  */
 
 public class CodeSetView extends ViewPart {
+
+	HistorySet historySet = new HistorySet();
+	ChangeSet changeSet = new ChangeSet();
+	
 	private TableViewer viewer;
-	private Action action1;
-	private Action action2;
+	//private Action action1;
+	//private Action action2;
+	
+	private Action historyAction;		//The history Action, when this is clicked, displays history set
+	private Action changeAction;		//The change Action, when this is clicked, displays change set
+	
 	private Action doubleClickAction;
 	
 	class NameSorter extends ViewerSorter {
@@ -48,7 +56,6 @@ public class CodeSetView extends ViewPart {
 	 * This is a callback that allows us to create and initialize the viewer.
 	 */
 	public void createPartControl(Composite parent) {
-		HistorySet historySet = new HistorySet();
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(historySet);
 		viewer.setLabelProvider(new JavaElementLabelProvider(
@@ -61,28 +68,49 @@ public class CodeSetView extends ViewPart {
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
-		contributeToActionBars();
+		contributeToActionBars();			
 		
 		
 		// globally listen for part activation events
 		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet);
+		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, changeSet); 
+		
 		IPartListener partListener = new IPartListener() {
 			public void partActivated(IWorkbenchPart part) {
 				if (part instanceof JavaEditor) {
 					System.out.println("Editor Changed " + (JavaEditor)part);
 					listener.register((JavaEditor)part);
+					changeListener.register((JavaEditor)part);
 				}
 			}
 
-			public void partBroughtToTop(IWorkbenchPart part) {}
+			public void partBroughtToTop(IWorkbenchPart part) {
+				
+			}
 
-			public void partClosed(IWorkbenchPart part) {}
+			public void partClosed(IWorkbenchPart part) {
+				
+			}
 
-			public void partDeactivated(IWorkbenchPart part) {}
+			public void partDeactivated(IWorkbenchPart part) {
+				
+			}
 
-			public void partOpened(IWorkbenchPart part) {}
+			public void partOpened(IWorkbenchPart part) {
+				
+			}
 		};
+
 		getSite().getPage().addPartListener(partListener);
+		
+		//Get current editor
+		IEditorPart editor = getSite().getWorkbenchWindow().getActivePage().getActiveEditor();
+		
+		//if the editor is a JavaEditor, register the editor with the listeners. 
+		if (editor instanceof JavaEditor) {
+			listener.register((JavaEditor)editor);
+			changeListener.register((JavaEditor)editor);
+		}
 	}
 
 	private void hookContextMenu() {
@@ -105,43 +133,50 @@ public class CodeSetView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(new Separator());
-		manager.add(action2);
+		manager.add(historyAction);
+		manager.add(changeAction);
+		
+		//manager.add(new Separator());
+		
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(historyAction);
+		manager.add(changeAction);
+		
+		
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(action1);
-		manager.add(action2);
+		manager.add(historyAction);
+		manager.add(changeAction);
+		
 	}
 
 	private void makeActions() {
-		action1 = new Action() {
-			public void run() {
-				showMessage("Action 1 executed");
+		historyAction = new Action() {
+			public void run(){
+				showMessage("History Action Executed");  //this doesn't need to be here
+				viewer.setContentProvider(historySet);
 			}
 		};
-		action1.setText("Action 1");
-		action1.setToolTipText("Action 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		historyAction.setToolTipText("Shows a list of your history");  //change this for specified tooltip
+		historyAction.setText("History Set");
+		historyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+		changeAction = new Action() {
+				public void run(){
+					showMessage("Change Action Executed");  
+					viewer.setContentProvider(changeSet);
+				}
+		};
+		changeAction.setToolTipText("Shows a list of your changes");
+		changeAction.setText("Change Set");
+		changeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 		
-		action2 = new Action() {
-			public void run() {
-				showMessage("Action 2 executed");
-			}
-		};
-		action2.setText("Action 2");
-		action2.setToolTipText("Action 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
