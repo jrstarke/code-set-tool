@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IEditorPart;
 
+
 /**
 * This is used for listening to events corresponding to the cursor or selection
 * changing in a given editor. This can only be listening to one JavaEditor at a
@@ -30,6 +31,7 @@ import org.eclipse.ui.IEditorPart;
 public class EditorFocusListener implements ISelectionChangedListener {
 	HistorySet historySet;
 	JavaEditor editor;
+	
 	ISelectionProvider selectionProvider;
 	TableViewer viewer;
 	
@@ -41,7 +43,7 @@ public class EditorFocusListener implements ISelectionChangedListener {
 	public void register(JavaEditor part) {
 		unregister();
 		editor = part;
-		JavaEditor editor = (JavaEditor)part;
+		//JavaEditor editor = (JavaEditor)part;
 		selectionProvider = editor.getSelectionProvider();
 		
 		if (selectionProvider != null) {
@@ -81,7 +83,7 @@ public class EditorFocusListener implements ISelectionChangedListener {
 		int caret = getCaretPosition(sourceViewer, styledText);
 
 		IWorkingCopyManager manager = JavaPlugin.getDefault()
-				.getWorkingCopyManager();
+					.getWorkingCopyManager();
 		ICompilationUnit unit = manager.getWorkingCopy(editor.getEditorInput());
 		if (unit == null) return false;
 		
