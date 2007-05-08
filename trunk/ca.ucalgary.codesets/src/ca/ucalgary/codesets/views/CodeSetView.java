@@ -5,7 +5,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.*;
+import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.*;
@@ -42,12 +44,14 @@ import ca.ucalgary.codesets.*;
 public class CodeSetView extends ViewPart {
 
 	HistorySet historySet = new HistorySet();	//Set containing all elements that have been selected
-	ChangeSet changeSet = new ChangeSet();		//Set containing all elements that have been modified
+	ChangeSet editorChangeSet = new ChangeSet();		//Set containing all elements that have been modified
+	ChangeSet elementChangeSet = new ChangeSet();
 	
 	private TableViewer viewer;
 	
 	private Action historyAction;		//The history Action, when this is clicked, displays history set
-	private Action changeAction;		//The change Action, when this is clicked, displays change set
+	private Action editorChangeAction;		//The editor change Action, when this is clicked, displays editor change set
+	private Action elementChangeAction; 	//The element change Action, when this is clicked, displays element change set
 	
 	private Action doubleClickAction;
 	
@@ -64,7 +68,7 @@ public class CodeSetView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(historySet);
-		viewer.setLabelProvider(new ElementLabelProvider(changeSet,historySet));  
+		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet));  
 		
 		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 		el.setCurrentSet(historySet);  
@@ -79,7 +83,9 @@ public class CodeSetView extends ViewPart {
 		
 		// globally listen for part activation events
 		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet);
-		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, changeSet); 
+		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, editorChangeSet); 
+		//Registers the ElementChangedListener to the JavaCore to listen for changes
+		JavaCore.addElementChangedListener(new JavaElementChangeListener(viewer, elementChangeSet), ElementChangedEvent.POST_RECONCILE);
 		
 		IPartListener partListener = new IPartListener() {
 			public void partActivated(IWorkbenchPart part) {
@@ -140,14 +146,16 @@ public class CodeSetView extends ViewPart {
 
 	private void fillLocalPullDown(IMenuManager manager) {
 		manager.add(historyAction);
-		manager.add(changeAction);
+		manager.add(editorChangeAction);
+		manager.add(elementChangeAction);
 		
 //		manager.add(new Separator());
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(historyAction);
-		manager.add(changeAction);		
+		manager.add(editorChangeAction);	
+		manager.add(elementChangeAction);
 		
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -155,7 +163,8 @@ public class CodeSetView extends ViewPart {
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(historyAction);
-		manager.add(changeAction);		
+		manager.add(editorChangeAction);	
+		manager.add(elementChangeAction);
 	}
 
 	private void makeActions() {
@@ -173,17 +182,29 @@ public class CodeSetView extends ViewPart {
 		historyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 			
-		changeAction = new Action() {
+		editorChangeAction = new Action() {
 				public void run(){
 					ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
-					viewer.setContentProvider(changeSet);
-					el.setCurrentSet(changeSet);
+					viewer.setContentProvider(editorChangeSet);
+					el.setCurrentSet(editorChangeSet);
 				}
 		};
-		changeAction.setToolTipText("Shows a list of your changes");
-		changeAction.setText("Change Set");
-		changeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+		editorChangeAction.setToolTipText("Shows a list of your changes");
+		editorChangeAction.setText("Change Set");
+		editorChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action	
+		
+		elementChangeAction = new Action() {
+			public void run(){
+				showMessage("Element Change Action Executed");  
+				viewer.setContentProvider(elementChangeSet);
+			}
+		};
+		elementChangeAction.setToolTipText("Shows a list of your changes");
+		elementChangeAction.setText("Element Change Set");
+		elementChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+		
 		
 		doubleClickAction = new Action() {
 			public void run() {
