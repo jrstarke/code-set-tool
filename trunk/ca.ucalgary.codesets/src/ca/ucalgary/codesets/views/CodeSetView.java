@@ -1,10 +1,17 @@
 package ca.ucalgary.codesets.views;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.*;
+import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -34,12 +41,10 @@ import ca.ucalgary.codesets.*;
 
 public class CodeSetView extends ViewPart {
 
-	HistorySet historySet = new HistorySet();
-	ChangeSet changeSet = new ChangeSet();
+	HistorySet historySet = new HistorySet();	//Set containing all elements that have been selected
+	ChangeSet changeSet = new ChangeSet();		//Set containing all elements that have been modified
 	
 	private TableViewer viewer;
-	//private Action action1;
-	//private Action action2;
 	
 	private Action historyAction;		//The history Action, when this is clicked, displays history set
 	private Action changeAction;		//The change Action, when this is clicked, displays change set
@@ -54,15 +59,16 @@ public class CodeSetView extends ViewPart {
 
 	/**
 	 * This is a callback that allows us to create and initialize the viewer.
+	 *  
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(historySet);
-		viewer.setLabelProvider(new JavaElementLabelProvider(
-				JavaElementLabelProvider.SHOW_PARAMETERS
-				| JavaElementLabelProvider.SHOW_SMALL_ICONS
-				| JavaElementLabelProvider.SHOW_RETURN_TYPE
-				| JavaElementLabelProvider.SHOW_TYPE));
+		viewer.setLabelProvider(new ElementLabelProvider(changeSet,historySet));  
+		
+		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
+		el.setCurrentSet(historySet);  
+		
 		viewer.setSorter(new NameSorter());
 		viewer.setInput(getViewSite());
 		makeActions();
@@ -136,14 +142,12 @@ public class CodeSetView extends ViewPart {
 		manager.add(historyAction);
 		manager.add(changeAction);
 		
-		//manager.add(new Separator());
-		
+//		manager.add(new Separator());
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(historyAction);
-		manager.add(changeAction);
-		
+		manager.add(changeAction);		
 		
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -151,31 +155,35 @@ public class CodeSetView extends ViewPart {
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
 		manager.add(historyAction);
-		manager.add(changeAction);
-		
+		manager.add(changeAction);		
 	}
 
 	private void makeActions() {
+		
 		historyAction = new Action() {
 			public void run(){
-				showMessage("History Action Executed");  //this doesn't need to be here
+				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 				viewer.setContentProvider(historySet);
+				el.setCurrentSet(historySet);
+				
 			}
 		};
 		historyAction.setToolTipText("Shows a list of your history");  //change this for specified tooltip
 		historyAction.setText("History Set");
 		historyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+			
 		changeAction = new Action() {
 				public void run(){
-					showMessage("Change Action Executed");  
+					ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 					viewer.setContentProvider(changeSet);
+					el.setCurrentSet(changeSet);
 				}
 		};
 		changeAction.setToolTipText("Shows a list of your changes");
 		changeAction.setText("Change Set");
 		changeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action	
 		
 		doubleClickAction = new Action() {
 			public void run() {
@@ -206,4 +214,5 @@ public class CodeSetView extends ViewPart {
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
+	
 }
