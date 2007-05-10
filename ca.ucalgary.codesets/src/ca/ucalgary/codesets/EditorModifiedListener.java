@@ -14,13 +14,14 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.StyledText;
 
 public class EditorModifiedListener implements IDocumentListener {
-	ChangeSet changeSet;
+	ResultSet changeSet;
+	//ChangeSet changeSet;
 	TableViewer viewer;
 	JavaEditor editor;
 	DocumentEvent event;
 	
-	public EditorModifiedListener(TableViewer viewer, ChangeSet changeSet) {
-		this.changeSet = changeSet;
+	public EditorModifiedListener(TableViewer viewer, ResultSet editorChangeSet) {
+		this.changeSet = editorChangeSet;
 		this.viewer = viewer;
 	}
 	
@@ -52,7 +53,7 @@ public class EditorModifiedListener implements IDocumentListener {
 		if (styledText == null) return null;
 
 		int caret = getCaretPosition(sourceViewer, styledText);
-		System.out.println(caret);
+		//System.out.println(caret);
 		
 		IWorkingCopyManager manager = JavaPlugin.getDefault()
 				.getWorkingCopyManager();

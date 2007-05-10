@@ -23,29 +23,17 @@ import org.eclipse.swt.SWT;
 
 import ca.ucalgary.codesets.*;
 
-/**
- * This sample class demonstrates how to plug-in a new
- * workbench view. The view shows data obtained from the
- * model. The sample creates a dummy model on the fly,
- * but a real implementation would connect to the model
- * available either in this or another plug-in (e.g. the workspace).
- * The view is connected to the model using a content provider.
- * <p>
- * The view uses a label provider to define how model
- * objects should be presented in the view. Each
- * view can present the same model objects using
- * different labels and icons, if needed. Alternatively,
- * a single label provider can be shared between views
- * in order to ensure that objects of the same type are
- * presented in the same way everywhere.
- * <p>
- */
-
+// This view displays sets of source code entities as provided by one of a
+// number of ResultSet's. 
 public class CodeSetView extends ViewPart {
 
-	HistorySet historySet = new HistorySet();	//Set containing all elements that have been selected
-	ChangeSet editorChangeSet = new ChangeSet();		//Set containing all elements that have been modified
-	ChangeSet elementChangeSet = new ChangeSet();
+	// Set containing all elements that have been selected
+	ResultSet historySet = new ResultSet();
+	// Two sets containing all elements that have been modified
+	ResultSet editorChangeSet = new ResultSet();
+	ResultSet elementChangeSet = new ResultSet();
+		
+	private boolean sortByName = false;
 	
 	private TableViewer viewer;
 	
@@ -55,10 +43,9 @@ public class CodeSetView extends ViewPart {
 	
 	private Action doubleClickAction;
 	
+	private Action changeSetOrder;			//This action is setup to change the way the sets are ordered
+	
 	class NameSorter extends ViewerSorter {
-	}
-
-	public CodeSetView() {
 	}
 
 	/**
@@ -73,7 +60,11 @@ public class CodeSetView extends ViewPart {
 		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 		el.setCurrentSet(historySet);  
 		
-		viewer.setSorter(new NameSorter());
+		if(sortByName)
+			viewer.setSorter(new NameSorter());
+		else
+			viewer.setSorter(null);//new NameSorter());
+		
 		viewer.setInput(getViewSite());
 		makeActions();
 		hookContextMenu();
@@ -115,14 +106,31 @@ public class CodeSetView extends ViewPart {
 
 		getSite().getPage().addPartListener(partListener);
 		
-		//Get current editor
-		IEditorPart editor = getSite().getWorkbenchWindow().getActivePage().getActiveEditor();
-		
-		//if the editor is a JavaEditor, register the editor with the listeners. 
-		if (editor instanceof JavaEditor) {
-			listener.register((JavaEditor)editor);
-			changeListener.register((JavaEditor)editor);
+		//The following lines get the Current Editor. 
+		//There has been a bug, where the editor *might* not be loaded which is giving a 
+		//nullpointerexception. If this is where the exception is happening, then the != nulls will 
+		//stop the exception, and will print a statement to the console displaying which part of these 
+		//statements is null
+		//We will remove the if statements of the parts that we know aren't ever null
+		//If you see something in the console at startup, then we know there was a null
+		IWorkbenchWindow workbench = getSite().getWorkbenchWindow();
+		if (workbench != null) {
+			IWorkbenchPage page = workbench.getActivePage();
+			if (page != null) {
+				IEditorPart editor = page.getActiveEditor();
+				 
+				if (editor != null && editor instanceof JavaEditor) { //if JavaEditor, register the editor with the listeners.
+					listener.register((JavaEditor)editor);
+					changeListener.register((JavaEditor)editor);
+				}
+				else if(editor == null)
+					System.out.println("Editor is Null");
+			}
+			else
+				System.out.println("Page is Null");
 		}
+		else
+			System.out.println("Workbench is Null");
 	}
 
 	private void hookContextMenu() {
@@ -148,14 +156,17 @@ public class CodeSetView extends ViewPart {
 		manager.add(historyAction);
 		manager.add(editorChangeAction);
 		manager.add(elementChangeAction);
+		manager.add(new Separator());
+		manager.add(changeSetOrder);
 		
-//		manager.add(new Separator());
+
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
 		manager.add(historyAction);
 		manager.add(editorChangeAction);	
 		manager.add(elementChangeAction);
+		manager.add(changeSetOrder);
 		
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -196,7 +207,6 @@ public class CodeSetView extends ViewPart {
 		
 		elementChangeAction = new Action() {
 			public void run(){
-				showMessage("Element Change Action Executed");  
 				viewer.setContentProvider(elementChangeSet);
 			}
 		};
@@ -205,12 +215,31 @@ public class CodeSetView extends ViewPart {
 		elementChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 		
+		changeSetOrder = new Action() {
+			public void run(){
+				if(sortByName){
+					sortByName = false;
+					viewer.setSorter(null);
+				}
+				else {
+					viewer.setSorter(new NameSorter());
+					sortByName = true;
+				}
+				viewer.refresh();
+			}
+	};
+	changeSetOrder.setToolTipText("Changes the way the sets are ordered");
+	changeSetOrder.setText("Change Set Order");
+	changeSetOrder.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+		
 		
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
 				showMessage("Double-click detected on "+obj.toString());
+				
 			}
 		};
 	}

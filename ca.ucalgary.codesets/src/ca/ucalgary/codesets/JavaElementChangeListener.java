@@ -9,12 +9,13 @@ import org.eclipse.jface.viewers.TableViewer;
 
 
 public class JavaElementChangeListener implements IElementChangedListener {
-	private ChangeSet changeSet;
+	private ResultSet changeSet;
+	//private ChangeSet changeSet;
 	private TableViewer viewer;
 
-	public JavaElementChangeListener(TableViewer inViewer, ChangeSet changeSet) {
+	public JavaElementChangeListener(TableViewer inViewer, ResultSet elementChangeSet) {
 		this.viewer = inViewer;
-		this.changeSet = changeSet;
+		this.changeSet = elementChangeSet;
 	}
 
 	public void elementChanged(ElementChangedEvent event) {

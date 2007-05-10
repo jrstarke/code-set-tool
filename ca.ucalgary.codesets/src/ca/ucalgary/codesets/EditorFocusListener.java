@@ -29,13 +29,13 @@ import org.eclipse.ui.IEditorPart;
 * time.
 */
 public class EditorFocusListener implements ISelectionChangedListener {
-	HistorySet historySet;
+	ResultSet historySet;
 	JavaEditor editor;
 	
 	ISelectionProvider selectionProvider;
 	TableViewer viewer;
 	
-	public EditorFocusListener(TableViewer viewer, HistorySet historySet) {
+	public EditorFocusListener(TableViewer viewer, ResultSet historySet) {
 		this.historySet = historySet;
 		this.viewer = viewer;
 	}
