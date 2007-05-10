@@ -1,5 +1,6 @@
 package ca.ucalgary.codesets;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.jdt.core.ISourceReference;
@@ -11,21 +12,23 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	private Color white = new Color(null, 255,255,255);
 	private Color foreground = new Color(null, 0,0,0);
 	private Color background = new Color(null, 225,225,210);
-	private ChangeSet changeSet;
-	private HistorySet historySet;
-	private HashSet<ISourceReference> currentSet;
+	private ResultSet changeSet;
 	
-	public ElementLabelProvider(ChangeSet cset,HistorySet hset)
+//	private ChangeSet changeSet;
+	private ResultSet historySet;
+	private ArrayList<ISourceReference> currentSet;
+	
+	public ElementLabelProvider(ResultSet editorChangeSet,ResultSet hset)
 	{
 		super(JavaElementLabelProvider.SHOW_PARAMETERS
 				| JavaElementLabelProvider.SHOW_SMALL_ICONS
 				| JavaElementLabelProvider.SHOW_RETURN_TYPE
 				| JavaElementLabelProvider.SHOW_TYPE);
-		changeSet = cset;
+		changeSet = editorChangeSet;
 		historySet = hset;
 	}
 
-	public void setCurrentSet(HashSet<ISourceReference> set) {
+	public void setCurrentSet(ArrayList<ISourceReference> set) {
 		this.currentSet = set;
 	}
 	
@@ -36,6 +39,8 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	}
 
 	public Color getForeground(Object element) {
+		// if history set is current
+		//    int index = get index of element
 		return foreground;
 	}
 	
