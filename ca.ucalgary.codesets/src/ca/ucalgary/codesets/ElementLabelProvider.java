@@ -35,6 +35,8 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	public Color getBackground(Object element) {
 		if (currentSet == historySet && changeSet.contains((ISourceReference)element))
 			return background;
+		if(currentSet == changeSet)  //everything that's in the changeSet will have a background Colour other than white. 
+			return background;
 		return white;
 	}
 

@@ -43,7 +43,8 @@ public class CodeSetView extends ViewPart {
 	
 	private Action doubleClickAction;
 	
-	private Action changeSetOrder;			//This action is setup to change the way the sets are ordered
+	private Action changeSetOrderAction;			//This action is setup to change the way the sets are ordered
+	
 	
 	class NameSorter extends ViewerSorter {
 	}
@@ -157,7 +158,7 @@ public class CodeSetView extends ViewPart {
 		manager.add(editorChangeAction);
 		manager.add(elementChangeAction);
 		manager.add(new Separator());
-		manager.add(changeSetOrder);
+		manager.add(changeSetOrderAction);
 		
 
 	}
@@ -166,7 +167,7 @@ public class CodeSetView extends ViewPart {
 		manager.add(historyAction);
 		manager.add(editorChangeAction);	
 		manager.add(elementChangeAction);
-		manager.add(changeSetOrder);
+		manager.add(changeSetOrderAction);
 		
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -185,9 +186,10 @@ public class CodeSetView extends ViewPart {
 				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 				viewer.setContentProvider(historySet);
 				el.setCurrentSet(historySet);
-				
+				viewer.refresh();
 			}
 		};
+		
 		historyAction.setToolTipText("Shows a list of your history");  //change this for specified tooltip
 		historyAction.setText("History Set");
 		historyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
@@ -198,6 +200,7 @@ public class CodeSetView extends ViewPart {
 					ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 					viewer.setContentProvider(editorChangeSet);
 					el.setCurrentSet(editorChangeSet);
+					viewer.refresh();
 				}
 		};
 		editorChangeAction.setToolTipText("Shows a list of your changes");
@@ -215,24 +218,24 @@ public class CodeSetView extends ViewPart {
 		elementChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 		
-		changeSetOrder = new Action() {
+		//these lines change the order that the lists are displayed
+		changeSetOrderAction = new Action() {
 			public void run(){
 				if(sortByName){
 					sortByName = false;
-					viewer.setSorter(null);
+					viewer.setSorter(null); //chronological
 				}
 				else {
-					viewer.setSorter(new NameSorter());
+					viewer.setSorter(new NameSorter()); //alphabetical
 					sortByName = true;
 				}
 				viewer.refresh();
 			}
 	};
-	changeSetOrder.setToolTipText("Changes the way the sets are ordered");
-	changeSetOrder.setText("Change Set Order");
-	changeSetOrder.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+	changeSetOrderAction.setToolTipText("Changes the way the sets are ordered");
+	changeSetOrderAction.setText("Change Set Order");
+	changeSetOrderAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-		
 		
 		doubleClickAction = new Action() {
 			public void run() {
