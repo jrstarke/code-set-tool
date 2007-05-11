@@ -32,6 +32,7 @@ public class CodeSetView extends ViewPart {
 	// Two sets containing all elements that have been modified
 	ResultSet editorChangeSet = new ResultSet();
 	ResultSet elementChangeSet = new ResultSet();
+	ResultSet searchSet = new ResultSet();
 		
 	private boolean sortByName = false;
 	
@@ -40,11 +41,11 @@ public class CodeSetView extends ViewPart {
 	private Action historyAction;		//The history Action, when this is clicked, displays history set
 	private Action editorChangeAction;		//The editor change Action, when this is clicked, displays editor change set
 	private Action elementChangeAction; 	//The element change Action, when this is clicked, displays element change set
+	private Action autoReferenceAction;
 	
 	private Action doubleClickAction;
 	
 	private Action changeSetOrderAction;			//This action is setup to change the way the sets are ordered
-	
 	
 	class NameSorter extends ViewerSorter {
 	}
@@ -74,7 +75,7 @@ public class CodeSetView extends ViewPart {
 		
 		
 		// globally listen for part activation events
-		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet);
+		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet, searchSet);
 		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, editorChangeSet); 
 		//Registers the ElementChangedListener to the JavaCore to listen for changes
 		JavaCore.addElementChangedListener(new JavaElementChangeListener(viewer, elementChangeSet), ElementChangedEvent.POST_RECONCILE);
@@ -128,7 +129,7 @@ public class CodeSetView extends ViewPart {
 					System.out.println("Editor is Null");
 			}
 			else
-				System.out.println("Page is Null");
+				System.out.println("Page is Null");  //I've received this being null
 		}
 		else
 			System.out.println("Workbench is Null");
@@ -157,6 +158,7 @@ public class CodeSetView extends ViewPart {
 		manager.add(historyAction);
 		manager.add(editorChangeAction);
 		manager.add(elementChangeAction);
+		manager.add(autoReferenceAction);
 		manager.add(new Separator());
 		manager.add(changeSetOrderAction);
 		
@@ -167,6 +169,7 @@ public class CodeSetView extends ViewPart {
 		manager.add(historyAction);
 		manager.add(editorChangeAction);	
 		manager.add(elementChangeAction);
+		manager.add(autoReferenceAction);
 		manager.add(changeSetOrderAction);
 		
 		// Other plug-ins can contribute there actions here
@@ -177,6 +180,7 @@ public class CodeSetView extends ViewPart {
 		manager.add(historyAction);
 		manager.add(editorChangeAction);	
 		manager.add(elementChangeAction);
+		manager.add(autoReferenceAction);
 	}
 
 	private void makeActions() {
@@ -216,6 +220,17 @@ public class CodeSetView extends ViewPart {
 		elementChangeAction.setToolTipText("Shows a list of your changes");
 		elementChangeAction.setText("Element Change Set");
 		elementChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+		
+		autoReferenceAction = new Action() {
+			public void run(){
+				showMessage("Auto Referencing Action Executed");  
+				viewer.setContentProvider(searchSet);
+			}
+		};
+		autoReferenceAction.setToolTipText("Shows a list of elements that reference this element");
+		autoReferenceAction.setText("Auto Reference Set");
+		autoReferenceAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 		
 		//these lines change the order that the lists are displayed

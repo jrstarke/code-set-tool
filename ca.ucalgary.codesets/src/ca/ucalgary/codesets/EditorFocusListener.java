@@ -30,13 +30,15 @@ import org.eclipse.ui.IEditorPart;
 */
 public class EditorFocusListener implements ISelectionChangedListener {
 	ResultSet historySet;
+	ResultSet searchSet;
 	JavaEditor editor;
 	
 	ISelectionProvider selectionProvider;
 	TableViewer viewer;
 	
-	public EditorFocusListener(TableViewer viewer, ResultSet historySet) {
+	public EditorFocusListener(TableViewer viewer, ResultSet historySet, ResultSet searchSet) {
 		this.historySet = historySet;
+		this.searchSet = searchSet;
 		this.viewer = viewer;
 	}
 	
@@ -89,12 +91,18 @@ public class EditorFocusListener implements ISelectionChangedListener {
 		
 		try {
 			IJavaElement element = getElementAt(unit, caret, false);
+			//The Following line performs a new search automatically for any references
+			// to this element
+			new AutoReferenceSearch(searchSet, element);
 			if (!(element instanceof ISourceReference))
 				return false;
 			
-			if (element instanceof IType)  
+			if (element instanceof IType)  {
+				// The Following line performs a new search automatically for any references
+				// to this element
+				new AutoReferenceSearch(searchSet, element);
 				historySet.add((ISourceReference)element); //, null, caret);
-			else 
+			} else 
 				computeLines((ISourceReference)element, unit.getSource(), caret);
 			
 			return true;
