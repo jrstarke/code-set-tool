@@ -6,10 +6,13 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.*;
 import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -34,7 +37,6 @@ public class CodeSetView extends ViewPart {
 	ResultSet elementChangeSet = new ResultSet();
 	ResultSet searchSet = new ResultSet();
 
-	private boolean sortByName = false;
 
 	private TableViewer viewer;
 
@@ -44,8 +46,7 @@ public class CodeSetView extends ViewPart {
 	private Action autoReferenceAction;
 
 	private Action doubleClickAction;
-
-	private Action changeSetOrderAction;			//This action is setup to change the way the sets are ordered
+	
 	private CodeSetView codeSetView = this;
 
 
@@ -59,16 +60,13 @@ public class CodeSetView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(historySet);
-		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet));  
+		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet,searchSet));  
 		codeSetView.setContentDescription("History");
 
 		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 		el.setCurrentSet(historySet);  
-
-		if(sortByName)
-			viewer.setSorter(new NameSorter());
-		else
-			viewer.setSorter(null);//new NameSorter());
+		
+		viewer.setSorter(null);//new NameSorter());
 
 		viewer.setInput(getViewSite());
 		makeActions();
@@ -163,9 +161,6 @@ public class CodeSetView extends ViewPart {
 		manager.add(elementChangeAction);
 		manager.add(autoReferenceAction);
 		manager.add(new Separator());
-		manager.add(changeSetOrderAction);
-
-
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
@@ -173,8 +168,6 @@ public class CodeSetView extends ViewPart {
 		manager.add(editorChangeAction);	
 		manager.add(elementChangeAction);
 		manager.add(autoReferenceAction);
-		manager.add(changeSetOrderAction);
-
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -190,6 +183,7 @@ public class CodeSetView extends ViewPart {
 				viewer.setContentProvider(historySet);
 				el.setCurrentSet(historySet);
 				codeSetView.setContentDescription("History");
+				viewer.setSorter(null);//ordering for the set (Chronological)
 				viewer.refresh();
 			}
 		};
@@ -205,6 +199,7 @@ public class CodeSetView extends ViewPart {
 				viewer.setContentProvider(editorChangeSet);
 				el.setCurrentSet(editorChangeSet);
 				codeSetView.setContentDescription("Changes by Editor");
+				viewer.setSorter(null);//ordering for the set (Chronological)
 				viewer.refresh();
 			}
 		};
@@ -217,6 +212,7 @@ public class CodeSetView extends ViewPart {
 			public void run(){
 				viewer.setContentProvider(elementChangeSet);
 				codeSetView.setContentDescription("Changes by Element");
+				viewer.setSorter(null); //ordering for the set (Chronological)
 				viewer.refresh();
 			}
 		};
@@ -228,7 +224,11 @@ public class CodeSetView extends ViewPart {
 		autoReferenceAction = new Action() {
 			public void run(){
 				codeSetView.setContentDescription("Auto Referencing by Caret");
+				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 				viewer.setContentProvider(searchSet);
+				el.setCurrentSet(searchSet);
+				viewer.setSorter(new NameSorter());//ordering for the set (Alphabetical)
+				viewer.refresh();
 			}
 		};
 		autoReferenceAction.setToolTipText("Shows a list of elements that reference this element");
@@ -236,34 +236,35 @@ public class CodeSetView extends ViewPart {
 		autoReferenceAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 
-		//these lines change the order that the lists are displayed
-		changeSetOrderAction = new Action() {
-			public void run(){
-				if(sortByName){
-					sortByName = false;
-					viewer.setSorter(null); //chronological
-				}
-				else {
-					viewer.setSorter(new NameSorter()); //alphabetical
-					sortByName = true;
-				}
-				viewer.refresh();
-			}
-		};
-		changeSetOrderAction.setToolTipText("Changes the way the sets are ordered");
-		changeSetOrderAction.setText("Change Set Order");
-		changeSetOrderAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-		
 
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
-				Object obj = ((IStructuredSelection)selection).getFirstElement();
-				showMessage("Double-click detected on "+obj.toString());
-
+				IStructuredSelection sel = (IStructuredSelection)selection;								
+				IJavaElement elem = (IJavaElement) sel.getFirstElement();
+				IEditorPart editor = setCurrentElement(elem);				
 			}
 		};
+	}
+	
+//	Jonathan's code
+//	Opens the selected source in the editor
+	private IEditorPart setCurrentElement(IJavaElement element) {
+		try {
+			IJavaElement unit = element
+					.getAncestor(IJavaElement.COMPILATION_UNIT);
+			if (unit == null) return null;
+			IEditorPart editor;
+			editor = JavaUI.openInEditor(unit);
+			JavaUI.revealInEditor(editor, element);
+			return editor;
+		} catch (PartInitException e) {
+			e.printStackTrace();
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		return null;
 	}
 
 	private void hookDoubleClickAction() {
@@ -273,6 +274,7 @@ public class CodeSetView extends ViewPart {
 			}
 		});
 	}
+	
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 				viewer.getControl().getShell(),

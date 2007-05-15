@@ -12,13 +12,15 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	private Color white = new Color(null, 255,255,255);
 	private Color foreground = new Color(null, 0,0,0);
 	private Color background = new Color(null, 225,225,210);
+	private Color greyText = new Color(null, 100,100,100);
 	private ResultSet changeSet;
 	
 //	private ChangeSet changeSet;
 	private ResultSet historySet;
-	private ArrayList<ISourceReference> currentSet;
+	private ResultSet searchSet;
+	private ResultSet currentSet;
 	
-	public ElementLabelProvider(ResultSet editorChangeSet,ResultSet hset)
+	public ElementLabelProvider(ResultSet editorChangeSet,ResultSet hset,ResultSet sSet)
 	{
 		super(JavaElementLabelProvider.SHOW_PARAMETERS
 				| JavaElementLabelProvider.SHOW_SMALL_ICONS
@@ -26,10 +28,16 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 				| JavaElementLabelProvider.SHOW_TYPE);
 		changeSet = editorChangeSet;
 		historySet = hset;
+		searchSet = sSet;
+		
 	}
 
-	public void setCurrentSet(ArrayList<ISourceReference> set) {
+	public void setCurrentSet(ResultSet set) {
 		this.currentSet = set;
+	}
+	
+	public ResultSet getCurrentSet(){
+		return currentSet;
 	}
 	
 	public Color getBackground(Object element) {
@@ -43,6 +51,9 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	public Color getForeground(Object element) {
 		// if history set is current
 		//    int index = get index of element
+		if((currentSet == historySet || currentSet == searchSet) && searchSet.contains((ISourceReference)element)
+				&& historySet.contains((ISourceReference)element))
+			return greyText;
 		return foreground;
 	}
 	
