@@ -23,8 +23,8 @@ import org.eclipse.swt.SWT;
 
 import ca.ucalgary.codesets.*;
 
-// This view displays sets of source code entities as provided by one of a
-// number of ResultSet's. 
+//This view displays sets of source code entities as provided by one of a
+//number of ResultSet's. 
 public class CodeSetView extends ViewPart {
 
 	// Set containing all elements that have been selected
@@ -33,20 +33,22 @@ public class CodeSetView extends ViewPart {
 	ResultSet editorChangeSet = new ResultSet();
 	ResultSet elementChangeSet = new ResultSet();
 	ResultSet searchSet = new ResultSet();
-		
+
 	private boolean sortByName = false;
-	
+
 	private TableViewer viewer;
-	
+
 	private Action historyAction;		//The history Action, when this is clicked, displays history set
 	private Action editorChangeAction;		//The editor change Action, when this is clicked, displays editor change set
 	private Action elementChangeAction; 	//The element change Action, when this is clicked, displays element change set
 	private Action autoReferenceAction;
-	
+
 	private Action doubleClickAction;
-	
+
 	private Action changeSetOrderAction;			//This action is setup to change the way the sets are ordered
-	
+	private CodeSetView codeSetView = this;
+
+
 	class NameSorter extends ViewerSorter {
 	}
 
@@ -58,28 +60,29 @@ public class CodeSetView extends ViewPart {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(historySet);
 		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet));  
-		
+		codeSetView.setContentDescription("History");
+
 		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 		el.setCurrentSet(historySet);  
-		
+
 		if(sortByName)
 			viewer.setSorter(new NameSorter());
 		else
 			viewer.setSorter(null);//new NameSorter());
-		
+
 		viewer.setInput(getViewSite());
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();			
-		
-		
+
+
 		// globally listen for part activation events
 		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet, searchSet);
 		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, editorChangeSet); 
 		//Registers the ElementChangedListener to the JavaCore to listen for changes
 		JavaCore.addElementChangedListener(new JavaElementChangeListener(viewer, elementChangeSet), ElementChangedEvent.POST_RECONCILE);
-		
+
 		IPartListener partListener = new IPartListener() {
 			public void partActivated(IWorkbenchPart part) {
 				if (part instanceof JavaEditor) {
@@ -90,24 +93,24 @@ public class CodeSetView extends ViewPart {
 			}
 
 			public void partBroughtToTop(IWorkbenchPart part) {
-				
+
 			}
 
 			public void partClosed(IWorkbenchPart part) {
-				
+
 			}
 
 			public void partDeactivated(IWorkbenchPart part) {
-				
+
 			}
 
 			public void partOpened(IWorkbenchPart part) {
-				
+
 			}
 		};
 
 		getSite().getPage().addPartListener(partListener);
-		
+
 		//The following lines get the Current Editor. 
 		//There has been a bug, where the editor *might* not be loaded which is giving a 
 		//nullpointerexception. If this is where the exception is happening, then the != nulls will 
@@ -120,7 +123,7 @@ public class CodeSetView extends ViewPart {
 			IWorkbenchPage page = workbench.getActivePage();
 			if (page != null) {
 				IEditorPart editor = page.getActiveEditor();
-				 
+
 				if (editor != null && editor instanceof JavaEditor) { //if JavaEditor, register the editor with the listeners.
 					listener.register((JavaEditor)editor);
 					changeListener.register((JavaEditor)editor);
@@ -161,7 +164,7 @@ public class CodeSetView extends ViewPart {
 		manager.add(autoReferenceAction);
 		manager.add(new Separator());
 		manager.add(changeSetOrderAction);
-		
+
 
 	}
 
@@ -171,60 +174,60 @@ public class CodeSetView extends ViewPart {
 		manager.add(elementChangeAction);
 		manager.add(autoReferenceAction);
 		manager.add(changeSetOrderAction);
-		
+
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-	
+
 	private void fillLocalToolBar(IToolBarManager manager) {
-		manager.add(historyAction);
-		manager.add(editorChangeAction);	
-		manager.add(elementChangeAction);
-		manager.add(autoReferenceAction);
 	}
 
 	private void makeActions() {
-		
+
 		historyAction = new Action() {
 			public void run(){
 				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 				viewer.setContentProvider(historySet);
 				el.setCurrentSet(historySet);
+				codeSetView.setContentDescription("History");
 				viewer.refresh();
 			}
 		};
-		
+
 		historyAction.setToolTipText("Shows a list of your history");  //change this for specified tooltip
 		historyAction.setText("History Set");
 		historyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-			
+
 		editorChangeAction = new Action() {
-				public void run(){
-					ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
-					viewer.setContentProvider(editorChangeSet);
-					el.setCurrentSet(editorChangeSet);
-					viewer.refresh();
-				}
+			public void run(){
+				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
+				viewer.setContentProvider(editorChangeSet);
+				el.setCurrentSet(editorChangeSet);
+				codeSetView.setContentDescription("Changes by Editor");
+				viewer.refresh();
+			}
 		};
 		editorChangeAction.setToolTipText("Shows a list of your changes");
 		editorChangeAction.setText("Change Set");
 		editorChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action	
-		
+
 		elementChangeAction = new Action() {
 			public void run(){
 				viewer.setContentProvider(elementChangeSet);
+				codeSetView.setContentDescription("Changes by Element");
+				viewer.refresh();
 			}
 		};
 		elementChangeAction.setToolTipText("Shows a list of your changes");
 		elementChangeAction.setText("Element Change Set");
 		elementChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-		
+
 		autoReferenceAction = new Action() {
 			public void run(){
-				showMessage("Auto Referencing Action Executed");  
+				codeSetView.setContentDescription("Auto Referencing by Caret");
 				viewer.setContentProvider(searchSet);
 			}
 		};
@@ -232,7 +235,7 @@ public class CodeSetView extends ViewPart {
 		autoReferenceAction.setText("Auto Reference Set");
 		autoReferenceAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-		
+
 		//these lines change the order that the lists are displayed
 		changeSetOrderAction = new Action() {
 			public void run(){
@@ -246,18 +249,19 @@ public class CodeSetView extends ViewPart {
 				}
 				viewer.refresh();
 			}
-	};
-	changeSetOrderAction.setToolTipText("Changes the way the sets are ordered");
-	changeSetOrderAction.setText("Change Set Order");
-	changeSetOrderAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+		};
+		changeSetOrderAction.setToolTipText("Changes the way the sets are ordered");
+		changeSetOrderAction.setText("Change Set Order");
+		changeSetOrderAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 		
+
 		doubleClickAction = new Action() {
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				Object obj = ((IStructuredSelection)selection).getFirstElement();
 				showMessage("Double-click detected on "+obj.toString());
-				
+
 			}
 		};
 	}
@@ -271,9 +275,9 @@ public class CodeSetView extends ViewPart {
 	}
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
-			viewer.getControl().getShell(),
-			"Code Sets",
-			message);
+				viewer.getControl().getShell(),
+				"Code",
+				message);
 	}
 
 	/**
@@ -282,5 +286,5 @@ public class CodeSetView extends ViewPart {
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
-	
+
 }
