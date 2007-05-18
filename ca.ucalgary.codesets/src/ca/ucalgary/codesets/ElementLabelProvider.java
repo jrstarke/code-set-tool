@@ -8,19 +8,21 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.swt.graphics.Color;
 
+import ca.ucalgary.codesets.sets.CodeSet;
+
 public class ElementLabelProvider extends JavaElementLabelProvider implements IColorProvider{
 	private Color white = new Color(null, 255,255,255);
 	private Color foreground = new Color(null, 0,0,0);
 	private Color background = new Color(null, 225,225,210);
 	private Color greyText = new Color(null, 100,100,100);
-	private ResultSet changeSet;
+	private CodeSet changeSet;
 	
 //	private ChangeSet changeSet;
-	private ResultSet historySet;
-	private ResultSet searchSet;
-	private ResultSet currentSet;
+	private CodeSet historySet;
+	private CodeSet searchSet;
+	private CodeSet currentSet;
 	
-	public ElementLabelProvider(ResultSet editorChangeSet,ResultSet hset,ResultSet sSet)
+	public ElementLabelProvider(CodeSet editorChangeSet,CodeSet hset,CodeSet sSet)
 	{
 		super(JavaElementLabelProvider.SHOW_PARAMETERS
 				| JavaElementLabelProvider.SHOW_SMALL_ICONS
@@ -32,11 +34,11 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 		
 	}
 
-	public void setCurrentSet(ResultSet set) {
+	public void setCurrentSet(CodeSet set) {
 		this.currentSet = set;
 	}
 	
-	public ResultSet getCurrentSet(){
+	public CodeSet getCurrentSet(){
 		return currentSet;
 	}
 	

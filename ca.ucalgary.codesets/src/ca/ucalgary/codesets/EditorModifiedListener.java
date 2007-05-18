@@ -13,14 +13,16 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.StyledText;
 
-public class EditorModifiedListener implements IDocumentListener {
-	ResultSet changeSet;
-	//ChangeSet changeSet;
+import ca.ucalgary.codesets.listeners.CodeSetListener;
+import ca.ucalgary.codesets.sets.CodeSet;
+
+public class EditorModifiedListener implements IDocumentListener, CodeSetListener {
+	CodeSet changeSet;
 	TableViewer viewer;
 	JavaEditor editor;
 	DocumentEvent event;
 	
-	public EditorModifiedListener(TableViewer viewer, ResultSet editorChangeSet) {
+	public EditorModifiedListener(TableViewer viewer, CodeSet editorChangeSet) {
 		this.changeSet = editorChangeSet;
 		this.viewer = viewer;
 	}
@@ -40,9 +42,24 @@ public class EditorModifiedListener implements IDocumentListener {
 		viewer.refresh();
 	}
 	
+	public void register(Object object) {
+		JavaEditor editor = (JavaEditor)object;
+		editor.getViewer().getDocument().addDocumentListener(this);
+	}
+	
+	public void unregister (Object object) {
+		JavaEditor editor = (JavaEditor) object;
+		editor.getViewer().getDocument().addDocumentListener(this);
+	}
+	
 	public void register(JavaEditor editor) {
 		this.editor = editor;
 		editor.getViewer().getDocument().addDocumentListener(this);
+	}
+	
+	public void unregister(JavaEditor editor) {
+		this.editor = editor;
+		editor.getViewer().getDocument().removeDocumentListener(this);
 	}
 	
 	ISourceReference computeSelection() {

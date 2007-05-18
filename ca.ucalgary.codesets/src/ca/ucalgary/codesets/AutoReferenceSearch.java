@@ -18,13 +18,15 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import ca.ucalgary.codesets.sets.CodeSet;
+
 /**
  * 
  * @author starkej
  *
  */
 public class AutoReferenceSearch {
-	ResultSet searchSet;
+	CodeSet searchSet;
 	
 	/**
 	 * Create a new auto reference search with a given search set and element what we would like
@@ -32,7 +34,7 @@ public class AutoReferenceSearch {
 	 * @param searchSet
 	 * @param element
 	 */
-	public AutoReferenceSearch (ResultSet searchSet, IJavaElement element) {
+	public AutoReferenceSearch (CodeSet searchSet, IJavaElement element) {
 		this.searchSet = searchSet;
 		searchSet.clear();
 		run(element);

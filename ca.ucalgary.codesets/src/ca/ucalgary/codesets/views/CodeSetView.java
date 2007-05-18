@@ -1,5 +1,7 @@
 package ca.ucalgary.codesets.views;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
@@ -25,17 +27,22 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.SWT;
 
 import ca.ucalgary.codesets.*;
+import ca.ucalgary.codesets.listeners.CodeSetListener;
+import ca.ucalgary.codesets.listeners.PartListener;
+import ca.ucalgary.codesets.listeners.SetListener;
+import ca.ucalgary.codesets.sets.*;
 
 //This view displays sets of source code entities as provided by one of a
 //number of ResultSet's. 
-public class CodeSetView extends ViewPart {
+public class CodeSetView extends ViewPart implements SetListener {
 
+	ArrayList sets = new ArrayList();
 	// Set containing all elements that have been selected
-	ResultSet historySet = new ResultSet();
+	CodeSet searchSet = new CodeSet();
+	HistorySet historySet = new HistorySet(searchSet);
 	// Two sets containing all elements that have been modified
-	ResultSet editorChangeSet = new ResultSet();
-	ResultSet elementChangeSet = new ResultSet();
-	ResultSet searchSet = new ResultSet();
+	CodeSet editorChangeSet = new CodeSet();
+	CodeSet elementChangeSet = new CodeSet();
 
 
 	private TableViewer viewer;
@@ -44,6 +51,7 @@ public class CodeSetView extends ViewPart {
 	private Action editorChangeAction;		//The editor change Action, when this is clicked, displays editor change set
 	private Action elementChangeAction; 	//The element change Action, when this is clicked, displays element change set
 	private Action autoReferenceAction;
+	private Action setPreferencesAction;
 
 	private Action doubleClickAction;
 	
@@ -76,36 +84,18 @@ public class CodeSetView extends ViewPart {
 
 
 		// globally listen for part activation events
-		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet, searchSet);
+//		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet.getResultSet(), searchSet);
 		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, editorChangeSet); 
 		//Registers the ElementChangedListener to the JavaCore to listen for changes
 		JavaCore.addElementChangedListener(new JavaElementChangeListener(viewer, elementChangeSet), ElementChangedEvent.POST_RECONCILE);
 
-		IPartListener partListener = new IPartListener() {
-			public void partActivated(IWorkbenchPart part) {
-				if (part instanceof JavaEditor) {
-					System.out.println("Editor Changed " + (JavaEditor)part);
-					listener.register((JavaEditor)part);
-					changeListener.register((JavaEditor)part);
-				}
-			}
-
-			public void partBroughtToTop(IWorkbenchPart part) {
-
-			}
-
-			public void partClosed(IWorkbenchPart part) {
-
-			}
-
-			public void partDeactivated(IWorkbenchPart part) {
-
-			}
-
-			public void partOpened(IWorkbenchPart part) {
-
-			}
-		};
+		//Initializes the listener that keeps track of all of the editors
+		PartListener partListener = new PartListener();
+		historySet.activate();
+		historySet.changeListener(this);
+		searchSet.changeListener(this);
+		PartListener.addListener(changeListener);
+		
 
 		getSite().getPage().addPartListener(partListener);
 
@@ -123,8 +113,10 @@ public class CodeSetView extends ViewPart {
 				IEditorPart editor = page.getActiveEditor();
 
 				if (editor != null && editor instanceof JavaEditor) { //if JavaEditor, register the editor with the listeners.
-					listener.register((JavaEditor)editor);
-					changeListener.register((JavaEditor)editor);
+					for (CodeSetListener l:partListener.getListeners()) {
+						l.register((JavaEditor)editor);
+					}
+//					 changeListener.register(editor);
 				}
 				else if(editor == null)
 					System.out.println("Editor is Null");
@@ -173,6 +165,7 @@ public class CodeSetView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
+		manager.add(setPreferencesAction);
 	}
 
 	private void makeActions() {
@@ -236,6 +229,16 @@ public class CodeSetView extends ViewPart {
 		autoReferenceAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 
+		setPreferencesAction = new Action() {
+			public void run(){
+				CodeSetPreferences preferences = new CodeSetPreferences( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+				preferences.open();
+			}
+		};
+		setPreferencesAction.setToolTipText("Selects the running sets");
+		setPreferencesAction.setText("Preferences");
+		setPreferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 
 		doubleClickAction = new Action() {
 			public void run() {
@@ -287,6 +290,11 @@ public class CodeSetView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+	
+	public void refresh (CodeSet set) {
+		if (set == viewer.getContentProvider())
+			viewer.refresh();
 	}
 
 }
