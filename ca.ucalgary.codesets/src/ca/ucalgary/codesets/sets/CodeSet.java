@@ -42,9 +42,9 @@ public class CodeSet extends ArrayList<ISourceReference> implements IStructuredC
 			remove(isr);  				//delete the object if it is in the list already
 		
 		add(0,isr);						//add the object to the front of the list
-		changed();
 		if(size() > sizeOfList)		//remove the last unit if the size is greater than allowed
 			remove(sizeOfList-1);		
+		changed();
 		return true;
 	}
 	
