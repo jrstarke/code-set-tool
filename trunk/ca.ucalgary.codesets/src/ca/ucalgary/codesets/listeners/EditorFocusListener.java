@@ -1,4 +1,4 @@
-package ca.ucalgary.codesets;
+package ca.ucalgary.codesets.listeners;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IImportContainer;
@@ -22,24 +22,31 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IEditorPart;
 
+import ca.ucalgary.codesets.AutoReferenceSearch;
+import ca.ucalgary.codesets.sets.*;
+
 
 /**
 * This is used for listening to events corresponding to the cursor or selection
 * changing in a given editor. This can only be listening to one JavaEditor at a
 * time.
 */
-public class EditorFocusListener implements ISelectionChangedListener {
-	ResultSet historySet;
-	ResultSet searchSet;
+public class EditorFocusListener implements ISelectionChangedListener, CodeSetListener {
+	CodeSet historySet;
+	CodeSet searchSet;
 	JavaEditor editor;
 	
 	ISelectionProvider selectionProvider;
 	TableViewer viewer;
 	
-	public EditorFocusListener(TableViewer viewer, ResultSet historySet, ResultSet searchSet) {
+	public EditorFocusListener(CodeSet historySet, CodeSet searchSet) { 
 		this.historySet = historySet;
 		this.searchSet = searchSet;
 		this.viewer = viewer;
+	}
+	
+	public void register (Object object) {
+		register((JavaEditor)object);
 	}
 	
 	public void register(JavaEditor part) {
@@ -58,6 +65,10 @@ public class EditorFocusListener implements ISelectionChangedListener {
 		}
 	}
 	
+	public void unregister (Object object) {
+		unregister();
+	}
+	
 	void unregister() {
 		if (selectionProvider != null) {
 			selectionProvider.removeSelectionChangedListener(this);
@@ -71,7 +82,6 @@ public class EditorFocusListener implements ISelectionChangedListener {
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (computeSelection()) {
 			System.out.println("Selection changed");
-			viewer.refresh();
 		}
 	}
 	
@@ -100,7 +110,7 @@ public class EditorFocusListener implements ISelectionChangedListener {
 			if (element instanceof IType)  {
 				// The Following line performs a new search automatically for any references
 				// to this element
-				new AutoReferenceSearch(searchSet, element);
+//				new AutoReferenceSearch(searchSet, element);
 				historySet.add((ISourceReference)element); //, null, caret);
 			} else 
 				computeLines((ISourceReference)element, unit.getSource(), caret);
@@ -180,5 +190,10 @@ public class EditorFocusListener implements ISelectionChangedListener {
 			int offset = sourceViewer.getVisibleRegion().getOffset();
 			return offset + styledText.getCaretOffset();
 		}
+	}
+
+	public void unregister(JavaEditor o) {
+		// TODO Auto-generated method stub
+		
 	}
 }

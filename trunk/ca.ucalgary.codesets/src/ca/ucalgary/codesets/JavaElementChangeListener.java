@@ -7,13 +7,15 @@ import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jface.viewers.TableViewer;
 
+import ca.ucalgary.codesets.sets.CodeSet;
+
 
 public class JavaElementChangeListener implements IElementChangedListener {
-	private ResultSet changeSet;
+	private CodeSet changeSet;
 	//private ChangeSet changeSet;
 	private TableViewer viewer;
 
-	public JavaElementChangeListener(TableViewer inViewer, ResultSet elementChangeSet) {
+	public JavaElementChangeListener(TableViewer inViewer, CodeSet elementChangeSet) {
 		this.viewer = inViewer;
 		this.changeSet = elementChangeSet;
 	}
