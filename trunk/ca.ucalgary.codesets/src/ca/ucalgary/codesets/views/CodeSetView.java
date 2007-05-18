@@ -41,7 +41,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 	CodeSet searchSet = new CodeSet();
 	HistorySet historySet = new HistorySet(searchSet);
 	// Two sets containing all elements that have been modified
-	CodeSet editorChangeSet = new CodeSet();
+	EditorChangeSet editorChangeSet = new EditorChangeSet();
 	CodeSet elementChangeSet = new CodeSet();
 
 
@@ -85,7 +85,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 
 		// globally listen for part activation events
 //		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet.getResultSet(), searchSet);
-		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, editorChangeSet); 
+//		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, editorChangeSet); 
 		//Registers the ElementChangedListener to the JavaCore to listen for changes
 		JavaCore.addElementChangedListener(new JavaElementChangeListener(viewer, elementChangeSet), ElementChangedEvent.POST_RECONCILE);
 
@@ -93,8 +93,10 @@ public class CodeSetView extends ViewPart implements SetListener {
 		PartListener partListener = new PartListener();
 		historySet.activate();
 		historySet.changeListener(this);
+		editorChangeSet.activate();
+		editorChangeSet.changeListener(this);
 		searchSet.changeListener(this);
-		PartListener.addListener(changeListener);
+//		PartListener.addListener(changeListener);
 		
 
 		getSite().getPage().addPartListener(partListener);

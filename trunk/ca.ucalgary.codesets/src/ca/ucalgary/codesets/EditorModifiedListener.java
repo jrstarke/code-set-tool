@@ -18,28 +18,22 @@ import ca.ucalgary.codesets.sets.CodeSet;
 
 public class EditorModifiedListener implements IDocumentListener, CodeSetListener {
 	CodeSet changeSet;
-	TableViewer viewer;
 	JavaEditor editor;
 	DocumentEvent event;
 	
-	public EditorModifiedListener(TableViewer viewer, CodeSet editorChangeSet) {
+	public EditorModifiedListener(CodeSet editorChangeSet) {
 		this.changeSet = editorChangeSet;
-		this.viewer = viewer;
 	}
 	
 	public void documentChanged (DocumentEvent event) {
 		this.event = event;
 		changeSet.add(computeSelection());
 		System.out.println("A Change was detected");
-
-		viewer.refresh();
 	}
 	
 	public void documentAboutToBeChanged (DocumentEvent event) {
 		this.event = event;
 		changeSet.remove(computeSelection());
-		
-		viewer.refresh();
 	}
 	
 	public void register(Object object) {
@@ -70,7 +64,6 @@ public class EditorModifiedListener implements IDocumentListener, CodeSetListene
 		if (styledText == null) return null;
 
 		int caret = getCaretPosition(sourceViewer, styledText);
-		//System.out.println(caret);
 		
 		IWorkingCopyManager manager = JavaPlugin.getDefault()
 				.getWorkingCopyManager();
