@@ -16,12 +16,21 @@ public class CodeSet extends ArrayList<ISourceReference> implements IStructuredC
 
 	private int sizeOfList = 10;
 	protected CodeSetListener listener;
-	protected Boolean isActivated;
+	protected boolean isActivated;
 	protected SetListener listensToUs;
+	protected Action action;
 
-	public void activate () {}
+	public CodeSet () {
+		isActivated = false;
+	}
+	
+	public void activate () {
+		isActivated = true;
+	}
 
-	public void deactivate () {}
+	public void deactivate () {
+		isActivated = false;
+	}
 	
 	public boolean isActivated () {
 		return isActivated;
@@ -61,6 +70,14 @@ public class CodeSet extends ArrayList<ISourceReference> implements IStructuredC
 	// Can use this in the future if you want the size of the list to change
 	public void setSize(int size) {
 		sizeOfList = size;
+	}
+	
+	public Action getAction() {
+		return action;
+	}
+	
+	public void setAction (Action action) {
+		this.action = action;
 	}
 
 }

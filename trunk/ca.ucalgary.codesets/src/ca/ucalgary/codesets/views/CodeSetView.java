@@ -36,14 +36,14 @@ import ca.ucalgary.codesets.sets.*;
 //number of ResultSet's. 
 public class CodeSetView extends ViewPart implements SetListener {
 
-	ArrayList sets = new ArrayList();
+	// The set of all of the sets (used in preferences)
+	ArrayList<CodeSet> sets = new ArrayList<CodeSet>();
 	// Set containing all elements that have been selected
 	CodeSet searchSet = new CodeSet();
 	HistorySet historySet = new HistorySet(searchSet);
 	// Two sets containing all elements that have been modified
 	EditorChangeSet editorChangeSet = new EditorChangeSet();
-	CodeSet elementChangeSet = new CodeSet();
-
+	ElementChangeSet elementChangeSet = new ElementChangeSet();
 
 	private TableViewer viewer;
 
@@ -54,7 +54,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 	private Action setPreferencesAction;
 
 	private Action doubleClickAction;
-	
+
 	private CodeSetView codeSetView = this;
 
 
@@ -73,11 +73,32 @@ public class CodeSetView extends ViewPart implements SetListener {
 
 		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 		el.setCurrentSet(historySet);  
-		
+
 		viewer.setSorter(null);//new NameSorter());
 
 		viewer.setInput(getViewSite());
 		makeActions();
+		
+		//Initializes the listener that keeps track of all of the editors
+		PartListener partListener = new PartListener();
+		historySet.activate();
+		historySet.changeListener(this);
+		historySet.setAction(historyAction);
+		editorChangeSet.activate();
+		editorChangeSet.changeListener(this);
+		editorChangeSet.setAction(editorChangeAction);
+		elementChangeSet.activate();
+		elementChangeSet.changeListener(this);
+		elementChangeSet.setAction(elementChangeAction);
+		searchSet.changeListener(this);
+
+		sets.add(historySet);
+		sets.add(editorChangeSet);
+		sets.add(elementChangeSet);
+//		PartListener.addListener(changeListener);
+
+		getSite().getPage().addPartListener(partListener);
+		
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();			
@@ -87,19 +108,28 @@ public class CodeSetView extends ViewPart implements SetListener {
 //		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet.getResultSet(), searchSet);
 //		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, editorChangeSet); 
 		//Registers the ElementChangedListener to the JavaCore to listen for changes
-		JavaCore.addElementChangedListener(new JavaElementChangeListener(viewer, elementChangeSet), ElementChangedEvent.POST_RECONCILE);
+//		JavaCore.addElementChangedListener(new JavaElementChangeListener(elementChangeSet), ElementChangedEvent.POST_RECONCILE);
 
-		//Initializes the listener that keeps track of all of the editors
-		PartListener partListener = new PartListener();
-		historySet.activate();
-		historySet.changeListener(this);
-		editorChangeSet.activate();
-		editorChangeSet.changeListener(this);
-		searchSet.changeListener(this);
-//		PartListener.addListener(changeListener);
-		
+//		//Initializes the listener that keeps track of all of the editors
+//		PartListener partListener = new PartListener();
+//		historySet.activate();
+//		historySet.changeListener(this);
+//		historySet.setAction(historyAction);
+//		editorChangeSet.activate();
+//		editorChangeSet.changeListener(this);
+//		editorChangeSet.setAction(editorChangeAction);
+//		elementChangeSet.activate();
+//		elementChangeSet.changeListener(this);
+//		elementChangeSet.setAction(elementChangeAction);
+//		searchSet.changeListener(this);
+//
+//		sets.add(historySet);
+//		sets.add(editorChangeSet);
+//		sets.add(elementChangeSet);
+////		PartListener.addListener(changeListener);
 
-		getSite().getPage().addPartListener(partListener);
+//
+//		getSite().getPage().addPartListener(partListener);
 
 		//The following lines get the Current Editor. 
 		//There has been a bug, where the editor *might* not be loaded which is giving a 
@@ -118,7 +148,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 					for (CodeSetListener l:partListener.getListeners()) {
 						l.register((JavaEditor)editor);
 					}
-//					 changeListener.register(editor);
+//					changeListener.register(editor);
 				}
 				else if(editor == null)
 					System.out.println("Editor is Null");
@@ -150,17 +180,19 @@ public class CodeSetView extends ViewPart implements SetListener {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		manager.add(historyAction);
-		manager.add(editorChangeAction);
-		manager.add(elementChangeAction);
+		for (CodeSet s:sets) {
+			if (s.isActivated())
+				manager.add(s.getAction());
+		}
 		manager.add(autoReferenceAction);
 		manager.add(new Separator());
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		manager.add(historyAction);
-		manager.add(editorChangeAction);	
-		manager.add(elementChangeAction);
+		for (CodeSet s:sets) {
+			if (s.isActivated())
+				manager.add(s.getAction());
+		}
 		manager.add(autoReferenceAction);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -233,7 +265,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 
 		setPreferencesAction = new Action() {
 			public void run(){
-				CodeSetPreferences preferences = new CodeSetPreferences( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+				CodeSetPreferences preferences = new CodeSetPreferences( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), sets);
 				preferences.open();
 			}
 		};
@@ -251,13 +283,13 @@ public class CodeSetView extends ViewPart implements SetListener {
 			}
 		};
 	}
-	
+
 //	Jonathan's code
 //	Opens the selected source in the editor
 	private IEditorPart setCurrentElement(IJavaElement element) {
 		try {
 			IJavaElement unit = element
-					.getAncestor(IJavaElement.COMPILATION_UNIT);
+			.getAncestor(IJavaElement.COMPILATION_UNIT);
 			if (unit == null) return null;
 			IEditorPart editor;
 			editor = JavaUI.openInEditor(unit);
@@ -279,7 +311,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 			}
 		});
 	}
-	
+
 	private void showMessage(String message) {
 		MessageDialog.openInformation(
 				viewer.getControl().getShell(),
@@ -293,7 +325,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
-	
+
 	public void refresh (CodeSet set) {
 		if (set == viewer.getContentProvider())
 			viewer.refresh();

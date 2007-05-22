@@ -1,5 +1,7 @@
 package ca.ucalgary.codesets;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -16,14 +18,17 @@ import org.eclipse.swt.widgets.Slider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ViewSettingsDialog;
 
+import ca.ucalgary.codesets.sets.CodeSet;
+
 
 
 public class CodeSetPreferences extends MessageDialog {
 
+	private ArrayList<CodeSet> sets;
 	private String[] buttonNames = {"History Set", "Change Set"};
-	private boolean[] values = {true, false};
+	private ArrayList<CodeSet> modified = new ArrayList<CodeSet>();
 	
-	public CodeSetPreferences (Shell parentShell) {
+	public CodeSetPreferences (Shell parentShell, ArrayList<CodeSet> sets) {
 		super( parentShell,
                 "Set Preferences",
                 null,
@@ -31,55 +36,62 @@ public class CodeSetPreferences extends MessageDialog {
                 0,
                 new String[]{IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL},
                 0);
+		this.sets = sets;
 	}
 	
-//	/**
-//	 * Modifies the preferences on buttons pressed.
-//	 * @param pButtonID The id for the button pressed.
-//	 */
-//	protected void buttonPressed( int pButtonID ) 
-//	{
-//		if( pButtonID == 0 )
-//		{
-//			ConcernMapper.getDefault().getPreferenceStore().
-//				setValue( ConcernMapperPreferencePage.P_FILTER_ENABLED, getToggleState());
-//			ConcernMapper.getDefault().getPreferenceStore().
-//				setValue( ConcernMapperPreferencePage.P_FILTER_THRESHOLD, new Integer( aThresholdSlider.getSelection()).toString() );
-//		}
-//		close();
-//	}
+	/**
+	 * Modifies the preferences on buttons pressed.
+	 * @param pButtonID The id for the button pressed.
+	 */
+	protected void buttonPressed( int pButtonID ) 
+	{
+		System.out.println(modified.size());
+		if( pButtonID == 0 )
+		{
+			for (CodeSet m:modified) {
+				if (m.isActivated())
+					m.deactivate();
+				else
+					m.activate();
+			}
+		}
+		close();
+	}
 
 	/**
 	 * Builds the custom layout for this dialog.
 	 * @param pParent The parent widget.
 	 * @return The control.
 	 */
-	protected Control createCustomArea( Composite pParent )
+	protected Control createCustomArea( Composite parent )
 	{
-		Button[] buttons = new Button[buttonNames.length];
-		for (int i = 0; i < buttonNames.length; i++)
+		ArrayList<Button> buttons = new ArrayList<Button>();
+		for (CodeSet s:sets)
 		{
-			buttons[i] = createToggleButton(pParent, buttonNames[i], values[i], i);
+			buttons.add(createToggleButton(parent, s));
 		}
-		return super.createCustomArea( pParent );
+		return super.createCustomArea( parent );
 	}
 	
-	protected Button createToggleButton(Composite parent, String buttonDescription, Boolean toggleState, final int i) {
+	protected Button createToggleButton(Composite parent, final CodeSet s) {
         final Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
         
         GridData data = new GridData(SWT.NONE);
         data.horizontalSpan = 2;
         button.setLayoutData(data);
         button.setFont(parent.getFont());
-        button.setText(buttonNames[i]);
-        button.setSelection(values[i]);
+        button.setText(s.getAction().getText());
+        button.setSelection(s.isActivated());
 
         button.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
-                values[i] = button.getSelection();
+                if (modified.contains(s)) {
+                	modified.remove(s);
+                }
+                else
+                	modified.add(s);
            }
-
         });
 
         return button;
