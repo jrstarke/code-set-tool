@@ -45,10 +45,6 @@ public class EditorFocusListener implements ISelectionChangedListener, CodeSetLi
 		this.viewer = viewer;
 	}
 	
-	public void register (Object object) {
-		register((JavaEditor)object);
-	}
-	
 	public void register(JavaEditor part) {
 		unregister();
 		editor = part;
@@ -65,7 +61,7 @@ public class EditorFocusListener implements ISelectionChangedListener, CodeSetLi
 		}
 	}
 	
-	public void unregister (Object object) {
+	public void unregister (JavaEditor part) {
 		unregister();
 	}
 	
@@ -190,10 +186,5 @@ public class EditorFocusListener implements ISelectionChangedListener, CodeSetLi
 			int offset = sourceViewer.getVisibleRegion().getOffset();
 			return offset + styledText.getCaretOffset();
 		}
-	}
-
-	public void unregister(JavaEditor o) {
-		// TODO Auto-generated method stub
-		
 	}
 }

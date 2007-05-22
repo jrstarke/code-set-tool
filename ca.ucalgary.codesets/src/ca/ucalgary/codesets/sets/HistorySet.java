@@ -14,11 +14,13 @@ public class HistorySet extends CodeSet {
 	
 	@Override
 	public void activate() {
+		super.activate();
 		PartListener.addListener(listener);
 	}
 
 	@Override
 	public void deactivate() {
+		super.deactivate();
 		PartListener.removeListener(listener);
 	}
 }
