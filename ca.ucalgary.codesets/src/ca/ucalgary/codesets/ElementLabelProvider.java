@@ -31,7 +31,6 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 		changeSet = editorChangeSet;
 		historySet = hset;
 		searchSet = sSet;
-		
 	}
 
 	public void setCurrentSet(CodeSet set) {
@@ -50,12 +49,16 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 		return white;
 	}
 
+		
+	/* returns a grey colour if the element is an object of HistorySet and SearchSet
+	 * returns black, if it is not
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
 	public Color getForeground(Object element) {
-		// if history set is current
-		//    int index = get index of element
 		if((currentSet == historySet || currentSet == searchSet) && searchSet.contains((ISourceReference)element)
 				&& historySet.contains((ISourceReference)element))
-			return greyText;
+			return greyText;			
 		return foreground;
 	}
 	
