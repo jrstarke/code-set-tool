@@ -7,23 +7,31 @@ import org.eclipse.mylar.monitor.core.InteractionEvent;
 import ca.ucalgary.codesets.ElementLabelProvider;
 import ca.ucalgary.codesets.listeners.*;
 
-public class HistorySet extends CodeSet {
+/**
+ * The Auto Reference Set keeps track of all of the items that reference this object
+ * @author starkej
+ *
+ */
+public class AutoReferenceSet extends CodeSet {
 
-	public HistorySet () {
+	/**
+	 * Creates a new AutoReferenceSet with a specified Listener
+	 *
+	 */
+	public AutoReferenceSet () {
 		super();
-		listener = new EditorFocusListener(this);
+		listener = new EditorAutoReferenceListener(this);
 	}
 	
 	@Override
 	public void activate() {
 		super.activate();
-//		PartListener.addListener(listener);
 		InteractionListener.addListener(InteractionEvent.Kind.SELECTION, listener);
 	}
 
 	@Override
 	public void deactivate() {
 		super.deactivate();
-//		PartListener.removeListener(listener);
+		InteractionListener.removeListener(listener);
 	}
 }
