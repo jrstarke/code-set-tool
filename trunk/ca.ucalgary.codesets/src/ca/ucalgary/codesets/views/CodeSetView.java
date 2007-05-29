@@ -28,7 +28,7 @@ import org.eclipse.swt.SWT;
 
 import ca.ucalgary.codesets.*;
 import ca.ucalgary.codesets.listeners.CodeSetListener;
-import ca.ucalgary.codesets.listeners.PartListener;
+import ca.ucalgary.codesets.listeners.InteractionListener;
 import ca.ucalgary.codesets.listeners.SetListener;
 import ca.ucalgary.codesets.sets.*;
 
@@ -39,17 +39,15 @@ public class CodeSetView extends ViewPart implements SetListener {
 	// The set of all of the sets (used in preferences)
 	ArrayList<CodeSet> sets = new ArrayList<CodeSet>();
 	// Set containing all elements that have been selected
-	CodeSet searchSet = new CodeSet();
-	HistorySet historySet = new HistorySet(searchSet);
+	AutoReferenceSet searchSet = new AutoReferenceSet();
+	HistorySet historySet = new HistorySet();
 	// Two sets containing all elements that have been modified
 	EditorChangeSet editorChangeSet = new EditorChangeSet();
-	ElementChangeSet elementChangeSet = new ElementChangeSet();
 
 	private TableViewer viewer;
 
 	private Action historyAction;		//The history Action, when this is clicked, displays history set
 	private Action editorChangeAction;		//The editor change Action, when this is clicked, displays editor change set
-	private Action elementChangeAction; 	//The element change Action, when this is clicked, displays element change set
 	private Action autoReferenceAction;
 	private Action setPreferencesAction;
 
@@ -80,84 +78,24 @@ public class CodeSetView extends ViewPart implements SetListener {
 		makeActions();
 		
 		//Initializes the listener that keeps track of all of the editors
-		PartListener partListener = new PartListener();
+		InteractionListener interactionListener = new InteractionListener();
 		historySet.activate();
 		historySet.changeListener(this);
 		historySet.setAction(historyAction);
 		editorChangeSet.activate();
 		editorChangeSet.changeListener(this);
 		editorChangeSet.setAction(editorChangeAction);
-		elementChangeSet.activate();
-		elementChangeSet.changeListener(this);
-		elementChangeSet.setAction(elementChangeAction);
+		searchSet.activate();
 		searchSet.changeListener(this);
+		searchSet.setAction(autoReferenceAction);
 
 		sets.add(historySet);
 		sets.add(editorChangeSet);
-		sets.add(elementChangeSet);
-//		PartListener.addListener(changeListener);
-
-		getSite().getPage().addPartListener(partListener);
+		sets.add(searchSet);
 		
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();			
-
-
-		// globally listen for part activation events
-//		final EditorFocusListener listener = new EditorFocusListener(viewer, historySet.getResultSet(), searchSet);
-//		final EditorModifiedListener changeListener = new EditorModifiedListener(viewer, editorChangeSet); 
-		//Registers the ElementChangedListener to the JavaCore to listen for changes
-//		JavaCore.addElementChangedListener(new JavaElementChangeListener(elementChangeSet), ElementChangedEvent.POST_RECONCILE);
-
-//		//Initializes the listener that keeps track of all of the editors
-//		PartListener partListener = new PartListener();
-//		historySet.activate();
-//		historySet.changeListener(this);
-//		historySet.setAction(historyAction);
-//		editorChangeSet.activate();
-//		editorChangeSet.changeListener(this);
-//		editorChangeSet.setAction(editorChangeAction);
-//		elementChangeSet.activate();
-//		elementChangeSet.changeListener(this);
-//		elementChangeSet.setAction(elementChangeAction);
-//		searchSet.changeListener(this);
-//
-//		sets.add(historySet);
-//		sets.add(editorChangeSet);
-//		sets.add(elementChangeSet);
-////		PartListener.addListener(changeListener);
-
-//
-//		getSite().getPage().addPartListener(partListener);
-
-		//The following lines get the Current Editor. 
-		//There has been a bug, where the editor *might* not be loaded which is giving a 
-		//nullpointerexception. If this is where the exception is happening, then the != nulls will 
-		//stop the exception, and will print a statement to the console displaying which part of these 
-		//statements is null
-		//We will remove the if statements of the parts that we know aren't ever null
-		//If you see something in the console at startup, then we know there was a null
-		IWorkbenchWindow workbench = getSite().getWorkbenchWindow();
-		if (workbench != null) {
-			IWorkbenchPage page = workbench.getActivePage();
-			if (page != null) {
-				IEditorPart editor = page.getActiveEditor();
-
-				if (editor != null && editor instanceof JavaEditor) { //if JavaEditor, register the editor with the listeners.
-					for (CodeSetListener l:partListener.getListeners()) {
-						l.register((JavaEditor)editor);
-					}
-//					changeListener.register(editor);
-				}
-				else if(editor == null)
-					System.out.println("Editor is Null");
-			}
-			else
-				System.out.println("Page is Null");  //I've received this being null
-		}
-		else
-			System.out.println("Workbench is Null");
 	}
 
 	private void hookContextMenu() {
@@ -184,7 +122,6 @@ public class CodeSetView extends ViewPart implements SetListener {
 			if (s.isActivated())
 				manager.add(s.getAction());
 		}
-		manager.add(autoReferenceAction);
 		manager.add(new Separator());
 	}
 
@@ -193,7 +130,6 @@ public class CodeSetView extends ViewPart implements SetListener {
 			if (s.isActivated())
 				manager.add(s.getAction());
 		}
-		manager.add(autoReferenceAction);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -235,18 +171,18 @@ public class CodeSetView extends ViewPart implements SetListener {
 		editorChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action	
 
-		elementChangeAction = new Action() {
-			public void run(){
-				viewer.setContentProvider(elementChangeSet);
-				codeSetView.setContentDescription("Changes by Element");
-				viewer.setSorter(null); //ordering for the set (Chronological)
-				viewer.refresh();
-			}
-		};
-		elementChangeAction.setToolTipText("Shows a list of your changes");
-		elementChangeAction.setText("Element Change Set");
-		elementChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+//		elementChangeAction = new Action() {
+//			public void run(){
+//				viewer.setContentProvider(elementChangeSet);
+//				codeSetView.setContentDescription("Changes by Element");
+//				viewer.setSorter(null); //ordering for the set (Chronological)
+//				viewer.refresh();
+//			}
+//		};
+//		elementChangeAction.setToolTipText("Shows a list of your changes");
+//		elementChangeAction.setText("Element Change Set");
+//		elementChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+//				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 
 		autoReferenceAction = new Action() {
 			public void run(){
