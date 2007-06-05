@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 //import org.eclipse.mylar.internal.monitor.usage.InteractionEventLogger;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.mylar.monitor.core.IInteractionEventListener;
 import org.eclipse.mylar.monitor.core.InteractionEvent;
 import org.eclipse.mylar.monitor.ui.MylarMonitorUiPlugin;
@@ -21,7 +22,6 @@ public class InteractionListener implements IInteractionEventListener {
 	 */
 	public InteractionListener() {
 		initialize();
-		startMonitoring ();
 	}
 
 	/**
@@ -33,6 +33,7 @@ public class InteractionListener implements IInteractionEventListener {
 		for(InteractionEvent.Kind kind: InteractionEvent.Kind.values()) {
 			listenerKinds.put(kind,new ArrayList<CodeSetListener>());
 		}
+		MylarMonitorUiPlugin.getDefault().addInteractionListener(this);
 	}
 
 	/**
@@ -42,9 +43,10 @@ public class InteractionListener implements IInteractionEventListener {
 	public void interactionObserved(InteractionEvent event) {
 		AbstractContextStructureBridge bridge = ContextCorePlugin.getDefault().getStructureBridge(event.getStructureKind());
 		Object theObject = bridge.getObjectForHandle(event.getStructureHandle());
-		System.out.println(event.getKind() + ": " + event.getDate());
+		System.out.println(event.getKind() + ": " + event.getDate()); 
 		if (theObject instanceof IJavaElement) {
 			IJavaElement element = (IJavaElement) theObject;
+			IJavaModel model = element.getJavaModel();
 			for (CodeSetListener listener: listenerKinds.get(event.getKind())) {
 				listener.eventOccured(element);
 			}
@@ -56,14 +58,12 @@ public class InteractionListener implements IInteractionEventListener {
 	 * and notify any interested parties
 	 */
 	public void startMonitoring () {
-		MylarMonitorUiPlugin.getDefault().addInteractionListener(this);
 	}
 
 	/**
 	 * Stops listening to the Mylar Monitor
 	 */
 	public void stopMonitoring () {
-		MylarMonitorUiPlugin.getDefault().removeInteractionListener(this);
 	}
 
 	/**
