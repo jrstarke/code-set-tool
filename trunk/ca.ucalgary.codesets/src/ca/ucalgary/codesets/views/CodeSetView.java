@@ -38,17 +38,18 @@ public class CodeSetView extends ViewPart implements SetListener {
 
 	// The set of all of the sets (used in preferences)
 	ArrayList<CodeSet> sets = new ArrayList<CodeSet>();
-	// Set containing all elements that have been selected
+	
 	AutoReferenceSet searchSet = new AutoReferenceSet();
 	HistorySet historySet = new HistorySet();
-	// Two sets containing all elements that have been modified
 	EditorChangeSet editorChangeSet = new EditorChangeSet();
+	DependancySet dependancySet = new DependancySet();
 
 	private TableViewer viewer;
 
 	private Action historyAction;		//The history Action, when this is clicked, displays history set
 	private Action editorChangeAction;		//The editor change Action, when this is clicked, displays editor change set
 	private Action autoReferenceAction;
+	private Action dependancyAction;
 	private Action setPreferencesAction;
 
 	private Action doubleClickAction;
@@ -88,10 +89,14 @@ public class CodeSetView extends ViewPart implements SetListener {
 		searchSet.activate();
 		searchSet.changeListener(this);
 		searchSet.setAction(autoReferenceAction);
+		dependancySet.activate();
+		dependancySet.changeListener(this);
+		dependancySet.setAction(dependancyAction);
 
 		sets.add(historySet);
 		sets.add(editorChangeSet);
 		sets.add(searchSet);
+		sets.add(dependancySet);
 		
 		hookContextMenu();
 		hookDoubleClickAction();
@@ -171,19 +176,6 @@ public class CodeSetView extends ViewPart implements SetListener {
 		editorChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action	
 
-//		elementChangeAction = new Action() {
-//			public void run(){
-//				viewer.setContentProvider(elementChangeSet);
-//				codeSetView.setContentDescription("Changes by Element");
-//				viewer.setSorter(null); //ordering for the set (Chronological)
-//				viewer.refresh();
-//			}
-//		};
-//		elementChangeAction.setToolTipText("Shows a list of your changes");
-//		elementChangeAction.setText("Element Change Set");
-//		elementChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-//				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-
 		autoReferenceAction = new Action() {
 			public void run(){
 				codeSetView.setContentDescription("Auto Referencing by Caret");
@@ -197,6 +189,21 @@ public class CodeSetView extends ViewPart implements SetListener {
 		autoReferenceAction.setToolTipText("Shows a list of elements that reference this element");
 		autoReferenceAction.setText("Auto Reference Set");
 		autoReferenceAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+		
+		dependancyAction = new Action() {
+			public void run(){
+				codeSetView.setContentDescription("Dependancy Elements");
+				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
+				viewer.setContentProvider(dependancySet);
+				el.setCurrentSet(dependancySet);
+				viewer.setSorter(new NameSorter());//ordering for the set (Alphabetical)
+				viewer.refresh();
+			}
+		};
+		dependancyAction.setToolTipText("Shows a list of elements that this element depends on");
+		dependancyAction.setText("Dependancy Set");
+		dependancyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 
 		setPreferencesAction = new Action() {
