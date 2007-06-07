@@ -20,7 +20,7 @@ public class AutoReferenceSet extends CodeSet {
 	 */
 	public AutoReferenceSet () {
 		super();
-		listener = new EditorAutoReferenceListener(this);
+		listener = new EditorAutoReferenceListener();
 	}
 	
 	@Override

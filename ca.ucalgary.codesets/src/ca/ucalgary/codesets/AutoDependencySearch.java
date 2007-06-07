@@ -21,7 +21,7 @@ import org.eclipse.jdt.internal.corext.Assert;
 import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 
 import ca.ucalgary.codesets.sets.CodeSet;
-import ca.ucalgary.codesets.sets.DependancySet;
+import ca.ucalgary.codesets.sets.DependencySet;
 
 public class AutoDependencySearch extends GenericVisitor {
 
@@ -30,12 +30,12 @@ public class AutoDependencySearch extends GenericVisitor {
 	private int fLength;
 	private int fEnd;
 	private ASTNode fResult;
-	private DependancySet neighborSet;
+	private DependencySet dependencySet;
 
-	private AutoDependencySearch(IMember element, CodeSet neighborSet) throws JavaModelException {
+	private AutoDependencySearch(IMember element, CodeSet dependencySet) throws JavaModelException {
 		super(true);
 		Assert.isNotNull(element);
-		this.neighborSet = (DependancySet)neighborSet;
+		this.dependencySet = (DependencySet)dependencySet;
 		fElement= element;
 		ISourceRange sourceRange= fElement.getNameRange();
 		fStart= sourceRange.getOffset();
@@ -43,8 +43,8 @@ public class AutoDependencySearch extends GenericVisitor {
 		fEnd= fStart + fLength;
 	}
 
-	public static ASTNode perform(IMember member, CodeSet neighborSet) throws JavaModelException {
-		AutoDependencySearch selector= new AutoDependencySearch(member, neighborSet);
+	public static ASTNode perform(IMember member, CodeSet dependencySet) throws JavaModelException {
+		AutoDependencySearch selector= new AutoDependencySearch(member, dependencySet);
 		ICompilationUnit unit= member.getCompilationUnit();
 
 		ASTParser parser= ASTParser.newParser(AST.JLS3);
@@ -68,7 +68,7 @@ public class AutoDependencySearch extends GenericVisitor {
 	public boolean visit (MethodInvocation node) {
 		IMethodBinding binding = node.resolveMethodBinding();
 		IJavaElement element = binding.getJavaElement();
-		neighborSet.add((ISourceReference)element);
+		dependencySet.add((ISourceReference)element);
 		return visitNode(node);
 	}
 

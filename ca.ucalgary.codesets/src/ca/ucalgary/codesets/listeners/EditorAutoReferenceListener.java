@@ -12,6 +12,7 @@ import org.eclipse.jdt.internal.ui.search.JavaSearchScopeFactory;
 import org.eclipse.jdt.internal.ui.search.SearchMessages;
 import org.eclipse.jdt.internal.ui.search.SearchUtil;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.search.ElementQuerySpecification;
 import org.eclipse.jdt.ui.search.QuerySpecification;
 import org.eclipse.search.ui.ISearchResultListener;
@@ -20,6 +21,7 @@ import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import ca.ucalgary.codesets.sets.AutoReferenceSet;
 import ca.ucalgary.codesets.sets.CodeSet;
 
 /**
@@ -28,16 +30,8 @@ import ca.ucalgary.codesets.sets.CodeSet;
  *
  */
 public class EditorAutoReferenceListener implements ISearchResultListener, CodeSetListener {
-	CodeSet searchSet;
-	
-	/**
-	 * Creates a new Auto Reference Listener and adds any results to the provided 
-	 * searchSet
-	 * @param searchSet
-	 */
-	public EditorAutoReferenceListener (CodeSet searchSet) {
-		this.searchSet = searchSet;
-	}
+	AutoReferenceSet referenceSet;
+	IJavaElement element;
 
 	/**
 	 * Notifies the system of a change in the results for a given search.  Any matches
@@ -48,15 +42,26 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 			JavaSearchResult results = (JavaSearchResult)event.getSearchResult();
 			Object[] elements = results.getElements();
 			for (int i = 0; i < elements.length; i++) {
-//				System.out.println(elements[i]);
-				searchSet.add((ISourceReference)elements[i]);
+				referenceSet.add((ISourceReference)elements[i]);
+			}
+			if (referenceSet.size() > 0) {
+				InteractionListener.addSet(referenceSet);
 			}
 		}
 	}
 	
 	public void eventOccured(IJavaElement element) {
+		JavaElementLabelProvider lp = new JavaElementLabelProvider();
+		IJavaElement parent = element.getParent();
+		String name = lp.getText(element);
+		String fullName = ("References to " + parent.getElementName() + "." + name);
+		referenceSet = (AutoReferenceSet)InteractionListener.getSet(fullName);
+		if (referenceSet == null)
+			referenceSet = new AutoReferenceSet();
+		referenceSet.setName(fullName);
+		
 		try {
-			searchSet.clear();
+			this.element = element;
 			performNewSearch(element);
 		} catch (JavaModelException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.Search_Error_search_notsuccessful_title, SearchMessages.Search_Error_search_notsuccessful_message); 

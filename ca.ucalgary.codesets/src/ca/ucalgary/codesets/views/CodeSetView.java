@@ -39,12 +39,17 @@ public class CodeSetView extends ViewPart implements SetListener {
 	// The set of all of the sets (used in preferences)
 	ArrayList<CodeSet> sets = new ArrayList<CodeSet>();
 	
+	ResultSets resultSets = new ResultSets();
+	
 	AutoReferenceSet searchSet = new AutoReferenceSet();
 	HistorySet historySet = new HistorySet();
 	EditorChangeSet editorChangeSet = new EditorChangeSet();
-	DependancySet dependancySet = new DependancySet();
+	DependencySet dependancySet = new DependencySet();
 
+	
+	
 	private TableViewer viewer;
+	private TableViewer setSelectionPane;
 
 	private Action historyAction;		//The history Action, when this is clicked, displays history set
 	private Action editorChangeAction;		//The editor change Action, when this is clicked, displays editor change set
@@ -53,6 +58,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 	private Action setPreferencesAction;
 
 	private Action doubleClickAction;
+	private Action setSelectionAction;
 
 	private CodeSetView codeSetView = this;
 
@@ -69,17 +75,26 @@ public class CodeSetView extends ViewPart implements SetListener {
 		viewer.setContentProvider(historySet);
 		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet,searchSet));  
 		codeSetView.setContentDescription("History");
+		
+		setSelectionPane = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		setSelectionPane.setContentProvider(resultSets);
 
+		
 		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 		el.setCurrentSet(historySet);  
 
 		viewer.setSorter(null);//new NameSorter());
-
 		viewer.setInput(getViewSite());
+		
+		setSelectionPane.setSorter(null);
+		setSelectionPane.setInput(getViewSite());
+		
 		makeActions();
 		
 		//Initializes the listener that keeps track of all of the editors
-		InteractionListener interactionListener = new InteractionListener();
+		resultSets.changeListener(this);
+		InteractionListener.setResultSets(resultSets);
+		
 		historySet.activate();
 		historySet.changeListener(this);
 		historySet.setAction(historyAction);
@@ -187,7 +202,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 			}
 		};
 		autoReferenceAction.setToolTipText("Shows a list of elements that reference this element");
-		autoReferenceAction.setText("Auto Reference Set");
+		autoReferenceAction.setText("Reference to Set");
 		autoReferenceAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 		
@@ -201,8 +216,8 @@ public class CodeSetView extends ViewPart implements SetListener {
 				viewer.refresh();
 			}
 		};
-		dependancyAction.setToolTipText("Shows a list of elements that this element depends on");
-		dependancyAction.setText("Dependancy Set");
+		dependancyAction.setToolTipText("Shows a list of elements that this element references");
+		dependancyAction.setText("Reference From Set");
 		dependancyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 
@@ -223,6 +238,21 @@ public class CodeSetView extends ViewPart implements SetListener {
 				IStructuredSelection sel = (IStructuredSelection)selection;								
 				IJavaElement elem = (IJavaElement) sel.getFirstElement();
 				IEditorPart editor = setCurrentElement(elem);				
+			}
+		};
+		
+		setSelectionAction = new Action () {
+			public void run() {
+				ISelection selection = setSelectionPane.getSelection();
+				IStructuredSelection sel = (IStructuredSelection) selection;
+				CodeSet set = (CodeSet) sel.getFirstElement();
+				
+				codeSetView.setContentDescription(set.getName());
+				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
+				viewer.setContentProvider(set);
+				el.setCurrentSet(set);
+				viewer.setSorter(new NameSorter());//ordering for the set (Alphabetical)
+				viewer.refresh();
 			}
 		};
 	}
@@ -253,6 +283,12 @@ public class CodeSetView extends ViewPart implements SetListener {
 				doubleClickAction.run();
 			}
 		});
+		setSelectionPane.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				setSelectionAction.run();
+			}
+		});
+		
 	}
 
 	private void showMessage(String message) {
@@ -269,9 +305,11 @@ public class CodeSetView extends ViewPart implements SetListener {
 		viewer.getControl().setFocus();
 	}
 
-	public void refresh (CodeSet set) {
+	public void refresh (Object set) {
 		if (set == viewer.getContentProvider())
 			viewer.refresh();
+		if (set == setSelectionPane.getContentProvider())
+			setSelectionPane.refresh();
 	}
 
 }
