@@ -13,7 +13,7 @@ import ca.ucalgary.codesets.listeners.*;
  * @author starkej
  *
  */
-public class DependancySet extends CodeSet {
+public class DependencySet extends CodeSet {
 
 	private IJavaElement lastElement;
 	
@@ -21,9 +21,9 @@ public class DependancySet extends CodeSet {
 	 * Creates a new AutoReferenceSet with a specified Listener
 	 *
 	 */
-	public DependancySet () {
+	public DependencySet () {
 		super();
-		listener = new EditorAutoDependancyListener(this);
+		listener = new EditorAutoDependencyListener();
 	}
 	
 	@Override

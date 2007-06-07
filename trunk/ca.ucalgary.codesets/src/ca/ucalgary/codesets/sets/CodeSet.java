@@ -10,7 +10,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import ca.ucalgary.codesets.ResultSet;
+import ca.ucalgary.codesets.ResultSets;
 import ca.ucalgary.codesets.listeners.CodeSetListener;
 import ca.ucalgary.codesets.listeners.SetListener;
 
@@ -21,6 +21,8 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 	protected boolean isActivated;
 	protected SetListener listensToUs;
 	protected Action action;
+	
+	protected String name;
 
 	public CodeSet () {
 		isActivated = false;
@@ -130,6 +132,18 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 	
 	public void setAction (Action action) {
 		this.action = action;
+	}
+	
+	public void setName (String name) {
+		this.name = name;
+	}
+	
+	public String getName () {
+		return this.name;
+	}
+	
+	public String toString () {
+		return name;
 	}
 
 }

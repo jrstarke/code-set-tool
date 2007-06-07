@@ -66,7 +66,7 @@ public class AutoReferenceSearch {
 			 * types used in the method signature, eventually triggering the loading of
 			 * a plug-in (in this case ISearchQuery results in Search plug-in being loaded).
 			 */
-			query.getSearchResult().addListener(new EditorAutoReferenceListener(searchSet));
+			query.getSearchResult().addListener(new EditorAutoReferenceListener());
 			query.run(new NullProgressMonitor());
 			
 			//SearchUtil.runQueryInBackground(query);

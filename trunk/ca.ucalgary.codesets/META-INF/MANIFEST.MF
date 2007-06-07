@@ -14,7 +14,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.search,
- org.eclipse.mylar.monitor.usage,
  org.eclipse.mylar.monitor.ui,
  org.eclipse.mylar.monitor.core,
  org.eclipse.mylar.context.core

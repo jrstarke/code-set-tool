@@ -11,8 +11,13 @@ import org.eclipse.mylar.monitor.core.InteractionEvent;
 import org.eclipse.mylar.monitor.ui.MylarMonitorUiPlugin;
 import org.eclipse.mylar.context.core.*;
 
-public class InteractionListener implements IInteractionEventListener {
+import ca.ucalgary.codesets.ResultSets;
+import ca.ucalgary.codesets.sets.CodeSet;
 
+public class InteractionListener implements IInteractionEventListener {
+	
+	private static ResultSets resultSets;
+	private static InteractionListener thisListener;
 	private static HashMap<InteractionEvent.Kind,ArrayList<CodeSetListener>> listenerKinds;
 
 	/**
@@ -72,6 +77,7 @@ public class InteractionListener implements IInteractionEventListener {
 	 * @param listener
 	 */
 	public static void addListener(InteractionEvent.Kind kind, CodeSetListener listener) {
+		checkActivated();
 		ArrayList<CodeSetListener> listeners = listenerKinds.get(kind);
 		listeners.add(listener);
 	}
@@ -81,6 +87,7 @@ public class InteractionListener implements IInteractionEventListener {
 	 * @param listener
 	 */
 	public static void addListener(CodeSetListener listener) {
+		checkActivated();
 		for (InteractionEvent.Kind kind:InteractionEvent.Kind.values()) {
 			addListener(kind, listener);
 		}
@@ -91,8 +98,26 @@ public class InteractionListener implements IInteractionEventListener {
 	 * @param listener
 	 */
 	public static void removeListener (CodeSetListener listener) {
+		checkActivated();
 		for (ArrayList<CodeSetListener> listeners: listenerKinds.values()) {
 			listeners.remove(listener);
 		}
+	}
+	
+	public static void setResultSets (ResultSets resultSets) {
+		InteractionListener.resultSets = resultSets;
+	}
+	
+	public static void addSet (CodeSet set) {
+		InteractionListener.resultSets.add(set);
+	}
+	
+	public static CodeSet getSet (String name) {
+		return InteractionListener.resultSets.get(name);
+	}
+	
+	public static void checkActivated() {
+		if (thisListener == null)
+			thisListener = new InteractionListener();
 	}
 }
