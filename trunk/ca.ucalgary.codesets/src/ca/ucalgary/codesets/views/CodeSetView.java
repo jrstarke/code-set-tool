@@ -73,7 +73,8 @@ public class CodeSetView extends ViewPart implements SetListener {
 	public void createPartControl(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(historySet);
-		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet,searchSet));  
+//		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet,searchSet,dependancySet, resultSets ));  
+		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet,resultSets)); 
 		codeSetView.setContentDescription("History");
 		
 		setSelectionPane = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -110,8 +111,8 @@ public class CodeSetView extends ViewPart implements SetListener {
 
 		sets.add(historySet);
 		sets.add(editorChangeSet);
-		sets.add(searchSet);
-		sets.add(dependancySet);
+//		sets.add(searchSet);
+//		sets.add(dependancySet);
 		
 		hookContextMenu();
 		hookDoubleClickAction();

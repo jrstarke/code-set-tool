@@ -1,8 +1,9 @@
 package ca.ucalgary.codesets;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import ca.ucalgary.codesets.sets.*;
 
+
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -11,62 +12,156 @@ import org.eclipse.swt.graphics.Color;
 import ca.ucalgary.codesets.sets.CodeSet;
 
 public class ElementLabelProvider extends JavaElementLabelProvider implements IColorProvider{
-	private Color white = new Color(null, 255,255,255);
-	private Color foreground = new Color(null, 0,0,0);
-	private Color background = new Color(null, 225,225,210);
-	private Color greyText = new Color(null, 100,100,100);
+	private Color white = new Color(null, 255,255,255);	
+
+//	Background colours for each set reference
+	private Color refToBackground = new Color(null,255,255,0); 		// Yellow
+	private Color refFromBackground = new Color(null,153,204,255);	// Blue
+	private Color historyBackground = new Color(null,255,204,0);	// Orange
+	private Color changeBackground = new Color(null,0,255,0);		// Green
+
+//	Sets
 	private CodeSet changeSet;
-	
-//	private ChangeSet changeSet;
 	private CodeSet historySet;
-	private CodeSet searchSet;
 	private CodeSet currentSet;
-	
-	public ElementLabelProvider(CodeSet editorChangeSet,CodeSet hset,CodeSet sSet)
+	private ResultSets resultSets;
+
+	public ElementLabelProvider(CodeSet editorChangeSet,CodeSet hset, ResultSets rSets)
 	{
 		super(JavaElementLabelProvider.SHOW_PARAMETERS
 				| JavaElementLabelProvider.SHOW_SMALL_ICONS
 				| JavaElementLabelProvider.SHOW_RETURN_TYPE
 				| JavaElementLabelProvider.SHOW_TYPE);
+
 		changeSet = editorChangeSet;
 		historySet = hset;
-		searchSet = sSet;
+		resultSets = rSets;
 	}
 
 	public void setCurrentSet(CodeSet set) {
 		this.currentSet = set;
 	}
-	
+
 	public CodeSet getCurrentSet(){
 		return currentSet;
 	}
-	
+
 	public Color getBackground(Object element) {
-		if (currentSet == historySet && changeSet.contains((ISourceReference)element))
-			return background;
-		if(currentSet == changeSet)  //everything that's in the changeSet will have a background Colour other than white. 
-			return background;
+
+		CodeSet temp1 = null;
+		CodeSet temp2 = null;
+
+		if(resultSets.size()>1) {
+			temp1 = resultSets.get(0);
+			temp2 = resultSets.get(1);
+		}
+		if(resultSets.size()==1) {
+			temp1 = resultSets.get(0);
+		}
+
+
+		if(currentSet instanceof AutoReferenceSet) { //to
+
+			if(changeSet.contains((ISourceReference)element)) {
+				return changeBackground;
+			}
+			if(historySet.contains((ISourceReference)element)) {
+				return historyBackground;
+			}
+		} else if(currentSet instanceof DependencySet) {  //from
+
+			if(changeSet.contains((ISourceReference)element)) {
+				return changeBackground;
+			}
+			if(historySet.contains((ISourceReference)element)) {
+				return historyBackground;
+			}
+		} else if(currentSet instanceof EditorChangeSet) {
+
+			if(temp1 != null && temp1 instanceof AutoReferenceSet) {
+				if(temp1.contains((ISourceReference)element))
+					return refToBackground;
+			}
+			if(temp1 != null && temp1 instanceof DependencySet) {
+				if(temp1.contains((ISourceReference)element))
+					return refFromBackground;
+			}
+			if(temp2 != null && temp2 instanceof AutoReferenceSet) {
+				if(temp2.contains((ISourceReference)element))
+					return refToBackground;
+			}
+			if(temp2 != null && temp2 instanceof DependencySet) {
+				if(temp2.contains((ISourceReference)element))
+					return refFromBackground;
+			}
+		} else 	if(currentSet instanceof HistorySet) {
+
+			if(temp1 != null && temp1 instanceof AutoReferenceSet) {
+				if(temp1.contains((ISourceReference)element))
+					return refToBackground;
+			}
+			if(temp1 != null && temp1 instanceof DependencySet) {
+				if(temp1.contains((ISourceReference)element))
+					return refFromBackground;
+			}
+			if(temp2 != null && temp2 instanceof AutoReferenceSet) {
+				if(temp2.contains((ISourceReference)element))
+					return refToBackground;
+			}
+			if(temp2 != null && temp2 instanceof DependencySet) {
+				if(temp2.contains((ISourceReference)element))
+					return refFromBackground;
+			}
+			if(changeSet.contains((ISourceReference)element)) {
+				return changeBackground;
+			}			
+		}		
 		return white;
 	}
 
-		
+
 	/* returns a grey colour if the element is an object of HistorySet and SearchSet
 	 * returns black, if it is not
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 	 */
-	public Color getForeground(Object element) {
-		if((currentSet == historySet || currentSet == searchSet) && searchSet.contains((ISourceReference)element)
-				&& historySet.contains((ISourceReference)element))
-			return greyText;			
-		return foreground;
+	public Color getForeground(Object element) {			
+		return new Color(null, 0,0,0);
+	}
+
+	public void setForgroundColor(Color colour) {
+//		Does nothing right now
+	}
+
+	public String getText(Object element) {
+		String text = super.getText(element);
+		if (element instanceof IJavaElement) {
+			IJavaElement source = (IJavaElement)element;
+			text = source.getParent().getElementName() + "." + text;
+		} 
+		return text;
+	}
+
+
+	/**The methods below change the colour of the designated set. 
+	 * @param colour
+	 */
+	public void changeHistoryBackground(Color colour) {
+		this.historyBackground = colour;
 	}
 	
-	public void setBackColor(Color colour) {
-		this.background = colour;
+	public void changeChangeBackground(Color colour) {
+		this.changeBackground = colour;
 	}
-	 
-	public void setForgroundColor(Color colour) {
-		this.foreground = colour;
+	
+	public void changeRefToBackground(Color colour) {
+		this.refToBackground = colour;
 	}
+
+	public void changeRefFromBackground(Color colour) {
+		this.refFromBackground = colour;
+	}
+	
+	
+	
 }

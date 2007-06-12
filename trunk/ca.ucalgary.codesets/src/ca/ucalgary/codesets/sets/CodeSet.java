@@ -16,7 +16,6 @@ import ca.ucalgary.codesets.listeners.SetListener;
 
 public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvider {
 
-	private int sizeOfList = 10;
 	protected CodeSetListener listener;
 	protected boolean isActivated;
 	protected SetListener listensToUs;
@@ -119,11 +118,6 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 	}
 	
 	public void dispose() {
-	}
-	
-	// Can use this in the future if you want the size of the list to change
-	public void setSize(int size) {
-		sizeOfList = size;
 	}
 	
 	public Action getAction() {
