@@ -74,7 +74,7 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 		
 		while(i.hasNext()) {
 			SetNode sn = i.next();
-			if(sn.getIsourcereference() == isr) {
+			if(sn.getIsourcereference().equals(isr)) {
 				sn.setTime(System.currentTimeMillis());
 				return;
 			}
