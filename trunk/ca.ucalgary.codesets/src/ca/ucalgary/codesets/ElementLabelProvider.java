@@ -76,7 +76,7 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 			if(historySet.contains((ISourceReference)element)) {
 				return historyBackground;
 			}
-		} else if(currentSet instanceof EditorChangeSet) {
+		} else if(currentSet instanceof EditorChangeSet || currentSet instanceof HistorySet) {
 
 			if(temp1 != null && temp1 instanceof AutoReferenceSet) {
 				if(temp1.contains((ISourceReference)element))
@@ -94,39 +94,15 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 				if(temp2.contains((ISourceReference)element))
 					return refFromBackground;
 			}
-		} else 	if(currentSet instanceof HistorySet) {
-
-			if(temp1 != null && temp1 instanceof AutoReferenceSet) {
-				if(temp1.contains((ISourceReference)element))
-					return refToBackground;
-			}
-			if(temp1 != null && temp1 instanceof DependencySet) {
-				if(temp1.contains((ISourceReference)element))
-					return refFromBackground;
-			}
-			if(temp2 != null && temp2 instanceof AutoReferenceSet) {
-				if(temp2.contains((ISourceReference)element))
-					return refToBackground;
-			}
-			if(temp2 != null && temp2 instanceof DependencySet) {
-				if(temp2.contains((ISourceReference)element))
-					return refFromBackground;
-			}
-			if(changeSet.contains((ISourceReference)element)) {
+			if(currentSet instanceof HistorySet && changeSet.contains((ISourceReference)element)) {
 				return changeBackground;
 			}			
 		}		
 		return white;
 	}
 
-
-	/* returns a grey colour if the element is an object of HistorySet and SearchSet
-	 * returns black, if it is not
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
 	public Color getForeground(Object element) {			
-		return new Color(null, 0,0,0);
+		return new Color(null, 0,0,0); 	// Always black
 	}
 
 	public void setForgroundColor(Color colour) {
