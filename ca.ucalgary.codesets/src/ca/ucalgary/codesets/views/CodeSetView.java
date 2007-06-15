@@ -39,7 +39,7 @@ public class CodeSetView extends ViewPart implements SetListener {
 	// The set of all of the sets (used in preferences)
 	ArrayList<CodeSet> sets = new ArrayList<CodeSet>();
 	
-	ResultSets resultSets = new ResultSets();
+	ResultSet resultSet = new ResultSet();
 	
 	AutoReferenceSet searchSet = new AutoReferenceSet();
 	HistorySet historySet = new HistorySet();
@@ -74,11 +74,11 @@ public class CodeSetView extends ViewPart implements SetListener {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(historySet);
 //		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet,searchSet,dependancySet, resultSets ));  
-		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet,resultSets)); 
+		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet)); 
 		codeSetView.setContentDescription("History");
 		
-		setSelectionPane = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		setSelectionPane.setContentProvider(resultSets);
+		//setSelectionPane = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		//setSelectionPane.setContentProvider(resultSets);
 
 		
 		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
@@ -87,14 +87,13 @@ public class CodeSetView extends ViewPart implements SetListener {
 		viewer.setSorter(null);//new NameSorter());
 		viewer.setInput(getViewSite());
 		
-		setSelectionPane.setSorter(null);
-		setSelectionPane.setInput(getViewSite());
+		//setSelectionPane.setSorter(null);
+		//setSelectionPane.setInput(getViewSite());
 		
 		makeActions();
 		
 		//Initializes the listener that keeps track of all of the editors
-		resultSets.changeListener(this);
-		InteractionListener.setResultSets(resultSets);
+		InteractionListener.setView(this);
 		
 		historySet.activate();
 		historySet.changeListener(this);
@@ -117,6 +116,8 @@ public class CodeSetView extends ViewPart implements SetListener {
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();			
+		
+		SideBar sideBar = new SideBar(parent, this, historySet, editorChangeSet);
 	}
 
 	private void hookContextMenu() {
@@ -284,11 +285,11 @@ public class CodeSetView extends ViewPart implements SetListener {
 				doubleClickAction.run();
 			}
 		});
-		setSelectionPane.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				setSelectionAction.run();
-			}
-		});
+//		setSelectionPane.addSelectionChangedListener(new ISelectionChangedListener() {
+//			public void selectionChanged(SelectionChangedEvent event) {
+//				setSelectionAction.run();
+//			}
+//		});
 		
 	}
 
@@ -309,8 +310,17 @@ public class CodeSetView extends ViewPart implements SetListener {
 	public void refresh (Object set) {
 		if (set == viewer.getContentProvider())
 			viewer.refresh();
-		if (set == setSelectionPane.getContentProvider())
-			setSelectionPane.refresh();
+//		if (set == setSelectionPane.getContentProvider())
+//			setSelectionPane.refresh();
+	}
+	
+	public void setCurrentSet(CodeSet codeSet) {
+		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
+		viewer.setContentProvider(codeSet);
+		el.setCurrentSet(codeSet);
+		codeSetView.setContentDescription(codeSet.getName());
+		viewer.setSorter(null);
+		viewer.refresh();
 	}
 
 }

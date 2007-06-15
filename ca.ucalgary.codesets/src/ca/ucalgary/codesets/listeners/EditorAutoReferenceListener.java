@@ -45,7 +45,7 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 				referenceSet.add((ISourceReference)elements[i]);
 			}
 			if (referenceSet.size() > 0) {
-				InteractionListener.addSet(referenceSet);
+				InteractionListener.addReferenceFrom(referenceSet);
 			}
 		}
 	}
@@ -54,8 +54,8 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 		JavaElementLabelProvider lp = new JavaElementLabelProvider();
 		IJavaElement parent = element.getParent();
 		String name = lp.getText(element);
-		String fullName = ("References to " + parent.getElementName() + "." + name);
-		referenceSet = (AutoReferenceSet)InteractionListener.getSet(fullName);
+		String fullName = (parent.getElementName() + "." + name);
+		referenceSet = (AutoReferenceSet)InteractionListener.getReferenceFrom(fullName);
 		if (referenceSet == null)
 			referenceSet = new AutoReferenceSet();
 		referenceSet.setName(fullName);

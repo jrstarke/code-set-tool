@@ -12,10 +12,12 @@ import ca.ucalgary.codesets.listeners.SetListener;
 import ca.ucalgary.codesets.sets.CodeSet;
 
 
-public class ResultSets extends ArrayList<CodeSet> implements IStructuredContentProvider {
+public class ResultSet extends ArrayList<CodeSet> implements IStructuredContentProvider {
 
 private SetListener listensToUs;
 	
+	String name;
+
 	// This code below is not optimized, and might be slowing the code down.
 	public boolean add(CodeSet set) {
 		if(contains(set))
@@ -53,4 +55,15 @@ private SetListener listensToUs;
 		return null;
 	}
 	
+	public String getName () {
+		return name;
+	}
+	
+	public void setName (String name) {
+		this.name = name;
+	}
+	
+	public int hashCode () {
+		return name.hashCode();
+	}
 }
