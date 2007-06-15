@@ -1,6 +1,7 @@
 package ca.ucalgary.codesets;
 
 import ca.ucalgary.codesets.sets.*;
+import ca.ucalgary.codesets.listeners.InteractionListener;
 
 
 import org.eclipse.jdt.core.IJavaElement;
@@ -24,9 +25,8 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	private CodeSet changeSet;
 	private CodeSet historySet;
 	private CodeSet currentSet;
-	private ResultSets resultSets;
 
-	public ElementLabelProvider(CodeSet editorChangeSet,CodeSet hset, ResultSets rSets)
+	public ElementLabelProvider(CodeSet editorChangeSet,CodeSet hset)
 	{
 		super(JavaElementLabelProvider.SHOW_PARAMETERS
 				| JavaElementLabelProvider.SHOW_SMALL_ICONS
@@ -35,7 +35,6 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 
 		changeSet = editorChangeSet;
 		historySet = hset;
-		resultSets = rSets;
 	}
 
 	public void setCurrentSet(CodeSet set) {
@@ -48,17 +47,16 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 
 	public Color getBackground(Object element) {
 
-		CodeSet temp1 = null;
-		CodeSet temp2 = null;
+		CodeSet referenceToSet = null;
+		CodeSet referenceFromSet = null;
 
-		if(resultSets.size()>1) {
-			temp1 = resultSets.get(0);
-			temp2 = resultSets.get(1);
-		}
-		if(resultSets.size()==1) {
-			temp1 = resultSets.get(0);
-		}
-
+		ResultSet referenceTo = InteractionListener.getReferenceTo();
+		ResultSet referenceFrom = InteractionListener.getReferenceFrom();
+	
+		if(referenceTo.size() >= 1)
+			referenceToSet = referenceTo.get(0);
+		if(referenceTo.size() >= 1)
+			referenceFromSet = referenceFrom.get(0);
 
 		if(currentSet instanceof AutoReferenceSet) { //to
 
@@ -78,20 +76,12 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 			}
 		} else if(currentSet instanceof EditorChangeSet || currentSet instanceof HistorySet) {
 
-			if(temp1 != null && temp1 instanceof AutoReferenceSet) {
-				if(temp1.contains((ISourceReference)element))
+			if(referenceToSet != null && referenceToSet instanceof AutoReferenceSet) {
+				if(referenceToSet.contains((ISourceReference)element))
 					return refToBackground;
 			}
-			if(temp1 != null && temp1 instanceof DependencySet) {
-				if(temp1.contains((ISourceReference)element))
-					return refFromBackground;
-			}
-			if(temp2 != null && temp2 instanceof AutoReferenceSet) {
-				if(temp2.contains((ISourceReference)element))
-					return refToBackground;
-			}
-			if(temp2 != null && temp2 instanceof DependencySet) {
-				if(temp2.contains((ISourceReference)element))
+			if(referenceFromSet != null && referenceFromSet instanceof DependencySet) {
+				if(referenceFromSet.contains((ISourceReference)element))
 					return refFromBackground;
 			}
 			if(currentSet instanceof HistorySet && changeSet.contains((ISourceReference)element)) {

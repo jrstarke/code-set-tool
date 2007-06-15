@@ -10,23 +10,23 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import ca.ucalgary.codesets.ResultSets;
 import ca.ucalgary.codesets.listeners.CodeSetListener;
 import ca.ucalgary.codesets.listeners.SetListener;
 
 public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvider {
 
+	private int sizeOfList = 10;
 	protected CodeSetListener listener;
 	protected boolean isActivated;
 	protected SetListener listensToUs;
 	protected Action action;
-	
+
 	protected String name;
 
 	public CodeSet () {
 		isActivated = false;
 	}
-	
+
 	public void activate () {
 		isActivated = true;
 	}
@@ -34,20 +34,20 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 	public void deactivate () {
 		isActivated = false;
 	}
-	
+
 	public boolean isActivated () {
 		return isActivated;
 	}
-	
+
 	public void changeListener (SetListener listens) {
 		listensToUs = listens;
 	}
-	
+
 	private void changed () {
 		if (listensToUs != null)
 			listensToUs.refresh(this);
 	}
-	
+
 	/**
 	 * Checks the hashSet to see if it contains the given ISourceReference, if it does contain it
 	 * already, it will update the time the ISourceReference was added to the set. 
@@ -63,7 +63,7 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 		changed();
 		return true;
 	}
-	
+
 	/**
 	 * This function searches through the hashSet for the give ISourceReference, and 
 	 * when it finds it, it replaces (updates) the time to the current time.
@@ -71,7 +71,7 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 	 */
 	private void updateTime(ISourceReference isr) {
 		java.util.Iterator<SetNode> i = iterator();
-		
+
 		while(i.hasNext()) {
 			SetNode sn = i.next();
 			if(sn.getIsourcereference().equals(isr)) {
@@ -80,7 +80,7 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the provided ISourceReference already exists
 	 * @param isr
@@ -91,8 +91,8 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 		SetNode node = new SetNode(isr);
 		return contains(node);
 	}
-	
-	
+
+
 	/*
 	 * Since the HashSet is a set of SetNodes, getting the elements will return an array 
 	 * of SetNodes which will cause an error for the viewer.
@@ -106,36 +106,39 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 	public Object[] getElements(Object parent) {
 		Object[] temp = toArray();
 		Arrays.sort(temp);
-		
+
 		ISourceReference[]  isr = new ISourceReference[temp.length];
 		for(int i = 0; i<isr.length;i++)
 			isr[i] = ((SetNode)temp[i]).getIsourcereference();
-		
+
 		return isr;
 	}
-	
+
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 	}
-	
+
 	public void dispose() {
 	}
-	
+
 	public Action getAction() {
 		return action;
 	}
-	
+
 	public void setAction (Action action) {
 		this.action = action;
 	}
-	
+
 	public void setName (String name) {
 		this.name = name;
 	}
-	
+
 	public String getName () {
-		return this.name;
+		if (this.name == null)
+			if (this.action != null)
+				this.name = this.action.getText();
+		return name;
 	}
-	
+
 	public String toString () {
 		return name;
 	}

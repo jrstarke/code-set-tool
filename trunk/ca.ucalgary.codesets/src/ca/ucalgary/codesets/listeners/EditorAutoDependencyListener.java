@@ -34,8 +34,8 @@ public class EditorAutoDependencyListener implements CodeSetListener {
 			JavaElementLabelProvider lp = new JavaElementLabelProvider();
 			IJavaElement parent = element.getParent();
 			String name = lp.getText(element);
-			dependencySet.setName("References from " + parent.getElementName() + "." + name);
-			InteractionListener.addSet(dependencySet);
+			dependencySet.setName(parent.getElementName() + "." + name);
+			InteractionListener.addReferenceTo(dependencySet);
 		}
 	}
 }

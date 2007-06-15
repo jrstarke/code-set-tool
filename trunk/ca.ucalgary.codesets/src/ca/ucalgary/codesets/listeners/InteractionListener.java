@@ -11,12 +11,15 @@ import org.eclipse.mylar.monitor.core.InteractionEvent;
 import org.eclipse.mylar.monitor.ui.MylarMonitorUiPlugin;
 import org.eclipse.mylar.context.core.*;
 
-import ca.ucalgary.codesets.ResultSets;
+import ca.ucalgary.codesets.ResultSet;
 import ca.ucalgary.codesets.sets.CodeSet;
+import ca.ucalgary.codesets.views.CodeSetView;
 
 public class InteractionListener implements IInteractionEventListener {
 	
-	private static ResultSets resultSets;
+	private static ResultSet referenceTo;
+	private static ResultSet referenceFrom;
+	private static CodeSetView view;
 	private static InteractionListener thisListener;
 	private static HashMap<InteractionEvent.Kind,ArrayList<CodeSetListener>> listenerKinds;
 
@@ -34,6 +37,14 @@ public class InteractionListener implements IInteractionEventListener {
 	 *
 	 */
 	private void initialize () {
+		referenceTo = new ResultSet();
+		referenceFrom = new ResultSet();
+		
+		referenceTo.changeListener(view);
+		referenceTo.setName("References To");
+		referenceFrom.changeListener(view);
+		referenceFrom.setName("References From");
+		
 		listenerKinds = new HashMap<InteractionEvent.Kind, ArrayList<CodeSetListener>>();
 		for(InteractionEvent.Kind kind: InteractionEvent.Kind.values()) {
 			listenerKinds.put(kind,new ArrayList<CodeSetListener>());
@@ -104,20 +115,36 @@ public class InteractionListener implements IInteractionEventListener {
 		}
 	}
 	
-	public static void setResultSets (ResultSets resultSets) {
-		InteractionListener.resultSets = resultSets;
+//	public static void setResultSets (ResultSets resultSets) {
+//		InteractionListener.resultSets = resultSets;
+//	}
+	
+	public static void addReferenceTo (CodeSet set) {
+		InteractionListener.referenceTo.add(set);
 	}
 	
-	public static void addSet (CodeSet set) {
-		InteractionListener.resultSets.add(set);
+	public static void addReferenceFrom (CodeSet set) {
+		InteractionListener.referenceFrom.add(set);
 	}
 	
-	public static CodeSet getSet (String name) {
-		return InteractionListener.resultSets.get(name);
+public static CodeSet getReferenceFrom (String name) {
+		return InteractionListener.referenceFrom.get(name);
+	}
+	
+	public static ResultSet getReferenceFrom () {
+		return InteractionListener.referenceFrom;
+	}
+	
+	public static ResultSet getReferenceTo () {
+		return InteractionListener.referenceTo;
 	}
 	
 	public static void checkActivated() {
 		if (thisListener == null)
 			thisListener = new InteractionListener();
+	}
+		
+	public static void setView (CodeSetView view) {
+		InteractionListener.view = view;
 	}
 }
