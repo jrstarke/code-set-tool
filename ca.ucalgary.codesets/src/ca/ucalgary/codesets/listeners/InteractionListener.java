@@ -127,8 +127,8 @@ public class InteractionListener implements IInteractionEventListener {
 		InteractionListener.referenceFrom.add(set);
 	}
 	
-public static CodeSet getReferenceFrom (String name) {
-		return InteractionListener.referenceFrom.get(name);
+public static CodeSet getReferenceTo (String name) {
+		return InteractionListener.referenceTo.get(name);
 	}
 	
 	public static ResultSet getReferenceFrom () {

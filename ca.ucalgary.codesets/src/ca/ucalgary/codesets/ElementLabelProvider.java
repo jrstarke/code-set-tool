@@ -16,10 +16,10 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	private Color white = new Color(null, 255,255,255);	
 
 //	Background colours for each set reference
-	private Color refToBackground = new Color(null,255,255,0); 		// Yellow
+	private Color refToBackground = new Color(null,255,255,100); 	// Yellow
 	private Color refFromBackground = new Color(null,153,204,255);	// Blue
-	private Color historyBackground = new Color(null,255,204,0);	// Orange
-	private Color changeBackground = new Color(null,0,255,0);		// Green
+	private Color historyBackground = new Color(null,255,204,100);	// Orange
+	private Color changeBackground = new Color(null,100,255,100);	// Green
 
 //	Sets
 	private CodeSet changeSet;
@@ -58,7 +58,7 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 		if(referenceTo.size() >= 1)
 			referenceFromSet = referenceFrom.get(0);
 
-		if(currentSet instanceof AutoReferenceSet) { //to
+		if(currentSet instanceof ReferenceToSet) { //to
 
 			if(changeSet.contains((ISourceReference)element)) {
 				return changeBackground;
@@ -66,7 +66,7 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 			if(historySet.contains((ISourceReference)element)) {
 				return historyBackground;
 			}
-		} else if(currentSet instanceof DependencySet) {  //from
+		} else if(currentSet instanceof ReferenceFromSet) {  //from
 
 			if(changeSet.contains((ISourceReference)element)) {
 				return changeBackground;
@@ -76,11 +76,11 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 			}
 		} else if(currentSet instanceof EditorChangeSet || currentSet instanceof HistorySet) {
 
-			if(referenceToSet != null && referenceToSet instanceof DependencySet) {
+			if(referenceToSet != null && referenceToSet instanceof ReferenceFromSet) {
 				if(referenceToSet.contains((ISourceReference)element))
 					return refToBackground;
 			}
-			if(referenceFromSet != null && referenceFromSet instanceof AutoReferenceSet) {
+			if(referenceFromSet != null && referenceFromSet instanceof ReferenceToSet) {
 				if(referenceFromSet.contains((ISourceReference)element))
 					return refFromBackground;
 			}
