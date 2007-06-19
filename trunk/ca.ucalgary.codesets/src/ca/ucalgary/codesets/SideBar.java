@@ -53,13 +53,17 @@ public class SideBar implements SetListener {
 		forms = new HashMap<Object,Form>();
 
 		mainLayout = new GridLayout();
-		mainLayout.verticalSpacing = 20;
+		mainLayout.verticalSpacing = 0;
+		mainLayout.marginWidth = 0;
 		mainLayout.marginLeft = 0;
 		mainLayout.numColumns = 1;
 
 		subLayout = new GridLayout();
 		subLayout.verticalSpacing = 0;
+		subLayout.marginTop = 0;
+		subLayout.marginBottom = 0;
 		subLayout.marginLeft = 0;
+		subLayout.marginWidth = 10;
 		subLayout.numColumns = 1;
 
 		container = new Composite(parent, SWT.NONE);
@@ -95,10 +99,11 @@ public class SideBar implements SetListener {
 
 			ResultSet resultSet = (ResultSet) set;
 
-			setpanel.setText(resultSet.getName());
+			if (resultSet.size() > 0)
+				setpanel.setText(resultSet.getName());
 			if (resultSet.size() > 3)
 				if (resultSet.displayAll())
-					results.addAll(resultSet.subList(0, resultSet.size()));
+					results.addAll(resultSet.subList(0, Math.min(10, resultSet.size())));
 				else
 					results.addAll(resultSet.subList(0, 3));
 			else

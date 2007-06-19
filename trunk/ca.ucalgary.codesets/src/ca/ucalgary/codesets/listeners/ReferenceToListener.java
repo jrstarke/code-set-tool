@@ -1,8 +1,9 @@
-package ca.ucalgary.codesets;
+package ca.ucalgary.codesets.listeners;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.internal.ui.search.JavaSearchQuery;
@@ -11,40 +12,57 @@ import org.eclipse.jdt.internal.ui.search.JavaSearchScopeFactory;
 import org.eclipse.jdt.internal.ui.search.SearchMessages;
 import org.eclipse.jdt.internal.ui.search.SearchUtil;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.search.ElementQuerySpecification;
 import org.eclipse.jdt.ui.search.QuerySpecification;
+import org.eclipse.search.ui.ISearchResultListener;
+import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
+import ca.ucalgary.codesets.sets.ReferenceToSet;
 import ca.ucalgary.codesets.sets.CodeSet;
-import ca.ucalgary.codesets.listeners.*;
+
 /**
- * 
+ * Listens for any new results from a reference search for a given element.
  * @author starkej
  *
  */
-public class AutoReferenceSearch {
-	CodeSet searchSet;
-	
+public class ReferenceToListener implements ISearchResultListener, CodeSetListener {
+	ReferenceToSet referenceToSet;
+	IJavaElement element;
+
 	/**
-	 * Create a new auto reference search with a given search set and element what we would like
-	 * to search and add results to.
-	 * @param searchSet
-	 * @param element
+	 * Notifies the system of a change in the results for a given search.  Any matches
+	 * from the Search Result Event are added to the searchSet
 	 */
-	public AutoReferenceSearch (CodeSet searchSet, IJavaElement element) {
-		this.searchSet = searchSet;
-		searchSet.clear();
-		run(element);
+	public void searchResultChanged (SearchResultEvent event) {
+		if (event instanceof MatchEvent) {
+			JavaSearchResult results = (JavaSearchResult)event.getSearchResult();
+			Object[] elements = results.getElements();
+			for (int i = 0; i < elements.length; i++) {
+				if (!element.equals((IJavaElement)elements[i]))
+					referenceToSet.add((ISourceReference)elements[i]);
+			}
+			if (referenceToSet.size() > 0) {
+				InteractionListener.addReferenceTo(referenceToSet);
+			}
+		}
 	}
 
-	/**
-	 * Run a new search for a given element
-	 * @param element
-	 */
-	public void run(IJavaElement element) {
+	public void eventOccured(IJavaElement element) {
+		JavaElementLabelProvider lp = new JavaElementLabelProvider();
+		IJavaElement parent = element.getParent();
+		String name = lp.getText(element);
+		String fullName = (parent.getElementName() + "." + name);
+		referenceToSet = (ReferenceToSet)InteractionListener.getReferenceTo(fullName);
+		if (referenceToSet == null)
+			referenceToSet = new ReferenceToSet();
+		referenceToSet.setName(fullName);
 
 		try {
+			this.element = element;
 			performNewSearch(element);
 		} catch (JavaModelException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.Search_Error_search_notsuccessful_title, SearchMessages.Search_Error_search_notsuccessful_message); 
@@ -66,14 +84,14 @@ public class AutoReferenceSearch {
 			 * types used in the method signature, eventually triggering the loading of
 			 * a plug-in (in this case ISearchQuery results in Search plug-in being loaded).
 			 */
-			query.getSearchResult().addListener(new ReferenceToListener());
+			query.getSearchResult().addListener(this);
 			query.run(new NullProgressMonitor());
-			
+
 			//SearchUtil.runQueryInBackground(query);
 			JavaSearchResult results = (JavaSearchResult)query.getSearchResult();
 			Object[] elements = results.getElements();
-			System.out.println(results);
-			
+//			System.out.println(results);
+
 			//query.getSearchResult().addListener(new EditorAutoReferenceListener(searchSet));
 		} else {
 			IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
@@ -104,4 +122,7 @@ public class AutoReferenceSearch {
 		String description= factory.getWorkspaceScopeDescription(isInsideJRE);
 		return new ElementQuerySpecification(element, 10, scope, description);
 	}
+
+
+
 }
