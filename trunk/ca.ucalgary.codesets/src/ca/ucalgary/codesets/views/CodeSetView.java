@@ -41,10 +41,10 @@ public class CodeSetView extends ViewPart implements SetListener {
 	
 	ResultSet resultSet = new ResultSet();
 	
-	AutoReferenceSet searchSet = new AutoReferenceSet();
+	ReferenceToSet searchSet = new ReferenceToSet();
 	HistorySet historySet = new HistorySet();
 	EditorChangeSet editorChangeSet = new EditorChangeSet();
-	DependencySet dependancySet = new DependencySet();
+	ReferenceFromSet dependancySet = new ReferenceFromSet();
 
 	
 	
