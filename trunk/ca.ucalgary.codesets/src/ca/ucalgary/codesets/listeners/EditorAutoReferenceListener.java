@@ -42,14 +42,15 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 			JavaSearchResult results = (JavaSearchResult)event.getSearchResult();
 			Object[] elements = results.getElements();
 			for (int i = 0; i < elements.length; i++) {
-				referenceSet.add((ISourceReference)elements[i]);
+				if (!element.equals((IJavaElement)elements[i]))
+					referenceSet.add((ISourceReference)elements[i]);
 			}
 			if (referenceSet.size() > 0) {
 				InteractionListener.addReferenceFrom(referenceSet);
 			}
 		}
 	}
-	
+
 	public void eventOccured(IJavaElement element) {
 		JavaElementLabelProvider lp = new JavaElementLabelProvider();
 		IJavaElement parent = element.getParent();
@@ -59,7 +60,7 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 		if (referenceSet == null)
 			referenceSet = new AutoReferenceSet();
 		referenceSet.setName(fullName);
-		
+
 		try {
 			this.element = element;
 			performNewSearch(element);
@@ -67,7 +68,7 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 			ExceptionHandler.handle(ex, SearchMessages.Search_Error_search_notsuccessful_title, SearchMessages.Search_Error_search_notsuccessful_message); 
 		}
 	}
-	
+
 	/**
 	 * Performs a new search for a given IJavaElement to discover all of the things that
 	 * reference that object.
@@ -85,12 +86,12 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 			 */
 			query.getSearchResult().addListener(this);
 			query.run(new NullProgressMonitor());
-			
+
 			//SearchUtil.runQueryInBackground(query);
 			JavaSearchResult results = (JavaSearchResult)query.getSearchResult();
 			Object[] elements = results.getElements();
 //			System.out.println(results);
-			
+
 			//query.getSearchResult().addListener(new EditorAutoReferenceListener(searchSet));
 		} else {
 			IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
@@ -105,7 +106,7 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 //			ErrorDialog.openError(getShell(), SearchMessages.Search_Error_search_title, SearchMessages.Search_Error_search_message, status); 
 		}
 	}
-	
+
 	/**
 	 * Create a new search query for the given element that will look for all things that 
 	 * reference it in the workspace
@@ -121,7 +122,7 @@ public class EditorAutoReferenceListener implements ISearchResultListener, CodeS
 		String description= factory.getWorkspaceScopeDescription(isInsideJRE);
 		return new ElementQuerySpecification(element, 10, scope, description);
 	}
-	
-	
+
+
 
 }

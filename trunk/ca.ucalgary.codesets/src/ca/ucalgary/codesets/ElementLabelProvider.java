@@ -76,11 +76,11 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 			}
 		} else if(currentSet instanceof EditorChangeSet || currentSet instanceof HistorySet) {
 
-			if(referenceToSet != null && referenceToSet instanceof AutoReferenceSet) {
+			if(referenceToSet != null && referenceToSet instanceof DependencySet) {
 				if(referenceToSet.contains((ISourceReference)element))
 					return refToBackground;
 			}
-			if(referenceFromSet != null && referenceFromSet instanceof DependencySet) {
+			if(referenceFromSet != null && referenceFromSet instanceof AutoReferenceSet) {
 				if(referenceFromSet.contains((ISourceReference)element))
 					return refFromBackground;
 			}
