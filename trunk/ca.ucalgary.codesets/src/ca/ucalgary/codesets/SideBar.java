@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.*;
 
-import ca.ucalgary.codesets.listeners.InteractionListener;
+import ca.ucalgary.codesets.listeners.CodeSetListener;
 import ca.ucalgary.codesets.listeners.LinkExpansionListener;
 import ca.ucalgary.codesets.listeners.LinkListener;
 import ca.ucalgary.codesets.listeners.SetListener;
@@ -35,17 +35,20 @@ public class SideBar implements SetListener {
 	GridLayout mainLayout;
 	GridLayout subLayout;
 
-	public SideBar (Composite parent, CodeSetView theView, CodeSet history, CodeSet edit) {
+	ArrayList<CodeSetListener> listeners;
+
+	public SideBar (Composite parent, CodeSetView theView, ArrayList<CodeSetListener> listeners) {
 
 		initialize(parent);
 		this.theView = theView;
-		createSet(history);
-		createSet(edit);
-		InteractionListener.getReferenceFrom().changeListener(this);
-		InteractionListener.getReferenceTo().changeListener(this);
-		createSet(InteractionListener.getReferenceFrom());
-		createSet(InteractionListener.getReferenceTo());
-
+//		createSet(history);
+//		createSet(edit);
+//		referenceFrom.changeListener(this);
+//		referenceTo.changeListener(this);
+//		createSet(referenceFrom);
+//		createSet(referenceTo);
+		this.listeners = listeners;
+		layoutListeners();
 	}
 
 	public void initialize (Composite parent) {
@@ -74,16 +77,26 @@ public class SideBar implements SetListener {
 		toolkit.setBackground(backgroundColor);
 	}
 
-	public void createSet (Object set) {
+	public void layoutListeners () {
+		for (CodeSetListener l:listeners) {
+			l.changeListener(this);
+			createSet(l);
+		}
+	}
 
-		Form setpanel = toolkit.createForm(container);
-		forms.put(set, setpanel);
-		int hashCode = set.hashCode();
+	public void createSet (CodeSetListener listener) {
 
-		setpanel.setBackground(backgroundColor);
-		setpanel.getBody().setLayout(subLayout);
+		if (listener.isActivated()) {
+			Object set = listener.getSet();
+			Form setpanel = toolkit.createForm(container);
+			forms.put(set, setpanel);
+			int hashCode = set.hashCode();
 
-		createContents(set,setpanel);
+			setpanel.setBackground(backgroundColor);
+			setpanel.getBody().setLayout(subLayout);
+
+			createContents(set,setpanel);
+		}
 	}
 
 	public void createContents (Object set, Form setpanel) {	
@@ -98,10 +111,11 @@ public class SideBar implements SetListener {
 			ArrayList<CodeSet> results = new ArrayList<CodeSet>();
 
 			ResultSet resultSet = (ResultSet) set;
+			resultSet.changeListener(this);
 
 			if (resultSet.size() > 0)
 				setpanel.setText(resultSet.getName());
-			if (resultSet.size() > 3)
+			if (resultSet.size() > 4)
 				if (resultSet.displayAll())
 					results.addAll(resultSet.subList(0, Math.min(10, resultSet.size())));
 				else
@@ -113,7 +127,7 @@ public class SideBar implements SetListener {
 				link.addHyperlinkListener(new LinkListener(theView));
 				link.setHref(c);
 			}
-			if (resultSet.size() > 3) {
+			if (resultSet.size() > 4) {
 				Hyperlink link;
 				if (resultSet.displayAll())
 					link = toolkit.createHyperlink(setpanel.getBody(), "^", SWT.NONE);
@@ -127,15 +141,17 @@ public class SideBar implements SetListener {
 
 
 	public void refresh(Object s) {
-		Form form = forms.get(s);
-
-		if (form != null) {
-			for (Control c: form.getBody().getChildren()) {
-				c.dispose();
-			}
-			createContents(s,form);
-			form.layout();
-			form.getParent().layout();
+		for (Control c:container.getChildren()) {
+			c.dispose();
 		}
+		layoutListeners();
+		container.layout();
+	}
+
+	public void toggleListener () {
+		for (Control c:container.getChildren()) {
+			c.dispose();
+		}
+		layoutListeners();
 	}
 }

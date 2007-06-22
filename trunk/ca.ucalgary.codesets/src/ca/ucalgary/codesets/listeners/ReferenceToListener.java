@@ -15,13 +15,15 @@ import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.search.ElementQuerySpecification;
 import org.eclipse.jdt.ui.search.QuerySpecification;
+import org.eclipse.mylar.monitor.core.InteractionEvent;
+import org.eclipse.mylar.monitor.ui.MylarMonitorUiPlugin;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
-import ca.ucalgary.codesets.sets.ReferenceToSet;
+import ca.ucalgary.codesets.ResultSet;
 import ca.ucalgary.codesets.sets.CodeSet;
 
 /**
@@ -29,10 +31,19 @@ import ca.ucalgary.codesets.sets.CodeSet;
  * @author starkej
  *
  */
-public class ReferenceToListener implements ISearchResultListener, CodeSetListener {
-	ReferenceToSet referenceToSet;
+public class ReferenceToListener extends CodeSetListener implements ISearchResultListener {
+	ResultSet referencesTo;
+	
+	CodeSet referenceToSet;
 	IJavaElement element;
 
+	public ReferenceToListener (ResultSet referencesTo) {
+		super();
+		this.referencesTo = referencesTo;
+		this.name = "References To";
+		this.referencesTo.setName(this.name);
+	}
+	
 	/**
 	 * Notifies the system of a change in the results for a given search.  Any matches
 	 * from the Search Result Event are added to the searchSet
@@ -46,26 +57,8 @@ public class ReferenceToListener implements ISearchResultListener, CodeSetListen
 					referenceToSet.add((ISourceReference)elements[i]);
 			}
 			if (referenceToSet.size() > 0) {
-				InteractionListener.addReferenceTo(referenceToSet);
+				referencesTo.add(referenceToSet);
 			}
-		}
-	}
-
-	public void eventOccured(IJavaElement element) {
-		JavaElementLabelProvider lp = new JavaElementLabelProvider();
-		IJavaElement parent = element.getParent();
-		String name = lp.getText(element);
-		String fullName = (parent.getElementName() + "." + name);
-		referenceToSet = (ReferenceToSet)InteractionListener.getReferenceTo(fullName);
-		if (referenceToSet == null)
-			referenceToSet = new ReferenceToSet();
-		referenceToSet.setName(fullName);
-
-		try {
-			this.element = element;
-			performNewSearch(element);
-		} catch (JavaModelException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.Search_Error_search_notsuccessful_title, SearchMessages.Search_Error_search_notsuccessful_message); 
 		}
 	}
 
@@ -90,9 +83,6 @@ public class ReferenceToListener implements ISearchResultListener, CodeSetListen
 			//SearchUtil.runQueryInBackground(query);
 			JavaSearchResult results = (JavaSearchResult)query.getSearchResult();
 			Object[] elements = results.getElements();
-//			System.out.println(results);
-
-			//query.getSearchResult().addListener(new EditorAutoReferenceListener(searchSet));
 		} else {
 			IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
 			/*
@@ -123,6 +113,40 @@ public class ReferenceToListener implements ISearchResultListener, CodeSetListen
 		return new ElementQuerySpecification(element, 10, scope, description);
 	}
 
+	@Override
+	public void interactionObserved(InteractionEvent event) {
+		if (event.getKind() == InteractionEvent.Kind.SELECTION) {
+			IJavaElement element = resolveElement(event);
+			
+			JavaElementLabelProvider lp = new JavaElementLabelProvider();
+			IJavaElement parent = element.getParent();
+			String name = lp.getText(element);
+			String fullName = (parent.getElementName() + "." + name);
+			referenceToSet = (CodeSet)referencesTo.get(fullName);
+			if (referenceToSet == null)
+				referenceToSet = new CodeSet(CodeSet.Type.ReferenceTo);
+			referenceToSet.setName(fullName);
 
-
+			try {
+				this.element = element;
+				performNewSearch(element);
+			} catch (JavaModelException ex) {
+				ExceptionHandler.handle(ex, SearchMessages.Search_Error_search_notsuccessful_title, SearchMessages.Search_Error_search_notsuccessful_message); 
+			}
+		}
+	}
+	
+	public void activate () {
+		super.activate();
+		MylarMonitorUiPlugin.getDefault().addInteractionListener(this);
+	}
+	
+	public void deactivate () {
+		super.deactivate();
+		MylarMonitorUiPlugin.getDefault().removeInteractionListener(this);
+	}
+	
+	public Object getSet () {
+		return referencesTo;
+	}
 }

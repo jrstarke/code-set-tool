@@ -16,6 +16,7 @@ public class ResultSet extends ArrayList<CodeSet> implements IStructuredContentP
 
 	private SetListener listensToUs;
 	private boolean listAll = false;
+	private boolean activated = true;
 
 	String name;
 
@@ -75,5 +76,17 @@ public class ResultSet extends ArrayList<CodeSet> implements IStructuredContentP
 	public void toggleDisplayAll() {
 		listAll = !listAll;
 		listensToUs.refresh(this);
+	}
+	
+	public boolean isActivated () {
+		return activated;
+	}
+	
+	public void activate () {
+		activated = true;
+	}
+	
+	public void deactivate () {
+		activated = false;
 	}
 }

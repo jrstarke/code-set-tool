@@ -19,6 +19,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.mylar.monitor.core.InteractionEvent;
+import org.eclipse.mylar.monitor.ui.MylarMonitorUiPlugin;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.IEditorPart;
 
@@ -30,26 +32,40 @@ import ca.ucalgary.codesets.sets.*;
  * changing in a given editor. This can only be listening to one JavaEditor at a
  * time.
  */
-public class EditorFocusListener implements CodeSetListener {
+public class EditorFocusListener extends CodeSetListener {
 	CodeSet historySet;
-	CodeSet searchSet;
-
-	ISelectionProvider selectionProvider;
-	TableViewer viewer;
 
 	/**
 	 * Creates a new Listener which will add elements to the provided set
 	 * @param historySet
 	 */
 	public EditorFocusListener(CodeSet historySet) { 
+		super();
 		this.historySet = historySet;
+		this.name = "Navigation History";
+		historySet.setName(this.name);
 	}
 
-	/**
-	 * Is called to notify this listener that an event of interest to it has occured
-	 */
-	public void eventOccured (IJavaElement element) {
-		if (element instanceof ISourceReference)
-			historySet.add((ISourceReference)element);
+	@Override
+	public void interactionObserved(InteractionEvent event) {
+		if (event.getKind() == InteractionEvent.Kind.SELECTION) {
+			historySet.add((ISourceReference)resolveElement(event));
+		}
 	}
+	
+	public void activate () {
+		super.activate();
+		MylarMonitorUiPlugin.getDefault().addInteractionListener(this);
+	}
+	
+	public void deactivate () {
+		super.deactivate();
+		MylarMonitorUiPlugin.getDefault().removeInteractionListener(this);
+	}
+	
+	public Object getSet() {
+		return historySet;
+	}
+	
+
 }

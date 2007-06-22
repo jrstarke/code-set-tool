@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+import ca.ucalgary.codesets.listeners.CodeSetListener;
 import ca.ucalgary.codesets.sets.CodeSet;
 
 /**
@@ -21,15 +22,15 @@ import ca.ucalgary.codesets.sets.CodeSet;
  */
 public class CodeSetPreferences extends MessageDialog {
 
-	private ArrayList<CodeSet> sets;
+	private ArrayList<CodeSetListener> codeSetListeners;
 	
 	/**
 	 * CodeSetPreferences is used for controlling all of the active sets that run at a given
 	 * time.  
 	 * @param parentShell
-	 * @param sets
+	 * @param codeSets
 	 */
-	public CodeSetPreferences (Shell parentShell, ArrayList<CodeSet> sets) {
+	public CodeSetPreferences (Shell parentShell, ArrayList<CodeSetListener> codeSetListeners) {
 		super( parentShell,
                 "Set Preferences",
                 null,
@@ -37,7 +38,7 @@ public class CodeSetPreferences extends MessageDialog {
                 0,
                 new String[]{"Done"},
                 0);
-		this.sets = sets;
+		this.codeSetListeners = codeSetListeners;
 	}
 	
 	/**
@@ -58,9 +59,9 @@ public class CodeSetPreferences extends MessageDialog {
 	{
 		ArrayList<Button> buttons = new ArrayList<Button>();
 		//Create a toggle for each set
-		for (CodeSet s:sets)
+		for (CodeSetListener l:codeSetListeners)
 		{
-			buttons.add(createToggleButton(parent, s));
+			buttons.add(createToggleButton(parent, l));
 		}
 		return super.createCustomArea( parent );
 	}
@@ -70,31 +71,31 @@ public class CodeSetPreferences extends MessageDialog {
 	 * deactivate that set
 	 * @param set
 	 */
-	protected void toggle(CodeSet set) {
-		if (set.isActivated())
-			set.deactivate();
+	protected void toggle(CodeSetListener listener) {
+		if (listener.isActivated())
+			listener.deactivate();
 		else
-			set.activate();
+			listener.activate();
 	}
 	
-	protected Button createToggleButton(Composite parent, final CodeSet s) {
+	protected Button createToggleButton(Composite parent, final CodeSetListener l) {
         Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
         
         GridData data = new GridData(SWT.NONE);
         data.horizontalSpan = 2;
         button.setLayoutData(data);
         button.setFont(parent.getFont());
-        button.setText(s.getAction().getText());
-        button.setSelection(s.isActivated());
+        button.setText(l.getName());
+        button.setSelection(l.isActivated());
 
         // Listens for selection of widgets, in this case, ToggleButtons
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-            	toggle(s);
+            	toggle(l);
            }
         });
 
         return button;
 	}
-
+	
 }
