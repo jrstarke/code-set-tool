@@ -21,7 +21,6 @@ import org.eclipse.jdt.internal.corext.Assert;
 import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 
 import ca.ucalgary.codesets.sets.CodeSet;
-import ca.ucalgary.codesets.sets.ReferenceFromSet;
 
 public class AutoDependencySearch extends GenericVisitor {
 
@@ -30,12 +29,12 @@ public class AutoDependencySearch extends GenericVisitor {
 	private int fLength;
 	private int fEnd;
 	private ASTNode fResult;
-	private ReferenceFromSet dependencySet;
+	private CodeSet dependencySet;
 
 	private AutoDependencySearch(IMember element, CodeSet dependencySet) throws JavaModelException {
 		super(true);
 		Assert.isNotNull(element);
-		this.dependencySet = (ReferenceFromSet)dependencySet;
+		this.dependencySet = (CodeSet)dependencySet;
 		fElement= element;
 		ISourceRange sourceRange= fElement.getNameRange();
 		fStart= sourceRange.getOffset();

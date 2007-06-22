@@ -28,7 +28,10 @@ import org.eclipse.swt.SWT;
 
 import ca.ucalgary.codesets.*;
 import ca.ucalgary.codesets.listeners.CodeSetListener;
-import ca.ucalgary.codesets.listeners.InteractionListener;
+import ca.ucalgary.codesets.listeners.EditorFocusListener;
+import ca.ucalgary.codesets.listeners.EditorModifiedListener;
+import ca.ucalgary.codesets.listeners.ReferenceFromListener;
+import ca.ucalgary.codesets.listeners.ReferenceToListener;
 import ca.ucalgary.codesets.listeners.SetListener;
 import ca.ucalgary.codesets.sets.*;
 
@@ -37,24 +40,16 @@ import ca.ucalgary.codesets.sets.*;
 public class CodeSetView extends ViewPart implements SetListener {
 
 	// The set of all of the sets (used in preferences)
-	ArrayList<CodeSet> sets = new ArrayList<CodeSet>();
+	ArrayList<CodeSetListener> listeners = new ArrayList<CodeSetListener>();
 	
-	ResultSet resultSet = new ResultSet();
-	
-	ReferenceToSet searchSet = new ReferenceToSet();
-	HistorySet historySet = new HistorySet();
-	EditorChangeSet editorChangeSet = new EditorChangeSet();
-	ReferenceFromSet dependancySet = new ReferenceFromSet();
-
-	
+	ResultSet referenceToSet = new ResultSet();
+	CodeSet historySet = new CodeSet(CodeSet.Type.History);
+	CodeSet editorChangeSet = new CodeSet(CodeSet.Type.Change);
+	ResultSet referenceFromSet = new ResultSet();
 	
 	private TableViewer viewer;
 	private TableViewer setSelectionPane;
 
-	private Action historyAction;		//The history Action, when this is clicked, displays history set
-	private Action editorChangeAction;		//The editor change Action, when this is clicked, displays editor change set
-	private Action autoReferenceAction;
-	private Action dependancyAction;
 	private Action setPreferencesAction;
 
 	private Action doubleClickAction;
@@ -71,15 +66,21 @@ public class CodeSetView extends ViewPart implements SetListener {
 	 *  
 	 */
 	public void createPartControl(Composite parent) {
+		listeners.add(new EditorFocusListener(historySet));
+		listeners.add(new EditorModifiedListener(editorChangeSet));
+		listeners.add(new ReferenceFromListener(referenceFromSet));
+		listeners.add(new ReferenceToListener(referenceToSet));
+		
+		historySet.changeListener(this);
+		editorChangeSet.changeListener(this);
+		referenceFromSet.changeListener(this);
+		referenceToSet.changeListener(this);
+		
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(historySet);
 //		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet,searchSet,dependancySet, resultSets ));  
-		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet)); 
-		codeSetView.setContentDescription("History");
-		
-		//setSelectionPane = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		//setSelectionPane.setContentProvider(resultSets);
-
+		viewer.setLabelProvider(new ElementLabelProvider(editorChangeSet,historySet, referenceToSet, referenceFromSet)); 
+		codeSetView.setContentDescription(listeners.get(0).getName());
 		
 		ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
 		el.setCurrentSet(historySet);  
@@ -87,47 +88,23 @@ public class CodeSetView extends ViewPart implements SetListener {
 		viewer.setSorter(null);//new NameSorter());
 		viewer.setInput(getViewSite());
 		
-		//setSelectionPane.setSorter(null);
-		//setSelectionPane.setInput(getViewSite());
-		
 		makeActions();
-		
-		//Initializes the listener that keeps track of all of the editors
-		InteractionListener.setView(this);
-		
-		historySet.activate();
-		historySet.changeListener(this);
-		historySet.setAction(historyAction);
-		editorChangeSet.activate();
-		editorChangeSet.changeListener(this);
-		editorChangeSet.setAction(editorChangeAction);
-		searchSet.activate();
-		searchSet.changeListener(this);
-		searchSet.setAction(autoReferenceAction);
-		dependancySet.activate();
-		dependancySet.changeListener(this);
-		dependancySet.setAction(dependancyAction);
 
-		sets.add(historySet);
-		sets.add(editorChangeSet);
-//		sets.add(searchSet);
-//		sets.add(dependancySet);
-		
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();			
 		
-		SideBar sideBar = new SideBar(parent, this, historySet, editorChangeSet);
+		SideBar sideBar = new SideBar(parent, this, listeners);
 	}
 
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				CodeSetView.this.fillContextMenu(manager);
-			}
-		});
+//		menuMgr.addMenuListener(new IMenuListener() {
+//			public void menuAboutToShow(IMenuManager manager) {
+//				CodeSetView.this.fillContextMenu(manager);
+//			}
+//		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
@@ -135,25 +112,8 @@ public class CodeSetView extends ViewPart implements SetListener {
 
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
-		fillLocalPullDown(bars.getMenuManager());
+//		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
-	}
-
-	private void fillLocalPullDown(IMenuManager manager) {
-		for (CodeSet s:sets) {
-			if (s.isActivated())
-				manager.add(s.getAction());
-		}
-		manager.add(new Separator());
-	}
-
-	private void fillContextMenu(IMenuManager manager) {
-		for (CodeSet s:sets) {
-			if (s.isActivated())
-				manager.add(s.getAction());
-		}
-		// Other plug-ins can contribute there actions here
-		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
@@ -162,70 +122,9 @@ public class CodeSetView extends ViewPart implements SetListener {
 
 	private void makeActions() {
 
-		historyAction = new Action() {
-			public void run(){
-				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
-				viewer.setContentProvider(historySet);
-				el.setCurrentSet(historySet);
-				codeSetView.setContentDescription("History");
-				viewer.setSorter(null);//ordering for the set (Chronological)
-				viewer.refresh();
-			}
-		};
-
-		historyAction.setToolTipText("Shows a list of your history");  //change this for specified tooltip
-		historyAction.setText("History Set");
-		historyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-
-		editorChangeAction = new Action() {
-			public void run(){
-				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
-				viewer.setContentProvider(editorChangeSet);
-				el.setCurrentSet(editorChangeSet);
-				codeSetView.setContentDescription("Changes by Editor");
-				viewer.setSorter(null);//ordering for the set (Chronological)
-				viewer.refresh();
-			}
-		};
-		editorChangeAction.setToolTipText("Shows a list of your changes");
-		editorChangeAction.setText("Change Set");
-		editorChangeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action	
-
-		autoReferenceAction = new Action() {
-			public void run(){
-				codeSetView.setContentDescription("Auto Referencing by Caret");
-				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
-				viewer.setContentProvider(searchSet);
-				el.setCurrentSet(searchSet);
-				viewer.setSorter(new NameSorter());//ordering for the set (Alphabetical)
-				viewer.refresh();
-			}
-		};
-		autoReferenceAction.setToolTipText("Shows a list of elements that reference this element");
-		autoReferenceAction.setText("Reference to Set");
-		autoReferenceAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-		
-		dependancyAction = new Action() {
-			public void run(){
-				codeSetView.setContentDescription("Dependancy Elements");
-				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
-				viewer.setContentProvider(dependancySet);
-				el.setCurrentSet(dependancySet);
-				viewer.setSorter(new NameSorter());//ordering for the set (Alphabetical)
-				viewer.refresh();
-			}
-		};
-		dependancyAction.setToolTipText("Shows a list of elements that this element references");
-		dependancyAction.setText("Reference From Set");
-		dependancyAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-
 		setPreferencesAction = new Action() {
 			public void run(){
-				CodeSetPreferences preferences = new CodeSetPreferences( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), sets);
+				CodeSetPreferences preferences = new CodeSetPreferences( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), listeners);
 				preferences.open();
 			}
 		};
@@ -240,21 +139,6 @@ public class CodeSetView extends ViewPart implements SetListener {
 				IStructuredSelection sel = (IStructuredSelection)selection;								
 				IJavaElement elem = (IJavaElement) sel.getFirstElement();
 				IEditorPart editor = setCurrentElement(elem);				
-			}
-		};
-		
-		setSelectionAction = new Action () {
-			public void run() {
-				ISelection selection = setSelectionPane.getSelection();
-				IStructuredSelection sel = (IStructuredSelection) selection;
-				CodeSet set = (CodeSet) sel.getFirstElement();
-				
-				codeSetView.setContentDescription(set.getName());
-				ElementLabelProvider el = (ElementLabelProvider) viewer.getLabelProvider();
-				viewer.setContentProvider(set);
-				el.setCurrentSet(set);
-				viewer.setSorter(new NameSorter());//ordering for the set (Alphabetical)
-				viewer.refresh();
 			}
 		};
 	}

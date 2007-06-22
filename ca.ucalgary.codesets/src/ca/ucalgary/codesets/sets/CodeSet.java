@@ -20,11 +20,14 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 	protected boolean isActivated;
 	protected SetListener listensToUs;
 	protected Action action;
+	
+	protected Type type;
 
 	protected String name;
 
-	public CodeSet () {
+	public CodeSet (Type type) {
 		isActivated = false;
+		this.type = type;
 	}
 
 	public void activate () {
@@ -143,4 +146,9 @@ public class CodeSet extends HashSet<SetNode> implements IStructuredContentProvi
 		return name;
 	}
 
+	public Type getType () {
+		return type;
+	}
+	
+	public enum Type {Change, History, ReferenceTo, ReferenceFrom};
 }

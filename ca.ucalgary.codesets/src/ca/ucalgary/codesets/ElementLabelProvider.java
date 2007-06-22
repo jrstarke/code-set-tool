@@ -1,8 +1,6 @@
 package ca.ucalgary.codesets;
 
 import ca.ucalgary.codesets.sets.*;
-import ca.ucalgary.codesets.listeners.InteractionListener;
-
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
@@ -24,9 +22,11 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 //	Sets
 	private CodeSet changeSet;
 	private CodeSet historySet;
+	private ResultSet referencesTo;
+	private ResultSet referencesFrom;
 	private CodeSet currentSet;
 
-	public ElementLabelProvider(CodeSet editorChangeSet,CodeSet hset)
+	public ElementLabelProvider(CodeSet editorChangeSet,CodeSet hset, ResultSet referencesTo, ResultSet referencesFrom)
 	{
 		super(JavaElementLabelProvider.SHOW_PARAMETERS
 				| JavaElementLabelProvider.SHOW_SMALL_ICONS
@@ -35,6 +35,8 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 
 		changeSet = editorChangeSet;
 		historySet = hset;
+		this.referencesTo = referencesTo;
+		this.referencesFrom = referencesFrom;
 	}
 
 	public void setCurrentSet(CodeSet set) {
@@ -49,24 +51,13 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 
 		CodeSet referenceToSet = null;
 		CodeSet referenceFromSet = null;
-
-		ResultSet referenceTo = InteractionListener.getReferenceTo();
-		ResultSet referenceFrom = InteractionListener.getReferenceFrom();
 	
-		if(referenceTo.size() >= 1)
-			referenceToSet = referenceTo.get(0);
-		if(referenceTo.size() >= 1)
-			referenceFromSet = referenceFrom.get(0);
+		if(referencesTo.size() >= 1)
+			referenceToSet = referencesTo.get(0);
+		if(referencesTo.size() >= 1)
+			referenceFromSet = referencesFrom.get(0);
 
-		if(currentSet instanceof ReferenceToSet) { //to
-
-			if(changeSet.contains((ISourceReference)element)) {
-				return changeBackground;
-			}
-			if(historySet.contains((ISourceReference)element)) {
-				return historyBackground;
-			}
-		} else if(currentSet instanceof ReferenceFromSet) {  //from
+		if(currentSet.getType().equals(CodeSet.Type.ReferenceTo)) { //to
 
 			if(changeSet.contains((ISourceReference)element)) {
 				return changeBackground;
@@ -74,17 +65,25 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 			if(historySet.contains((ISourceReference)element)) {
 				return historyBackground;
 			}
-		} else if(currentSet instanceof EditorChangeSet || currentSet instanceof HistorySet) {
+		} else if(currentSet.getType().equals(CodeSet.Type.ReferenceFrom)) {  //from
 
-			if(referenceToSet != null && referenceToSet instanceof ReferenceFromSet) {
+			if(changeSet.contains((ISourceReference)element)) {
+				return changeBackground;
+			}
+			if(historySet.contains((ISourceReference)element)) {
+				return historyBackground;
+			}
+		} else if(currentSet.getType().equals(CodeSet.Type.Change) || currentSet.getType().equals(CodeSet.Type.History)) {
+
+			if(referenceToSet != null && referenceToSet.getType().equals(CodeSet.Type.ReferenceTo)) {
 				if(referenceToSet.contains((ISourceReference)element))
 					return refToBackground;
 			}
-			if(referenceFromSet != null && referenceFromSet instanceof ReferenceToSet) {
+			if(referenceFromSet != null && referenceFromSet.getType().equals(CodeSet.Type.ReferenceFrom)) {
 				if(referenceFromSet.contains((ISourceReference)element))
 					return refFromBackground;
 			}
-			if(currentSet instanceof HistorySet && changeSet.contains((ISourceReference)element)) {
+			if(currentSet.getType().equals(CodeSet.Type.History) && changeSet.contains((ISourceReference)element)) {
 				return changeBackground;
 			}			
 		}		
