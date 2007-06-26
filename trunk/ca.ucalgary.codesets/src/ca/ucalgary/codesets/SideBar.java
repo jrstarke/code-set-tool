@@ -26,6 +26,12 @@ import ca.ucalgary.codesets.views.CodeSetView;
 public class SideBar implements SetListener {
 
 	Color backgroundColor = null; //new Color(null,245,245,250);
+
+	private Color white = new Color(null, 255,255,255);	
+	private Color selectedColor = new Color(null,255,204,100);	// Orange
+	private Color textColor = new Color(null,0,0,255);
+	private Color backColor = new Color(null,255,255,255);
+
 	HashMap<Object,Form> forms;
 
 	CodeSetView theView;
@@ -35,18 +41,15 @@ public class SideBar implements SetListener {
 	GridLayout mainLayout;
 	GridLayout subLayout;
 
+	LinkListener linkListener;
+
 	ArrayList<CodeSetListener> listeners;
 
 	public SideBar (Composite parent, CodeSetView theView, ArrayList<CodeSetListener> listeners) {
 
 		initialize(parent);
 		this.theView = theView;
-//		createSet(history);
-//		createSet(edit);
-//		referenceFrom.changeListener(this);
-//		referenceTo.changeListener(this);
-//		createSet(referenceFrom);
-//		createSet(referenceTo);
+		linkListener = new LinkListener(theView, this);
 		this.listeners = listeners;
 		layoutListeners();
 	}
@@ -100,11 +103,18 @@ public class SideBar implements SetListener {
 	}
 
 	public void createContents (Object set, Form setpanel) {	
+
+		CodeSet currentSet = theView.getCurrentSet();
+
 		if (set instanceof CodeSet) {
 			CodeSet codeSet = (CodeSet) set;
 
 			Hyperlink link = toolkit.createHyperlink(setpanel.getBody(), codeSet.getName(), SWT.NONE);
-			link.addHyperlinkListener(new LinkListener(theView));
+			if (currentSet == codeSet) {
+				link.setForeground(textColor);
+				link.setBackground(backColor);
+			}
+			link.addHyperlinkListener(linkListener);
 			link.setHref(codeSet);
 		}
 		else if (set instanceof ResultSet) {
@@ -124,7 +134,11 @@ public class SideBar implements SetListener {
 				results.addAll(resultSet.subList(0, resultSet.size()));
 			for (CodeSet c:results) {
 				Hyperlink link = toolkit.createHyperlink(setpanel.getBody(), c.getName(), SWT.NONE);
-				link.addHyperlinkListener(new LinkListener(theView));
+				if (currentSet == c) {
+					link.setForeground(textColor);
+					link.setBackground(backColor);
+				}
+				link.addHyperlinkListener(linkListener);
 				link.setHref(c);
 			}
 			if (resultSet.size() > 4) {
