@@ -73,7 +73,18 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 			if(historySet.contains((ISourceReference)element)) {
 				return historyBackground;
 			}
-		} else if(currentSet.getType().equals(CodeSet.Type.Change) || currentSet.getType().equals(CodeSet.Type.History)) {
+		} else if(currentSet.getType().equals(CodeSet.Type.Change)) {
+			
+			if(referenceToSet != null && referenceToSet.getType().equals(CodeSet.Type.ReferenceTo)) {
+				if(referenceToSet.contains((ISourceReference)element))
+					return refToBackground;
+			}
+			if(referenceFromSet != null && referenceFromSet.getType().equals(CodeSet.Type.ReferenceFrom)) {
+				if(referenceFromSet.contains((ISourceReference)element))
+					return refFromBackground;
+			}
+			
+		} else if(currentSet.getType().equals(CodeSet.Type.History)) {
 
 			if(referenceToSet != null && referenceToSet.getType().equals(CodeSet.Type.ReferenceTo)) {
 				if(referenceToSet.contains((ISourceReference)element))
@@ -83,7 +94,7 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 				if(referenceFromSet.contains((ISourceReference)element))
 					return refFromBackground;
 			}
-			if(currentSet.getType().equals(CodeSet.Type.History) && changeSet.contains((ISourceReference)element)) {
+			if(changeSet.contains((ISourceReference)element)) {
 				return changeBackground;
 			}			
 		}		
@@ -106,8 +117,7 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 		} 
 		return text;
 	}
-
-
+	
 	/**The methods below change the colour of the designated set. 
 	 * @param colour
 	 */

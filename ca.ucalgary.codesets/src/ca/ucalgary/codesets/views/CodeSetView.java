@@ -206,5 +206,10 @@ public class CodeSetView extends ViewPart implements SetListener {
 		viewer.setSorter(null);
 		viewer.refresh();
 	}
+	
+	public CodeSet getCurrentSet() {
+		return ((ElementLabelProvider)viewer.getLabelProvider()).getCurrentSet();
+	}
+	
 
 }
