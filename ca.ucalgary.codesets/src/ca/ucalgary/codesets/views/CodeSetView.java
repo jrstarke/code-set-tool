@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import ca.ucalgary.codesets.*;
 import ca.ucalgary.codesets.controllers.DisplayController;
 import ca.ucalgary.codesets.controllers.SideBarController;
-import ca.ucalgary.codesets.sets.*;
 
 // displays sets of source code entities as provided by one of a number of CodeSets.
 public class CodeSetView extends ViewPart {
