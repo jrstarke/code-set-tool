@@ -120,7 +120,7 @@ public class TestModels extends TestCase {
 		manager.sets("references to").get(0).state = CodeSet.State.INCLUDED;
 		manager.displaySet();
 		
-		assertEquals(0, manager.displaySetsAgo(ref3));
+		assertEquals(-1, manager.displaySetsAgo(ref3));
 		assertEquals(1, manager.displaySetsAgo(ref1));
 		assertEquals(-1, manager.displaySetsAgo(ref2));
 	}

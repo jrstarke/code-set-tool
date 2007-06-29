@@ -100,9 +100,14 @@ public class CodeSetManager {
 		return result;
 	}
 	
+	
 	// the display set is the current elements that should be
 	// displayed (made from combinations of raw sets)
 	public CodeSet displaySet() {
+		return displaySet(true);
+	}
+	
+	public CodeSet displaySet(boolean newSet) {
 		CodeSet set = new CodeSet("x", "display");
 		
 		// add in elements from all included sets
@@ -120,6 +125,9 @@ public class CodeSetManager {
 			if (s.state == CodeSet.State.RESTRICTEDTO)
 				set = set.intersection(s);
 		
+		if (!newSet)
+			displaySets.remove(0);
+		
 		displaySets.add(0, set);
 		return set;
 	}
@@ -127,7 +135,7 @@ public class CodeSetManager {
 	public int displaySetsAgo(ISourceReference element) {
 		int counter = 0;
 		for (CodeSet set : displaySets) {
-			if (set.contains(element))
+			if (counter != 0 && set.contains(element))
 				return counter;
 			counter++;
 		}

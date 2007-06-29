@@ -11,8 +11,8 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	static Color white = new Color(null, 255,255,255);
 	static Color black = new Color(null, 0,0,0);
 	static Color[] highlightColors = new Color[] {
-		new Color(null, 100,100,220), new Color(null, 125,125,225), 
-		new Color(null, 150,150,230), new Color(null, 175,175,235) };
+		null, new Color(null, 230,230,250), new Color(null, 234,234,251), 
+		new Color(null, 238,238,252), new Color(null, 242,242,253) };
 
 	public ElementLabelProvider() {
 		super(JavaElementLabelProvider.SHOW_PARAMETERS

@@ -29,7 +29,7 @@ public class DisplayController implements ICodeSetListener {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setLabelProvider(new ElementLabelProvider());
 		viewer.setSorter(null);//new NameSorter());
-		viewer.setContentProvider(CodeSetManager.instance().displaySet());
+		viewer.setContentProvider(CodeSetManager.instance().displaySet(true));
 		viewer.setInput(site);
 		
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -59,15 +59,11 @@ public class DisplayController implements ICodeSetListener {
 	public void setAdded(CodeSet set) {
 	}
 	public void setChanged(CodeSet set) {
-		setDisplaySet();
+		viewer.setContentProvider(CodeSetManager.instance().displaySet(false));
 	}
 	public void stateChanged(CodeSet set) {
-		setDisplaySet();
+		viewer.setContentProvider(CodeSetManager.instance().displaySet(true));
 		viewer.getControl().setFocus();
 	}
 	
-	// update the display ...
-	public void setDisplaySet() {
-		viewer.setContentProvider(CodeSetManager.instance().displaySet());
-	}
 }
