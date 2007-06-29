@@ -1,0 +1,71 @@
+package ca.ucalgary.codesets.models;
+
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.JavaModelException;
+
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+
+import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
+
+// uses eclipse's ast parser to compute the set of all references from a
+// given element.
+public class ReferenceFromSearch extends GenericVisitor {
+	IMember element;
+	CodeSet set;
+
+	public void search(IJavaElement element, String name) {
+		set = new CodeSet(name, "references from");
+		this.element = (IMember)element;
+		ICompilationUnit unit = this.element.getCompilationUnit();
+		ASTParser parser= ASTParser.newParser(AST.JLS3);
+		parser.setSource(unit);
+		parser.setResolveBindings(true);
+
+		CompilationUnit node = (CompilationUnit) parser.createAST(null);
+		node.accept(this);
+		if (set.size() != 0)
+			CodeSetManager.instance().addSet(set);
+	}
+	
+	protected boolean visitNode(ASTNode node) {
+		return true;
+	}
+
+	public boolean visit (MethodInvocation node) {
+		IMethodBinding binding = node.resolveMethodBinding();
+		IJavaElement element = binding.getJavaElement();
+		set.add((ISourceReference)element);
+		return visitNode(node);
+	}
+	
+	public boolean visit(MethodDeclaration node) {
+		return checkElement(node);
+	}
+	
+	public boolean visit (FieldDeclaration node) {
+		return checkElement(node);
+	}
+	
+	// returns true if the given node is within the range of the IJavaElement we
+	// are searching on
+	public boolean checkElement (ASTNode node) {
+		try {
+			if ((node.getStartPosition() == element.getSourceRange().getOffset()) && 
+					(node.getLength() == element.getSourceRange().getLength()))
+				return true;
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+}

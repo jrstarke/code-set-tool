@@ -17,5 +17,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.mylar.monitor.ui,
  org.eclipse.mylar.monitor.core,
  org.eclipse.mylar.context.core,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.junit4
 Eclipse-LazyStart: true
