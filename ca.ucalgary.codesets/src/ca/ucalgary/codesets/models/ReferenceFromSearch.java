@@ -9,11 +9,19 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
+import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 
@@ -48,6 +56,13 @@ public class ReferenceFromSearch extends GenericVisitor {
 		return visitNode(node);
 	}
 	
+	public boolean visit (ClassInstanceCreation node) {
+		IMethodBinding binding = node.resolveConstructorBinding();
+		IJavaElement element = binding.getJavaElement();
+		set.add((ISourceReference)element);
+		return visitNode(node);
+	}
+	
 	public boolean visit(MethodDeclaration node) {
 		return checkElement(node);
 	}
@@ -62,10 +77,10 @@ public class ReferenceFromSearch extends GenericVisitor {
 		try {
 			if ((node.getStartPosition() == element.getSourceRange().getOffset()) && 
 					(node.getLength() == element.getSourceRange().getLength()))
-				return true;
+				return visitNode(node);
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return !visitNode(node);
 	}
 }
