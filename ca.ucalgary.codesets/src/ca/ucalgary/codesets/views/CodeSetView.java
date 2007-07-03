@@ -65,21 +65,21 @@ public class CodeSetView extends ViewPart {
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
-		//manager.add(setPreferencesAction);
+//		manager.add(setPreferencesAction);
 	}
 
 //	private void makeActions() {
 //		setPreferencesAction = new Action() {
 //			public void run(){
-//				CodeSetPreferences preferences = new CodeSetPreferences( PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), listeners);
-//				preferences.open();
+//				
 //			}
 //		};
 //		setPreferencesAction.setToolTipText("Selects the running sets");
 //		setPreferencesAction.setText("Preferences");
 //		setPreferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 //				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-
+//	}
+		
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
