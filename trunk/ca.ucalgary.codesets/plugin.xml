@@ -15,6 +15,13 @@
             class="ca.ucalgary.codesets.views.CodeSetView"
             id="ca.ucalgary.codesets.views.CodeSetView">
       </view>
+      <view
+            name="Group Selection"
+            icon="icons/sample.gif"
+            category="ca.ucalgary.codesets"
+            class="ca.ucalgary.codesets.views.SelectionView"
+            id="ca.ucalgary.codesets.views.SelectionView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">

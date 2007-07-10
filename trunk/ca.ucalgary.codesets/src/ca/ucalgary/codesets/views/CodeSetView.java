@@ -20,7 +20,7 @@ public class CodeSetView extends ViewPart {
 		hookContextMenu();
 		contributeToActionBars();
 		new DisplayController(getViewSite(), parent);
-		new SideBarController(parent);
+//		new SideBarController(parent);
 	}
 
 	private void hookContextMenu() {
