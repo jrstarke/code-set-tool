@@ -26,6 +26,7 @@ public class InteractionListener implements IInteractionEventListener {
 			CodeSetManager.instance().setFocus((ISourceReference)element);
 			new ReferenceToSearch().search(element, name(element));
 			new ReferenceFromSearch().search(element, name(element));
+			new RefOfFile().search(element);
 		}
 	}
 
