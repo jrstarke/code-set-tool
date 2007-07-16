@@ -32,6 +32,8 @@ public class CodeSet extends HashSet<ISourceReference> implements IStructuredCon
 	}
 	
 	public Object[] getElements(Object inputElement) {
+		
+		
 		return toArray();
 	}
 	
