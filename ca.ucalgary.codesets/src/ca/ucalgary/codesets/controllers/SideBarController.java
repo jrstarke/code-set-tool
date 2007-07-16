@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -12,25 +15,33 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.part.ViewPart;
 
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
 import ca.ucalgary.codesets.models.ICodeSetListener;
+import ca.ucalgary.codesets.views.ElementLabelProvider;
 import ca.ucalgary.codesets.views.SideBarSection;
 
 //a controller for the "side bar" view that allows users to specify the combination
 //of events that they are interested in
 public class SideBarController implements ICodeSetListener {
 	// the ui is a simple series of SideBarSections
+	private Label label;
+	
 	HashMap<String, SideBarSection> sections = new HashMap<String, SideBarSection>();
 	Composite sideBar;
+	IToolBarManager toolBarManager;
+	
 
 	public SideBarController(Composite parent) {
-		sideBar = view(parent);
-		createButton();
+		sideBar = view(parent);		
 		for (CodeSet set : CodeSetManager.instance().sets()) 
 			setAdded(set);
 		CodeSetManager.instance().addListener(this);
@@ -58,7 +69,7 @@ public class SideBarController implements ICodeSetListener {
 			}
 		});
 	}
-
+	
 	void addLinks(String category, List<CodeSet> sets) {
 		SideBarSection section = sections.get(category);
 		section.clearLinks();
@@ -104,28 +115,14 @@ public class SideBarController implements ICodeSetListener {
 		}
 		sideBar.layout();
 	}
+	
+	
 	public void stateChanged(CodeSet set) {
 		// ignore for now...
 	}
-
-	protected Button createButton() {
-		Button button = new Button(sideBar, SWT.PUSH);
-		button.setText("Name this set");
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				InputDialog dialog = new InputDialog(sideBar.getShell(), 
-						"Set Name",
-						"Please enter a name for the new set:", "", null);
-				dialog.open();
-				String name = dialog.getValue();
-				if (name != null) {
-					CodeSet currentSet = CodeSetManager.instance().displaySet();
-					currentSet.name = name;
-					currentSet.category = "named";
-					CodeSetManager.instance().addSet(currentSet);
-				}
-			}
-		});
-		return button;
+	
+	public Composite getSideBar() {
+		return this.sideBar;
 	}
 }
+

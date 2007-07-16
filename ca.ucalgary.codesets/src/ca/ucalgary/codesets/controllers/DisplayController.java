@@ -39,7 +39,6 @@ public class DisplayController implements ICodeSetListener {
 				IStructuredSelection sel = (IStructuredSelection)selection;								
 				IJavaElement elem = (IJavaElement) sel.getFirstElement();
 				openElement(elem);				
-
 			}
 		});
 	}

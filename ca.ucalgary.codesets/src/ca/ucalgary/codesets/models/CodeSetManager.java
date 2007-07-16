@@ -1,11 +1,14 @@
 package ca.ucalgary.codesets.models;
 
 import java.util.ArrayList;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+
 import org.eclipse.jdt.core.ISourceReference;
+
 import org.eclipse.mylar.monitor.ui.MylarMonitorUiPlugin;
 
 // keeps track of all code sets and dispatches events to listeners about 
@@ -65,6 +68,10 @@ public class CodeSetManager {
 	
 	public ISourceReference getFocus() {
 		return currentFocus;
+	}
+	
+	public void clearStates() {
+		// for each set ...
 	}
 	
 	public void changeState(CodeSet set) {
