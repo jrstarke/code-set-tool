@@ -63,9 +63,10 @@ public class SideBarSection extends Composite {
 	// append a hyperlink to this section 
 	public Hyperlink addLink(String text, CodeSet set) {
 		Hyperlink link = new Hyperlink(this, SWT.NONE);
-		link.setText(text);
+		link.setText(text +" ("+set.state.toString().toLowerCase()+")");
 		link.setData(set);
 		styleLink(link, set);
+		this.layout();
 		return link;
 	}
 
@@ -87,13 +88,13 @@ public class SideBarSection extends Composite {
 	// set the hyperlink's style based on the state of the corresponding code set
 	public static void styleLink(Hyperlink link, CodeSet set) {		
 		Color color = backgroundColors[set.state.ordinal()];
-		link.setBackground(color);
+//		link.setBackground(color);  //if you want the background colours, uncomment this line
 		
 		if (set.state == CodeSet.State.EXCLUDED)
 			link.setForeground(hideColor);
 		else 
 			link.setForeground(null);
-		
+		link.setText(set.name +" ("+set.state.toString().toLowerCase()+")");
 		// etc
 	}
 }

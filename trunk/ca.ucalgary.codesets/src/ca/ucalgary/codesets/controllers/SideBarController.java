@@ -49,7 +49,8 @@ public class SideBarController implements ICodeSetListener {
 	Composite view(Composite parent) {
 		Composite sideBar = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
-		layout.spacing = 5;
+		layout.wrap = true;
+		layout.spacing  = 5;
 		sideBar.setLayout(layout);
 		return sideBar;
 	}
