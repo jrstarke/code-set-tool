@@ -8,7 +8,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import ca.ucalgary.codesets.controllers.AdvancedViewController;
 import ca.ucalgary.codesets.controllers.SideBarController;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
@@ -39,12 +38,13 @@ public class SelectionView extends ViewPart {
 	private void makeActions() {
 		clearSetsAction = new Action() {
 			public void run(){
-				for(CodeSet s: CodeSetManager.instance().sets()){
-					if(s.state != CodeSet.State.IGNORED){
-						s.state = CodeSet.State.IGNORED;
-						barController.setChanged(s);
-					}
-				}
+//				for(CodeSet s: CodeSetManager.instance().sets()){
+//					if(s.state != CodeSet.State.IGNORED){
+//						s.state = CodeSet.State.IGNORED;
+//						barController.setChanged(s);
+//					}
+//				}
+				CodeSetManager.instance().clearStates();
 			}
 		};
 
@@ -83,5 +83,7 @@ public class SelectionView extends ViewPart {
             mgr.add(nameSetAction);
             mgr.add(clearSetsAction);
     }
+	
+
 	
 }

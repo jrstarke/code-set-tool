@@ -33,7 +33,6 @@ import ca.ucalgary.codesets.views.SideBarSection;
 //of events that they are interested in
 public class SideBarController implements ICodeSetListener {
 	// the ui is a simple series of SideBarSections
-	private Label label;
 	
 	HashMap<String, SideBarSection> sections = new HashMap<String, SideBarSection>();
 	Composite sideBar;
@@ -93,8 +92,10 @@ public class SideBarController implements ICodeSetListener {
 	public void setAdded(CodeSet set) {
 		if (!sections.containsKey(set.category))
 			sections.put(set.category, new SideBarSection(sideBar, set.category));
-		addLinks(set.category, CodeSetManager.instance().sets(set.category));	
+		
+		addLinks(set.category, CodeSetManager.instance().sets(set.category));
 	}
+	
 	public void setChanged(CodeSet set) {
 		for (Hyperlink link : links()) {
 			CodeSet s = (CodeSet)link.getData();
