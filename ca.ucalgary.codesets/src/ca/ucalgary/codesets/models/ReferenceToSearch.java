@@ -23,6 +23,11 @@ public class ReferenceToSearch implements ISearchResultListener {
 	void search(IJavaElement element, String name) {
 		this.element = element;
 		set = new CodeSet(name, "references to");
+		
+		// TODO: really we should just add to the existing set if there is one
+		if (CodeSetManager.instance().containsSet(set))
+			return;
+		
 		try {
 			JavaSearchQuery query= new JavaSearchQuery(createQuery(element));
 			query.getSearchResult().addListener(this);

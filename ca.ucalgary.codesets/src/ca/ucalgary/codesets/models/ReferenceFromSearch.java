@@ -27,6 +27,9 @@ public class ReferenceFromSearch extends GenericVisitor {
 
 	public void search(IJavaElement element, String name) {
 		set = new CodeSet(name, "references from");
+		if (CodeSetManager.instance().containsSet(set))
+			return;
+		
 		this.element = (IMember)element;
 		ICompilationUnit unit = this.element.getCompilationUnit();
 		ASTParser parser= ASTParser.newParser(AST.JLS3);

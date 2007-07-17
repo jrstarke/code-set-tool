@@ -37,6 +37,10 @@ public class RefOfFile extends GenericVisitor {
 		set = new CodeSet(new JavaElementLabelProvider().getText(unit), "elements of file");
 
 		CompilationUnit node = (CompilationUnit) parser.createAST(null);
+
+		if (CodeSetManager.instance().containsSet(set))
+			return;
+		
 		node.accept(this);
 		if (set.size() != 0)
 			CodeSetManager.instance().addSet(set);

@@ -66,12 +66,22 @@ public class CodeSetManager {
 		}
 	}
 	
-	public ISourceReference getFocus() {
-		return currentFocus;
+	public void clearStates() {
+		for(CodeSet set:rawSets){
+			if(set.state != CodeSet.State.IGNORED){
+				set.state = CodeSet.State.IGNORED;
+				setStateIgnore(set);
+			}
+		}		
 	}
 	
-	public void clearStates() {
-		// for each set ...
+	public void setStateIgnore(CodeSet set) {
+		for (ICodeSetListener listener : listeners)
+			listener.setChanged(set);
+	}
+	
+	public ISourceReference getFocus() {
+		return currentFocus;
 	}
 	
 	public void changeState(CodeSet set) {
@@ -147,6 +157,10 @@ public class CodeSetManager {
 			counter++;
 		}
 		return -1;
+	}
+
+	public boolean containsSet(CodeSet set) {
+		return rawSets.contains(set);	
 	}
 	
 }
