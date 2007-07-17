@@ -3,6 +3,8 @@ package ca.ucalgary.codesets.views;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -38,18 +40,12 @@ public class SelectionView extends ViewPart {
 	private void makeActions() {
 		clearSetsAction = new Action() {
 			public void run(){
-//				for(CodeSet s: CodeSetManager.instance().sets()){
-//					if(s.state != CodeSet.State.IGNORED){
-//						s.state = CodeSet.State.IGNORED;
-//						barController.setChanged(s);
-//					}
-//				}
 				CodeSetManager.instance().clearStates();
 			}
 		};
 
 		clearSetsAction.setToolTipText("Sets all sets to being ignored");  //change this for specified tooltip
-		clearSetsAction.setText("Clear");
+		clearSetsAction.setText("Clear");		
 		clearSetsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 
