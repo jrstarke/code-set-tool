@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -21,15 +22,26 @@ import ca.ucalgary.codesets.models.CodeSet;
 public class AdvancedViewSection extends Composite {
 	 //this will be the method name
 	ISourceReference isr;
+	int summaryLength;
 	
 	//Just displaying the name of the set right now, not doing anything else
-	public AdvancedViewSection(Composite parent, ISourceReference name) {
+	public AdvancedViewSection(Composite parent, ISourceReference name, int summaryLength) {
 		super(parent, SWT.NO_BACKGROUND);
+		this.summaryLength = summaryLength;
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.fill = false;
 		this.setLayout(layout);
 		this.isr = name;
 		setText();
+		createSummary();
+		restrictSummary();
+	}
+	
+	public void setSummary (int size) {
+		summaryLength = size;
+		clear();
+		createSummary();
+		restrictSummary();
 	}
 	
 	
@@ -37,7 +49,19 @@ public class AdvancedViewSection extends Composite {
 		if(isr != null) {
 			Label label = new Label(this, SWT.NONE);
 			label.setText(new JavaElementLabelProvider().getText(isr));
+			fontStyle(label, SWT.BOLD);
 		}
+	}
+	
+	public void restrictSummary () {
+		int left = summaryLength;
+		
+		for (Control line : lines())
+			if (left > 0) 
+				left--;
+			else	
+				line.dispose();
+		this.layout();
 	}
 
 	void fontStyle(Control widget, int style) {
@@ -69,6 +93,41 @@ public class AdvancedViewSection extends Composite {
 //		styleLink(link, set);
 		return link;
 	}
+	
+	private void createSummary() {
+		String[] summary = null;
+		try {
+			String source = isr.getSource();
+			int startBody = source.indexOf("{");
+			int endBody = source.lastIndexOf("}");
+			if ((startBody >0) && (endBody >1)) {
+				String bodySource = source.substring(startBody+1, endBody-1);
+				summary = bodySource.replace("{", "").replace("}", "").replace("\t", "    ").split("\n");
+				for (String line:summary) {
+					if (line.trim().length() > 0) {
+						Hyperlink link = new Hyperlink(this, SWT.NONE);
+						link.setText(line);
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void clear() {
+		for (Control line: lines()) {
+			line.dispose();
+		}
+	}
 
+	private List<Hyperlink> lines() {
+		ArrayList<Hyperlink> result = new ArrayList<Hyperlink>();
+		for (Control child : getChildren())
+			if (child instanceof Hyperlink)
+				result.add((Hyperlink)child);
+		return result;	
+	}
 	
 }
