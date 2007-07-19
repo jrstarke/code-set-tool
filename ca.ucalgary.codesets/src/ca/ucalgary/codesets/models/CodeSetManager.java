@@ -62,17 +62,15 @@ public class CodeSetManager {
 	}
 	
 	public void clearStates() {
-		for(CodeSet set:rawSets){
-			if(set.state != CodeSet.State.IGNORED){
-				set.state = CodeSet.State.IGNORED;
-				setStateIgnore(set);
-			}
-		}		
+		for(CodeSet set:rawSets)
+			if(set.state != CodeSet.State.IGNORED)
+				setStateIgnore(set);	
 	}
 	
 	public void setStateIgnore(CodeSet set) {
+		set.state = CodeSet.State.IGNORED;
 		for (ICodeSetListener listener : listeners)
-			listener.setChanged(set);
+			listener.stateChanged(set);
 	}
 	
 	public ISourceReference getFocus() {
