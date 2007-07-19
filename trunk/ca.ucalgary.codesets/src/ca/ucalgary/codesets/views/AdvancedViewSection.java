@@ -20,10 +20,10 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ca.ucalgary.codesets.models.CodeSet;
 
 public class AdvancedViewSection extends Composite {
-	 //this will be the method name
+	//this will be the method name
 	ISourceReference isr;
 	int summaryLength;
-	
+
 	//Just displaying the name of the set right now, not doing anything else
 	public AdvancedViewSection(Composite parent, ISourceReference name, int summaryLength) {
 		super(parent, SWT.NO_BACKGROUND);
@@ -36,15 +36,15 @@ public class AdvancedViewSection extends Composite {
 		createSummary();
 		restrictSummary();
 	}
-	
+
 	public void setSummary (int size) {
 		summaryLength = size;
 		clear();
 		createSummary();
 		restrictSummary();
 	}
-	
-	
+
+
 	private void setText() {
 		if(isr != null) {
 			Label label = new Label(this, SWT.NONE);
@@ -52,10 +52,10 @@ public class AdvancedViewSection extends Composite {
 			fontStyle(label, SWT.BOLD);
 		}
 	}
-	
+
 	public void restrictSummary () {
 		int left = summaryLength;
-		
+
 		for (Control line : lines())
 			if (left > 0) 
 				left--;
@@ -70,7 +70,7 @@ public class AdvancedViewSection extends Composite {
 		fd[0].setStyle(style);
 		widget.setFont(new Font(f.getDevice(), fd));
 	}
-	
+
 	public List<Hyperlink> links() {
 		ArrayList<Hyperlink> result = new ArrayList<Hyperlink>();
 		for (Control child : getChildren())
@@ -78,13 +78,13 @@ public class AdvancedViewSection extends Composite {
 				result.add((Hyperlink)child);
 		return result;
 	}
-	
+
 	// dispose of all hyperlinks being displayed
 	public void clearLinks() {
 		for (Hyperlink link : links())
 			link.dispose();
 	}
-	
+
 	// append a hyperlink to this section 
 	public Hyperlink addLink(String text, CodeSet set) {
 		Hyperlink link = new Hyperlink(this, SWT.NONE);
@@ -93,20 +93,22 @@ public class AdvancedViewSection extends Composite {
 //		styleLink(link, set);
 		return link;
 	}
-	
+
 	private void createSummary() {
 		String[] summary = null;
 		try {
 			String source = isr.getSource();
-			int startBody = source.indexOf("{");
-			int endBody = source.lastIndexOf("}");
-			if ((startBody >0) && (endBody >1)) {
-				String bodySource = source.substring(startBody+1, endBody-1);
-				summary = bodySource.replace("{", "").replace("}", "").replace("\t", "    ").split("\n");
-				for (String line:summary) {
-					if (line.trim().length() > 0) {
-						Hyperlink link = new Hyperlink(this, SWT.NONE);
-						link.setText(line);
+			if (source != null) {
+				int startBody = source.indexOf("{");
+				int endBody = source.lastIndexOf("}");
+				if ((startBody >0) && (endBody >1)) {
+					String bodySource = source.substring(startBody+1, endBody-1);
+					summary = bodySource.replace("{", "").replace("}", "").replace("\t", "    ").split("\n");
+					for (String line:summary) {
+						if (line.trim().length() > 0) {
+							Hyperlink link = new Hyperlink(this, SWT.NONE);
+							link.setText(line);
+						}
 					}
 				}
 			}
@@ -115,7 +117,7 @@ public class AdvancedViewSection extends Composite {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void clear() {
 		for (Control line: lines()) {
 			line.dispose();
@@ -129,5 +131,5 @@ public class AdvancedViewSection extends Composite {
 				result.add((Hyperlink)child);
 		return result;	
 	}
-	
+
 }
