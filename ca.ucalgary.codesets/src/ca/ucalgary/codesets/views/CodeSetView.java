@@ -7,6 +7,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import ca.ucalgary.codesets.controllers.DisplayController;
 import ca.ucalgary.codesets.controllers.SideBarController;
+import ca.ucalgary.codesets.models.EditorFocusListener;
 
 // displays sets of source code entities as provided by one of a number of CodeSets.
 public class CodeSetView extends ViewPart {
@@ -21,6 +22,7 @@ public class CodeSetView extends ViewPart {
 		contributeToActionBars();
 		new DisplayController(getViewSite(), parent);
 //		new SideBarController(parent);
+		getSite().getPage().addPartListener(new EditorFocusListener(getSite().getPage().getActiveEditor()));
 	}
 
 	private void hookContextMenu() {

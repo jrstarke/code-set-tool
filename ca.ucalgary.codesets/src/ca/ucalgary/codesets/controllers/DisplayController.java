@@ -19,7 +19,7 @@ import ca.ucalgary.codesets.views.ElementLabelProvider;
 
 // a controller for a simple display of code sets
 public class DisplayController implements ICodeSetListener {
-	TableViewer viewer;
+	private TableViewer viewer;
 
 	public DisplayController(IViewSite site, Composite parent) {
 		initViewer(site, parent);

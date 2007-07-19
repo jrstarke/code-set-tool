@@ -51,7 +51,6 @@ public class RefOfFile extends GenericVisitor {
 	}
 
 
-
 	public boolean visit (MethodInvocation node) {
 		IMethodBinding binding = node.resolveMethodBinding();
 		IJavaElement element = binding.getJavaElement();
