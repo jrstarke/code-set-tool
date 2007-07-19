@@ -102,8 +102,8 @@ public class AdvancedViewSection extends Composite {
 				int startBody = source.indexOf("{");
 				int endBody = source.lastIndexOf("}");
 				if ((startBody >0) && (endBody >1)) {
-					String bodySource = source.substring(startBody+1, endBody-1);
-					summary = bodySource.replace("{", "").replace("}", "").replace("\t", "    ").split("\n");
+					String bodySource = source.substring(startBody, endBody);
+					summary = bodySource.replace("{", "").replace("}", "").replace("\t\t","\t").replace("\t", "    ").split("\n");
 					for (String line:summary) {
 						if (line.trim().length() > 0) {
 							Hyperlink link = new Hyperlink(this, SWT.NONE);
