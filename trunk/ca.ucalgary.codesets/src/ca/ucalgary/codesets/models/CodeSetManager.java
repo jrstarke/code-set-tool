@@ -6,10 +6,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import org.eclipse.jdt.core.ISourceReference;
 
-import org.eclipse.mylar.monitor.ui.MylarMonitorUiPlugin;
 
 // keeps track of all code sets and dispatches events to listeners about 
 // changes to those sets
@@ -38,9 +36,6 @@ public class CodeSetManager {
 	CodeSetManager() {
 		addSet(new CodeSet("navigation", "history"));
 		navigationHistorySet().state = CodeSet.State.INCLUDED;
-		MylarMonitorUiPlugin plugin = MylarMonitorUiPlugin.getDefault();
-		if (plugin != null)
-			plugin.addInteractionListener(new InteractionListener());
 	}
 	
 	// likely only useful for testing purposes 
@@ -117,7 +112,6 @@ public class CodeSetManager {
 		return result;
 	}
 	
-	
 	// the display set is the current elements that should be
 	// displayed (made from combinations of raw sets)
 	public CodeSet displaySet() {
@@ -162,5 +156,4 @@ public class CodeSetManager {
 	public boolean containsSet(CodeSet set) {
 		return rawSets.contains(set);	
 	}
-	
 }
