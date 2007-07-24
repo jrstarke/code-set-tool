@@ -4,6 +4,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
@@ -67,7 +68,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		IJavaElement element = computeSelection(); 
-		if (element != null && ! element.equals(last)) {
+		if (element != null && ! element.equals(last) && !(element instanceof PackageDeclaration)) {
 //			System.out.println(element);
 			last = element;
 			
@@ -112,7 +113,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 		return null;
 	}
 	
-	protected IJavaElement getElementAt(ICompilationUnit unit, int offset,
+	protected static IJavaElement getElementAt(ICompilationUnit unit, int offset,
 			boolean reconcile) throws JavaModelException {
 		if (reconcile) {
 			synchronized (unit) {

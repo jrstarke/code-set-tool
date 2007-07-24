@@ -13,8 +13,6 @@ import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
 
 public class SelectionView extends ViewPart {
-
-
 	Action nameSetAction;   
 	Action clearSetsAction;
 	SideBarController barController;

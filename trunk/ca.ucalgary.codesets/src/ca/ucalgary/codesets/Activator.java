@@ -1,8 +1,12 @@
 package ca.ucalgary.codesets;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import ca.ucalgary.codesets.models.DebugEventListener;
+import ca.ucalgary.codesets.models.EditorFocusListener;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -28,6 +32,13 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		
+		// start listening to editor events 
+		IEditorPart part = getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new EditorFocusListener(part));
+		
+		// start listening to debug events
+		new DebugEventListener();
 	}
 
 	/*

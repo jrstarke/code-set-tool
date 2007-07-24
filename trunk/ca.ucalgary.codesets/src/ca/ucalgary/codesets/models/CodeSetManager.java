@@ -83,7 +83,7 @@ public class CodeSetManager {
 			listener.stateChanged(set);
 	}
 	
-	public void addSet(CodeSet set) {
+	public synchronized void addSet(CodeSet set) {
 		boolean removed = rawSets.remove(set); // O(n), but n <= SET_NUM_LIMIT
 		rawSets.add(set);
 		

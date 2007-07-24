@@ -14,7 +14,9 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.search,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.eclipse.debug.core,
+ org.eclipse.jdt.debug.ui
 Eclipse-LazyStart: true
 Export-Package: ca.ucalgary.codesets,
  ca.ucalgary.codesets.controllers,
