@@ -6,12 +6,9 @@ import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -21,7 +18,6 @@ import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
 import ca.ucalgary.codesets.models.ICodeSetListener;
 import ca.ucalgary.codesets.views.AdvancedViewSection;
-import ca.ucalgary.codesets.views.SideBarSection;
 
 public class AdvancedViewController implements ICodeSetListener  {
 
@@ -62,7 +58,7 @@ public class AdvancedViewController implements ICodeSetListener  {
 
 	void setSummarySize(int size) {
 		if (size != summarySize) {
-			System.out.println(size);
+//			System.out.println(size);
 			summarySize = size;
 			for(Control child:mainSection.getChildren()) {
 				if (child instanceof AdvancedViewSection) {
