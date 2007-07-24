@@ -27,21 +27,24 @@ public class RefOfFile extends GenericVisitor {
 	CodeSet set;
 
 	public void search(IJavaElement element) {
-		this.element = (IMember)element;
-		ICompilationUnit unit = this.element.getCompilationUnit();
-		ASTParser parser= ASTParser.newParser(AST.JLS3);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		set = new CodeSet(new JavaElementLabelProvider().getText(unit), "elements of file");
+		if (element instanceof IMember) {
+			this.element = (IMember) element;
+			ICompilationUnit unit = this.element.getCompilationUnit();
+			ASTParser parser = ASTParser.newParser(AST.JLS3);
+			parser.setSource(unit);
+			parser.setResolveBindings(true);
+			set = new CodeSet(new JavaElementLabelProvider().getText(unit),
+					"elements of file");
 
-		CompilationUnit node = (CompilationUnit) parser.createAST(null);
+			CompilationUnit node = (CompilationUnit) parser.createAST(null);
 
-		if (CodeSetManager.instance().containsSet(set))
-			return;
-		
-		node.accept(this);
-		if (set.size() != 0)
-			CodeSetManager.instance().addSet(set);
+			if (CodeSetManager.instance().containsSet(set))
+				return;
+
+			node.accept(this);
+			if (set.size() != 0)
+				CodeSetManager.instance().addSet(set);
+		}
 	}
 
 	protected boolean visitNode(ASTNode node) {

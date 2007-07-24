@@ -29,17 +29,19 @@ public class ReferenceFromSearch extends GenericVisitor {
 		set = new CodeSet(name, "references from");
 		if (CodeSetManager.instance().containsSet(set))
 			return;
-		
-		this.element = (IMember)element;
-		ICompilationUnit unit = this.element.getCompilationUnit();
-		ASTParser parser= ASTParser.newParser(AST.JLS3);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
 
-		CompilationUnit node = (CompilationUnit) parser.createAST(null);
-		node.accept(this);
-		if (set.size() != 0)
-			CodeSetManager.instance().addSet(set);
+		if (element instanceof IMember) {
+			this.element = (IMember) element;
+			ICompilationUnit unit = this.element.getCompilationUnit();
+			ASTParser parser = ASTParser.newParser(AST.JLS3);
+			parser.setSource(unit);
+			parser.setResolveBindings(true);
+
+			CompilationUnit node = (CompilationUnit) parser.createAST(null);
+			node.accept(this);
+			if (set.size() != 0)
+				CodeSetManager.instance().addSet(set);
+		}
 	}
 
 	protected boolean visitNode(ASTNode node) {

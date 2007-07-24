@@ -21,7 +21,7 @@ public class CodeSetView extends ViewPart {
 		contributeToActionBars();
 		new DisplayController(getViewSite(), parent);
 //		new SideBarController(parent);
-		getSite().getPage().addPartListener(new EditorFocusListener(getSite().getPage().getActiveEditor()));
+//		getSite().getPage().addPartListener(new EditorFocusListener(getSite().getPage().getActiveEditor()));
 	}
 
 	private void hookContextMenu() {
