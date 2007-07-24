@@ -5,29 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.ISourceReference;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.Hyperlink;
-import org.eclipse.ui.part.ViewPart;
 
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
 import ca.ucalgary.codesets.models.ICodeSetListener;
+import ca.ucalgary.codesets.models.TextBox;
 import ca.ucalgary.codesets.views.CodeSetLabel;
-import ca.ucalgary.codesets.views.ElementLabelProvider;
 import ca.ucalgary.codesets.views.SideBarSection;
 
 //a controller for the "side bar" view that allows users to specify the combination
@@ -42,9 +31,15 @@ public class SideBarController implements ICodeSetListener {
 
 	public SideBarController(Composite parent) {
 		sideBar = view(parent);		
+		addTextBox();
 		for (CodeSet set : CodeSetManager.instance().sets()) 
 			setAdded(set);
 		CodeSetManager.instance().addListener(this);
+	}
+
+	private void addTextBox() {
+//		Text text = new Text(sideBar,SWT.BORDER);
+			new TextBox(sideBar);
 	}
 
 	Composite view(Composite parent) {

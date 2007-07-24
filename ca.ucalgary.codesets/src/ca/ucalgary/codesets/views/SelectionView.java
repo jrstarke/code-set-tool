@@ -3,8 +3,6 @@ package ca.ucalgary.codesets.views;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -28,6 +26,8 @@ public class SelectionView extends ViewPart {
 		createToolbar();
 	}
 
+	
+	
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub

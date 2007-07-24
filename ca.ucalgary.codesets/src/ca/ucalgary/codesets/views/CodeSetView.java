@@ -6,7 +6,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import ca.ucalgary.codesets.controllers.DisplayController;
-import ca.ucalgary.codesets.controllers.SideBarController;
 import ca.ucalgary.codesets.models.EditorFocusListener;
 
 // displays sets of source code entities as provided by one of a number of CodeSets.

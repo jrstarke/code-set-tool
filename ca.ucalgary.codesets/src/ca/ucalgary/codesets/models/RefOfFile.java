@@ -1,12 +1,10 @@
 package ca.ucalgary.codesets.models;
 
-import java.util.List;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.ISourceReference;
-import org.eclipse.jdt.core.JavaModelException;
 
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -84,7 +82,7 @@ public class RefOfFile extends GenericVisitor {
 				IJavaElement element = binding.getJavaElement();
 				if (element != null)
 					set.add((ISourceReference)element);
-				System.out.println(element.getElementName());
+//				System.out.println(element.getElementName());
 			}
 		}
 		return visitNode(node);

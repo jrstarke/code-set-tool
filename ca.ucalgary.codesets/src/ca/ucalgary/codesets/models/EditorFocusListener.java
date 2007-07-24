@@ -73,7 +73,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			
 			try {
 				String s = ((ISourceReference)element).getSource();
-				System.out.println(s);
+//				System.out.println(s);
 			} catch (JavaModelException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
