@@ -43,10 +43,9 @@ public class DebugEventListener implements IDebugEventSetListener {
 				if (event.getKind() == DebugEvent.CREATE && source instanceof IProcess) {
 					// start recording new set
 					String name = new SimpleDateFormat("hh:mm a").format(new Date());
-					set = new CodeSet(name, "debugging session");
-
-				} else if (event.getKind() == DebugEvent.SUSPEND && 
-						event.getDetail() == DebugEvent.BREAKPOINT && source instanceof IThread) {
+					set = new CodeSet(name, "debugging xession");
+					
+				} else if (source instanceof IThread) {
 					// add entity from each stack frame to set
 					IStackFrame[] frames = ((IThread)source).getStackFrames();
 					for (int j = 0; j < frames.length; j++)
@@ -61,6 +60,10 @@ public class DebugEventListener implements IDebugEventSetListener {
 				ex.printStackTrace();
 			}
 		}
+	}
+	
+	void addFrameElements(IThread thread) {
+		
 	}
 	
 	// returns the character position at the start of the given line number
