@@ -28,6 +28,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 	JavaEditor editor;
 	ISelectionProvider selectionProvider;
 	IJavaElement last;
+	int lastCaret;
 	
 	public EditorFocusListener(IEditorPart part) {
 		if (part instanceof JavaEditor)
@@ -74,13 +75,11 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			
 			try {
 				String s = ((ISourceReference)element).getSource();
-//				System.out.println(s);
 			} catch (JavaModelException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			CodeSetManager.instance().setFocus((ISourceReference)element);
+			CodeSetManager.instance().setFocus((ISourceReference)element, lastCaret);
 			new ReferenceToSearch().search(element, name(element));
 			new ReferenceFromSearch().search(element, name(element));
 			new RefOfFile().search(element);
@@ -95,6 +94,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 		if (styledText == null) return null;
 
 		int caret = getCaretPosition(sourceViewer, styledText);
+		this.lastCaret = caret;
 
 		IWorkingCopyManager manager = JavaPlugin.getDefault().getWorkingCopyManager();
 		ICompilationUnit unit = manager.getWorkingCopy(editor.getEditorInput());

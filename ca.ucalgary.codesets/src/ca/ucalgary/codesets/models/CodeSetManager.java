@@ -12,6 +12,8 @@ import org.eclipse.jdt.core.ISourceReference;
 // keeps track of all code sets and dispatches events to listeners about 
 // changes to those sets
 public class CodeSetManager {
+	int NAVIGATIONVALUE = 1;
+	
 	// a raw set is a set that is supplied externally
 	LinkedList<CodeSet> rawSets = new LinkedList<CodeSet>();
 	
@@ -52,9 +54,10 @@ public class CodeSetManager {
 		return rawSets.getFirst();
 	}
 	
-	public void setFocus(ISourceReference newFocus) {
+	public void setFocus(ISourceReference newFocus, int newCarat) {
 		currentFocus = newFocus;
 		navigationHistorySet().add(currentFocus);
+		navigationHistorySet().srcCache.incrementPosition(newFocus, newCarat, NAVIGATIONVALUE);
 		for (ICodeSetListener listener : listeners) {
 			listener.setChanged(navigationHistorySet());
 			listener.focusChanged(newFocus);
@@ -121,8 +124,10 @@ public class CodeSetManager {
 		
 		// add in elements from all included sets
 		for (CodeSet s : sets())
-			if (s.state == CodeSet.State.INCLUDED)
+			if (s.state == CodeSet.State.INCLUDED) {
 				set.addAll(s);
+				set.srcCache.updateLineValues(s);
+			}
 		
 		// remove elements from all excluded sets
 		for (CodeSet s : sets())
