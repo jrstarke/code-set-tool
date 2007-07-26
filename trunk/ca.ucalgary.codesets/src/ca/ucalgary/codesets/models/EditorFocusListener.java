@@ -82,7 +82,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			CodeSetManager.instance().setFocus((ISourceReference)element, lastCaret);
 			new ReferenceToSearch().search(element, name(element));
 			new ReferenceFromSearch().search(element, name(element));
-			new RefOfFile().search(element);
+			new MembersOfType().search(element);
 		}
 	}
 	
