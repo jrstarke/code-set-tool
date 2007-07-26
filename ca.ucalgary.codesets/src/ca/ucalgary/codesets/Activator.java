@@ -18,7 +18,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -32,11 +32,12 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+
 		// start listening to editor events 
 		IEditorPart part = getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new EditorFocusListener(part));
-		
+		if (part != null)
+			getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new EditorFocusListener(part));
+
 		// start listening to debug events
 		new DebugEventListener();
 	}

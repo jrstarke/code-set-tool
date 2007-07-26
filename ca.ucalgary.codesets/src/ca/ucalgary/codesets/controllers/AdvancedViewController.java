@@ -4,8 +4,10 @@ import java.util.HashMap;
 
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -23,6 +25,7 @@ public class AdvancedViewController implements ICodeSetListener  {
 
 	HashMap<ISourceReference, AdvancedViewSection> sections = new HashMap<ISourceReference, AdvancedViewSection>();
 	Composite mainSection;
+	ScrolledComposite sc;
 	int summarySize = 5;
 	int MAXSUMMARYSIZE = 10;
 
@@ -33,10 +36,18 @@ public class AdvancedViewController implements ICodeSetListener  {
 	}
 
 	Composite view(Composite parent) {
-		Composite mainSection = new Composite(parent, SWT.NONE | SWT.V_SCROLL);
-		RowLayout layout = new RowLayout(SWT.VERTICAL);
-		layout.spacing = 1;
+		sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		Composite mainSection = new Composite(sc, SWT.NONE);
+		sc.setContent(mainSection);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.horizontalSpacing = 1;
+//		RowLayout layout = new RowLayout(SWT.VERTICAL);
+//		layout.spacing = 1;
 		mainSection.setLayout(layout);
+		sc.setMinSize(mainSection.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return mainSection;
 	}
 
@@ -66,6 +77,7 @@ public class AdvancedViewController implements ICodeSetListener  {
 					section.setSummary(set.srcCache.source(section.getISR(), summarySize));
 				}
 			}
+			sc.setMinSize(mainSection.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			mainSection.layout();
 		}
 	}
@@ -113,6 +125,7 @@ public class AdvancedViewController implements ICodeSetListener  {
 					sections.put(((ISourceReference)isr), new AdvancedViewSection(mainSection, (ISourceReference)isr, set.srcCache.source((ISourceReference)isr, summarySize)));
 				}
 			}
+			sc.setMinSize(mainSection.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			mainSection.layout();
 		}
 		catch(Exception e){
