@@ -12,11 +12,13 @@ import org.eclipse.jdt.ui.search.ElementQuerySpecification;
 import org.eclipse.jdt.ui.search.QuerySpecification;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 
 // uses eclipse's search api to produce a set of all elements that reference
 // a given IJavaElement
 public class ReferenceToSearch implements ISearchResultListener {
+	int REFERENCETOVALUE = 1;
 	IJavaElement element;
 	CodeSet set;
 	
@@ -44,12 +46,16 @@ public class ReferenceToSearch implements ISearchResultListener {
 	 */
 	public void searchResultChanged (SearchResultEvent event) {
 		if (event instanceof MatchEvent) {
+			Match[] matches = ((MatchEvent)event).getMatches();
 			boolean empty = set.size() == 0;
 			JavaSearchResult results = (JavaSearchResult)event.getSearchResult();
 			Object[] elements = results.getElements();
-			for (int i = 0; i < elements.length; i++) {
-				if (!element.equals((IJavaElement)elements[i]))
-					set.add((ISourceReference)elements[i]);
+			for (int i = 0; i < matches.length; i++) {
+				ISourceReference isr = (ISourceReference)matches[i].getElement();
+				if (!element.equals(isr)) {
+					set.add(isr);
+					set.srcCache.incrementPosition(isr, matches[i].getOffset(), REFERENCETOVALUE);
+				}
 			}
 			if (empty && set.size() > 0)
 				CodeSetManager.instance().addSet(set);

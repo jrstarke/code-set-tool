@@ -12,10 +12,12 @@ public class CodeSet extends HashSet<ISourceReference> implements IStructuredCon
 	public State state = State.IGNORED;
 	public String name;
 	public String category;
+	public SourceCache srcCache;
 	
 	public CodeSet(String name, String category) {
 		this.name = name;
 		this.category = category;
+		this.srcCache = new SourceCache();
 	}
 	
 	// move to the "next" state

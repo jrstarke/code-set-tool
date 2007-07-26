@@ -57,13 +57,13 @@ public class AdvancedViewController implements ICodeSetListener  {
 	}
 
 	void setSummarySize(int size) {
+		CodeSet set = CodeSetManager.instance().displaySet();
 		if (size != summarySize) {
-//			System.out.println(size);
 			summarySize = size;
 			for(Control child:mainSection.getChildren()) {
 				if (child instanceof AdvancedViewSection) {
 					AdvancedViewSection section = (AdvancedViewSection) child;
-					section.setSummary(summarySize);
+					section.setSummary(set.srcCache.source(section.getISR(), summarySize));
 				}
 			}
 			mainSection.layout();
@@ -110,7 +110,7 @@ public class AdvancedViewController implements ICodeSetListener  {
 			Object[] elements = set.getElements(null);
 			for(Object isr: elements){
 				if(isr instanceof ISourceReference/* && !sections.containsKey((ISourceReference)isr)*/){
-					sections.put(((ISourceReference)isr), new AdvancedViewSection(mainSection, (ISourceReference)isr, summarySize));
+					sections.put(((ISourceReference)isr), new AdvancedViewSection(mainSection, (ISourceReference)isr, set.srcCache.source((ISourceReference)isr, summarySize)));
 				}
 			}
 			mainSection.layout();

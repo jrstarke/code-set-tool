@@ -22,6 +22,7 @@ import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 //uses eclipse's ast parser to compute the set of all references from a
 //given element.
 public class ReferenceFromSearch extends GenericVisitor {
+	int REFERENCEFROMVALUE = 1;
 	IMember element;
 	CodeSet set;
 
@@ -56,16 +57,20 @@ public class ReferenceFromSearch extends GenericVisitor {
 	public boolean visit (MethodInvocation node) {
 		IMethodBinding binding = node.resolveMethodBinding();
 		IJavaElement element = binding.getJavaElement();
-		if (element != null)
+		if (element != null) {
 			set.add((ISourceReference)element);
+			set.srcCache.incrementPosition((ISourceReference)this.element, node.getStartPosition(), REFERENCEFROMVALUE);
+		}
 		return visitNode(node);
 	}
 
 	public boolean visit (ClassInstanceCreation node) {
 		IMethodBinding binding = node.resolveConstructorBinding();
 		IJavaElement element = binding.getJavaElement();
-		if (element != null)
+		if (element != null) {
 			set.add((ISourceReference)element);
+			set.srcCache.incrementPosition((ISourceReference)this.element, node.getStartPosition(), REFERENCEFROMVALUE);
+		}
 		return visitNode(node);
 	}
 
