@@ -10,6 +10,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -33,6 +34,7 @@ public class SideBarController implements ICodeSetListener {
 	
 	HashMap<String, SideBarSection> sections = new HashMap<String, SideBarSection>();
 	Composite sideBar;
+	ScrolledComposite sc;
 	IToolBarManager toolBarManager;
 
 	public SideBarController(Composite parent) {
@@ -49,11 +51,17 @@ public class SideBarController implements ICodeSetListener {
 	}
 
 	Composite view(Composite parent) {
-		Composite sideBar = new Composite(parent, SWT.NONE);
+		// sc is a scrolled Composite, basically a container with scroll bars for the sidebar content
+		sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		Composite sideBar = new Composite(sc, SWT.NONE);
+		sc.setContent(sideBar);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.wrap = true;
 		layout.spacing  = 5;
 		sideBar.setLayout(layout);
+		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return sideBar;
 	}
 
@@ -75,6 +83,7 @@ public class SideBarController implements ICodeSetListener {
 		section.clear();
 		for (CodeSet set : sets)
 			addLink(section, set);
+		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sideBar.layout();
 	}
 
@@ -118,6 +127,7 @@ public class SideBarController implements ICodeSetListener {
 			else
 				label.demphasizeLink();
 		}
+		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sideBar.layout();
 	}
 	
