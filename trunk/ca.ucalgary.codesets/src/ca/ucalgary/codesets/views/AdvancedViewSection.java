@@ -21,14 +21,15 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ca.ucalgary.codesets.models.CodeSet;
+import ca.ucalgary.codesets.models.LineValue;
 
 public class AdvancedViewSection extends Composite {
 	//this will be the method name
 	ISourceReference isr;
-	String[] summary;
+	LineValue[] summary;
 
 	//Just displaying the name of the set right now, not doing anything else
-	public AdvancedViewSection(Composite parent, ISourceReference name, String[] summary) {
+	public AdvancedViewSection(Composite parent, ISourceReference name, LineValue[] summary) {
 		super(parent, SWT.NO_BACKGROUND);
 		this.summary = summary;
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
@@ -39,7 +40,7 @@ public class AdvancedViewSection extends Composite {
 		createSummary();
 	}
 
-	public void setSummary (String[] summary) {
+	public void setSummary (LineValue[] summary) {
 		this.summary = summary;
 		clear();
 		createSummary();
@@ -106,11 +107,22 @@ public class AdvancedViewSection extends Composite {
 	}
 
 	private void createSummary() {
-		if (summary != null) 
-			for (String line:summary) {
+		int lastLine = -1;
+		if (summary != null) {
+			for (LineValue line:summary) {
+				if (((line.number() != 0) || (line.number() != 1)) && (lastLine != (line.number() -1))) {
+					Hyperlink elipsis = new Hyperlink(this,SWT.NONE);
+					elipsis.setText("...");
+				}	
 				Hyperlink link = new Hyperlink(this, SWT.NONE);
-				link.setText(line);
+				link.setText(line.source());
+				lastLine = line.number();
 			}
+			if ((lastLine + 1) != summary[0].lastNumber()) {
+				Hyperlink elipsis = new Hyperlink(this,SWT.NONE);
+				elipsis.setText("...");
+			}
+		}	
 	}
 
 	private void clear() {

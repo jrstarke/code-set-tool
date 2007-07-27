@@ -71,8 +71,8 @@ public class SourceCache {
 			source[line].incrementValue(value);
 	}
 
-	public String[] source(ISourceReference isr, int numLines) {
-		String[] sizedSource = null;
+	public LineValue[] source(ISourceReference isr, int numLines) {
+		LineValue[] sizedSource = null;
 		if (numLines > 0) {
 			LineValue[] source = get(isr);
 			if (source != null) {  //If this element Actually has sourcecode available
@@ -87,9 +87,9 @@ public class SourceCache {
 					else
 						output.add(l);
 				}
-				sizedSource = new String[output.size()];
+				sizedSource = new LineValue[output.size()];
 				for (int i = 0; i < output.size(); i++) {
-					sizedSource[i] = output.get(i).source();
+					sizedSource[i] = output.get(i);
 				}
 			}
 		}
@@ -117,7 +117,7 @@ public class SourceCache {
 			String[] temp = rawSource.replace("\t\t", "\t").split("\n");
 			formattedSource = new LineValue[temp.length];
 			for (int i = 0; i < temp.length; i++) {
-				formattedSource[i] = new LineValue(temp[i],INITIALLINEVALUE);
+				formattedSource[i] = new LineValue(temp[i],INITIALLINEVALUE, i, temp.length);
 			}
 		}
 		srcCache.put(isr, formattedSource);
@@ -172,13 +172,14 @@ public class SourceCache {
 		if (tempSource != null) {
 			for (LineValue l:tempSource) {
 				if (l.source().replace("{", "").replace("}", "").trim().length() > 0)
-					cleanedSource.add(new LineValue(l.source().replace("\t","    "),l.value()));
+					cleanedSource.add(new LineValue(l.source().replace("\t","    "),l.value(),l.number(),tempSource.length));
 			}
 		}
 
 		LineValue[] output = new LineValue[cleanedSource.size()];
 		for (int i = 0; i < output.length; i++) {
-			output[i] = cleanedSource.get(i);
+			LineValue line = cleanedSource.get(i);
+			output[i] = new LineValue(line.source(),line.value(),i,output.length);
 		}
 		return output;
 	}
