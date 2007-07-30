@@ -106,7 +106,7 @@ public class SourceCache {
 				int startBody = rawSource.indexOf("{");
 				int endBody = rawSource.lastIndexOf("}");
 				if ((startBody >0) && (endBody >2)) {
-					rawSource = rawSource.substring(startBody +1, endBody -1);
+					rawSource = rawSource.substring(startBody +1, endBody -1);  
 				}
 				else rawSource = rawSource.replace("{", "").replace("}", "");
 			}

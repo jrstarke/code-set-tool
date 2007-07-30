@@ -34,6 +34,8 @@ public class AdvancedViewController implements ICodeSetListener  {
 		createScale(mainSection, this);
 		CodeSetManager.instance().addListener(this);
 	}
+	
+	
 
 	Composite view(Composite parent) {
 		sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -113,7 +115,9 @@ public class AdvancedViewController implements ICodeSetListener  {
 		changeDisplaySet(set);
 	}
 
-
+	public Composite getAdvancedView() {
+		return this.mainSection;
+	}
 	//updates the view with the elements that are in each set.
 	private void changeDisplaySet(CodeSet set) {
 		set = CodeSetManager.instance().displaySet();
