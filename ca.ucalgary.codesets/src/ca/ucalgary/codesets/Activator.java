@@ -2,6 +2,9 @@ package ca.ucalgary.codesets;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -34,8 +37,23 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 
 		// start listening to editor events 
-		IEditorPart part = getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-		if (part != null)
+		IEditorPart part = null; //= getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+		
+		IWorkbench workbench = getWorkbench();
+		if(workbench != null) {
+			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+			if(activeWindow != null){
+				IWorkbenchPage iwp = activeWindow.getActivePage();
+				if(iwp != null){
+					part = iwp.getActiveEditor();
+				}
+			}
+		}
+		
+		
+//		new EditorFocusListener(part);
+		
+//		if (part != null)
 			getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new EditorFocusListener(part));
 
 		// start listening to debug events

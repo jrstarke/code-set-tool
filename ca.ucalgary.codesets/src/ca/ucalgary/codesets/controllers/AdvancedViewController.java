@@ -8,7 +8,6 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Scale;
@@ -28,13 +27,13 @@ public class AdvancedViewController implements ICodeSetListener  {
 	ScrolledComposite sc;
 	int summarySize = 5;
 	int MAXSUMMARYSIZE = 10;
+	
 
 	public AdvancedViewController(Composite parent) {
 		mainSection = view(parent);
 		createScale(mainSection, this);
 		CodeSetManager.instance().addListener(this);
 	}
-	
 	
 
 	Composite view(Composite parent) {
@@ -126,7 +125,10 @@ public class AdvancedViewController implements ICodeSetListener  {
 			Object[] elements = set.getElements(null);
 			for(Object isr: elements){
 				if(isr instanceof ISourceReference/* && !sections.containsKey((ISourceReference)isr)*/){
-					sections.put(((ISourceReference)isr), new AdvancedViewSection(mainSection, (ISourceReference)isr, set.srcCache.source((ISourceReference)isr, summarySize)));
+					AdvancedViewSection section = new AdvancedViewSection(mainSection, (ISourceReference)isr, set.srcCache.source((ISourceReference)isr, summarySize));
+					sections.put(((ISourceReference)isr), section);
+					
+					
 				}
 			}
 			sc.setMinSize(mainSection.computeSize(SWT.DEFAULT, SWT.DEFAULT));

@@ -1,12 +1,10 @@
 package ca.ucalgary.codesets.views;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.SWT;
@@ -20,6 +18,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
+import ca.ucalgary.codesets.controllers.AdvancedViewController;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.LineValue;
 
