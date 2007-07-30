@@ -13,7 +13,7 @@ import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
 
 public class SelectionView extends ViewPart {
-	Action nameSetAction;   
+//	Action nameSetAction;   
 	Action clearSetsAction;
 	SideBarController barController;
 	
@@ -23,8 +23,6 @@ public class SelectionView extends ViewPart {
 		makeActions();
 		createToolbar();
 	}
-
-	
 	
 	@Override
 	public void setFocus() {
@@ -47,26 +45,26 @@ public class SelectionView extends ViewPart {
 		clearSetsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 
-		nameSetAction = new Action() {
-			public void run(){
-				InputDialog dialog = new InputDialog(barController.getSideBar().getShell(), 
-						"Set Name",
-						"Please enter a name for the new set:", "", null);
-				dialog.open();
-				String name = dialog.getValue();
-				if (name != null) {
-					CodeSet currentSet = CodeSetManager.instance().displaySet();
-					currentSet.name = name;
-					currentSet.category = "named";
-					CodeSetManager.instance().addSet(currentSet);
-				}
-			}
-		};
+//		nameSetAction = new Action() {
+//			public void run(){
+//				InputDialog dialog = new InputDialog(barController.getSideBar().getShell(), 
+//						"Set Name",
+//						"Please enter a name for the new set:", "", null);
+//				dialog.open();
+//				String name = dialog.getValue();
+//				if (name != null) {
+//					CodeSet currentSet = CodeSetManager.instance().displaySet();
+//					currentSet.name = name;
+//					currentSet.category = "named";
+//					CodeSetManager.instance().addSet(currentSet);
+//				}
+//			}
+//		};
 		
-		nameSetAction.setToolTipText("Renames this set");  //change this for specified tooltip
-		nameSetAction.setText("Name this Set");
-		nameSetAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+//		nameSetAction.setToolTipText("Renames this set");  //change this for specified tooltip
+//		nameSetAction.setText("Name this Set");
+//		nameSetAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+//				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 	}
 	
     /**
@@ -74,7 +72,7 @@ public class SelectionView extends ViewPart {
      */
     private void createToolbar() {
             IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
-            mgr.add(nameSetAction);
+//            mgr.add(nameSetAction);
             mgr.add(clearSetsAction);
     }
 	

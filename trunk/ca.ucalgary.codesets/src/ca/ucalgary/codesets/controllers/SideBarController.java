@@ -23,7 +23,7 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
 import ca.ucalgary.codesets.models.ICodeSetListener;
-import ca.ucalgary.codesets.models.TextBox;
+import ca.ucalgary.codesets.models.SearchBox;
 import ca.ucalgary.codesets.views.CodeSetLabel;
 import ca.ucalgary.codesets.views.SideBarSection;
 
@@ -47,7 +47,7 @@ public class SideBarController implements ICodeSetListener {
 
 	private void addTextBox() {
 //		Text text = new Text(sideBar,SWT.BORDER);
-			new TextBox(sideBar);
+			new SearchBox(sideBar);
 	}
 
 	Composite view(Composite parent) {

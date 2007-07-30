@@ -118,7 +118,7 @@ public class AdvancedViewSection extends Composite {
 				link.setText(line.source());
 				lastLine = line.number();
 			}
-			if ((lastLine + 1) != summary[0].lastNumber()) {
+			if (lastLine >= 0 && (lastLine + 1) != summary[0].lastNumber()) {   //Something is going on here, bug? ArrayIndexOutOFBoundsException for 0
 				Hyperlink elipsis = new Hyperlink(this,SWT.NONE);
 				elipsis.setText("...");
 			}
