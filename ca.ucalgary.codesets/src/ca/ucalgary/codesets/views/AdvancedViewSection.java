@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.RowLayout;
@@ -18,7 +19,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
-import ca.ucalgary.codesets.controllers.AdvancedViewController;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.LineValue;
 
@@ -26,6 +26,8 @@ public class AdvancedViewSection extends Composite {
 	//this will be the method name
 	ISourceReference isr;
 	LineValue[] summary;
+	
+	private Color foregroundColor = new Color(null,229,229,229);
 
 	//Just displaying the name of the set right now, not doing anything else
 	public AdvancedViewSection(Composite parent, ISourceReference name, LineValue[] summary) {
@@ -77,6 +79,7 @@ public class AdvancedViewSection extends Composite {
 
 	void fontStyle(Control widget, int style) {
 		Font f = widget.getFont();
+		f.size = 12;					//sets the size of the font
 		FontData[] fd = f.getFontData();
 		fd[0].setStyle(style);
 		widget.setFont(new Font(f.getDevice(), fd));
@@ -85,8 +88,10 @@ public class AdvancedViewSection extends Composite {
 	public List<Hyperlink> links() {
 		ArrayList<Hyperlink> result = new ArrayList<Hyperlink>();
 		for (Control child : getChildren())
-			if (child instanceof Hyperlink)
+			if (child instanceof Hyperlink){
 				result.add((Hyperlink)child);
+				child.setForeground(new Color(null,229,229,229));
+			}
 		return result;
 	}
 
@@ -100,8 +105,8 @@ public class AdvancedViewSection extends Composite {
 	public Hyperlink addLink(String text, CodeSet set) {
 		Hyperlink link = new Hyperlink(this, SWT.NONE);
 		link.setText(text);
+		link.setForeground(new Color(null,229,229,229));
 		link.setData(set);
-//		styleLink(link, set);
 		return link;
 	}
 
@@ -112,14 +117,17 @@ public class AdvancedViewSection extends Composite {
 				if (((line.number() != 0) || (line.number() != 1)) && (lastLine != (line.number() -1))) {
 					Hyperlink elipsis = new Hyperlink(this,SWT.NONE);
 					elipsis.setText("...");
+					elipsis.setForeground(foregroundColor);
 				}	
 				Hyperlink link = new Hyperlink(this, SWT.NONE);
 				link.setText(line.source());
+				link.setForeground(foregroundColor);
 				lastLine = line.number();
 			}
 			if (lastLine >= 0 && (lastLine + 1) != summary[0].lastNumber()) {   //Something is going on here, bug? ArrayIndexOutOFBoundsException for 0
 				Hyperlink elipsis = new Hyperlink(this,SWT.NONE);
 				elipsis.setText("...");
+				elipsis.setForeground(foregroundColor);
 			}
 		}	
 	}
