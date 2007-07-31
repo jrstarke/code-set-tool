@@ -27,7 +27,7 @@ public class AdvancedViewSection extends Composite {
 	ISourceReference isr;
 	LineValue[] summary;
 	
-	private Color foregroundColor = new Color(null,229,229,229);
+	private Color foregroundColor = new Color(null,128,128,128);
 
 	//Just displaying the name of the set right now, not doing anything else
 	public AdvancedViewSection(Composite parent, ISourceReference name, LineValue[] summary) {

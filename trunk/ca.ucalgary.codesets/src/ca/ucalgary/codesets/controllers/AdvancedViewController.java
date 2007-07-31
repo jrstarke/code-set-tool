@@ -7,6 +7,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -27,6 +28,7 @@ public class AdvancedViewController implements ICodeSetListener  {
 	ScrolledComposite sc;
 	int summarySize = 5;
 	int MAXSUMMARYSIZE = 10;
+	Color background = new Color(null,255,255,255);
 	
 
 	public AdvancedViewController(Composite parent) {
@@ -48,6 +50,8 @@ public class AdvancedViewController implements ICodeSetListener  {
 //		RowLayout layout = new RowLayout(SWT.VERTICAL);
 //		layout.spacing = 1;
 		mainSection.setLayout(layout);
+		mainSection.setBackground(background);
+		mainSection.setBackgroundMode(SWT.INHERIT_FORCE);
 		sc.setMinSize(mainSection.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return mainSection;
 	}
