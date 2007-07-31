@@ -8,7 +8,10 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Scale;
@@ -29,26 +32,33 @@ public class AdvancedViewController implements ICodeSetListener  {
 	int summarySize = 5;
 	int MAXSUMMARYSIZE = 10;
 	Color background = new Color(null,255,255,255);
-	
+
 
 	public AdvancedViewController(Composite parent) {
 		mainSection = view(parent);
-		createScale(mainSection, this);
 		CodeSetManager.instance().addListener(this);
 	}
-	
+
 
 	Composite view(Composite parent) {
-		sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		Composite container = new Composite(parent, SWT.NONE);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 1;
+		container.setLayout(gridLayout);
+		createScale(container,this);
+		sc = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
+		GridData gridData = new GridData();
+		gridData.verticalAlignment = GridData.FILL;
+		gridData.horizontalAlignment = GridData.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.grabExcessVerticalSpace = true;
+		sc.setLayoutData(gridData);
 		Composite mainSection = new Composite(sc, SWT.NONE);
 		sc.setContent(mainSection);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.horizontalSpacing = 1;
-//		RowLayout layout = new RowLayout(SWT.VERTICAL);
-//		layout.spacing = 1;
+		RowLayout layout = new RowLayout(SWT.VERTICAL);
+		layout.spacing = 1;
 		mainSection.setLayout(layout);
 		mainSection.setBackground(background);
 		mainSection.setBackgroundMode(SWT.INHERIT_FORCE);
@@ -56,7 +66,7 @@ public class AdvancedViewController implements ICodeSetListener  {
 		return mainSection;
 	}
 
-	void createScale (Composite parent, final AdvancedViewController view) {
+	Scale createScale (Composite parent, final AdvancedViewController view) {
 		Scale scale = new Scale(parent, SWT.HORIZONTAL);
 		scale.setMaximum(MAXSUMMARYSIZE);
 		scale.setMinimum(0);
@@ -70,6 +80,7 @@ public class AdvancedViewController implements ICodeSetListener  {
 				view.setSummarySize(scale.getSelection());
 			}
 		});
+		return scale;
 	}
 
 	void setSummarySize(int size) {
@@ -131,8 +142,8 @@ public class AdvancedViewController implements ICodeSetListener  {
 				if(isr instanceof ISourceReference/* && !sections.containsKey((ISourceReference)isr)*/){
 					AdvancedViewSection section = new AdvancedViewSection(mainSection, (ISourceReference)isr, set.srcCache.source((ISourceReference)isr, summarySize));
 					sections.put(((ISourceReference)isr), section);
-					
-					
+
+
 				}
 			}
 			sc.setMinSize(mainSection.computeSize(SWT.DEFAULT, SWT.DEFAULT));
