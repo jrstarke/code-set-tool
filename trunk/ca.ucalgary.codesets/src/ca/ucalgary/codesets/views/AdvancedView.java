@@ -47,7 +47,7 @@ public class AdvancedView extends ViewPart  {
 		}
 	};
 	
-	nameSetAction.setToolTipText("Renames this set");  //change this for specified tooltip
+	nameSetAction.setToolTipText("Name this Set");  //change this for specified tooltip
 	nameSetAction.setText("Name this Set");
 	nameSetAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
