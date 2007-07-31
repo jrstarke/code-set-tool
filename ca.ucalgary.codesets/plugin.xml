@@ -9,21 +9,21 @@
             id="ca.ucalgary.codesets">
       </category>
       <view
-            name="Code Sets"
+            name="Old View"
             icon="icons/sample.gif"
             category="ca.ucalgary.codesets"
             class="ca.ucalgary.codesets.views.CodeSetView"
             id="ca.ucalgary.codesets.views.CodeSetView">
       </view>
       <view
-            name="Group Selection"
+            name="Set Explorer"
             icon="icons/sample.gif"
             category="ca.ucalgary.codesets"
             class="ca.ucalgary.codesets.views.SelectionView"
             id="ca.ucalgary.codesets.views.SelectionView">
       </view>
         <view
-            name="Main Group"
+            name="Code Set"
             icon="icons/sample.gif"
             category="ca.ucalgary.codesets"
             class="ca.ucalgary.codesets.views.AdvancedView"
