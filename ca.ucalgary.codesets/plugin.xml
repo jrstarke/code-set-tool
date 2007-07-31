@@ -16,7 +16,7 @@
             id="ca.ucalgary.codesets.views.CodeSetView">
       </view>
       <view
-            name="Set Explorer"
+            name="All Sets"
             icon="icons/sample.gif"
             category="ca.ucalgary.codesets"
             class="ca.ucalgary.codesets.views.SelectionView"
