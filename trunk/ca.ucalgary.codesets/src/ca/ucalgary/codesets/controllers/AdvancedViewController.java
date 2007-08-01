@@ -1,7 +1,9 @@
 package ca.ucalgary.codesets.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -22,12 +24,14 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
 import ca.ucalgary.codesets.models.ICodeSetListener;
+import ca.ucalgary.codesets.views.AdvancedViewGroup;
 import ca.ucalgary.codesets.views.AdvancedViewSection;
 
 public class AdvancedViewController implements ICodeSetListener  {
 
-	HashMap<ISourceReference, AdvancedViewSection> sections = new HashMap<ISourceReference, AdvancedViewSection>();
+	HashMap<ISourceReference, Composite> sections = new HashMap<ISourceReference, Composite>();
 	Composite mainSection;
+	HashMap<ISourceReference,ArrayList<ISourceReference>> groups;
 	ScrolledComposite sc;
 	int summarySize = 5;
 	int MAXSUMMARYSIZE = 10;
@@ -57,11 +61,12 @@ public class AdvancedViewController implements ICodeSetListener  {
 		sc.setLayoutData(gridData);
 		Composite mainSection = new Composite(sc, SWT.NONE);
 		sc.setContent(mainSection);
-		RowLayout layout = new RowLayout(SWT.VERTICAL);
-		layout.spacing = 1;
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.verticalSpacing = 1;
 		mainSection.setLayout(layout);
 		mainSection.setBackground(background);
-		mainSection.setBackgroundMode(SWT.INHERIT_FORCE);
+		mainSection.setBackgroundMode(SWT.DEFAULT);
 		sc.setMinSize(mainSection.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return mainSection;
 	}
@@ -138,10 +143,23 @@ public class AdvancedViewController implements ICodeSetListener  {
 		clear();
 		try{
 			Object[] elements = set.getElements(null);
+			groups = new HashMap<ISourceReference,ArrayList<ISourceReference>>();
 			for(Object isr: elements){
 				if(isr instanceof ISourceReference/* && !sections.containsKey((ISourceReference)isr)*/){
-					AdvancedViewSection section = new AdvancedViewSection(mainSection, (ISourceReference)isr, set.srcCache.source((ISourceReference)isr, summarySize));
-					sections.put(((ISourceReference)isr), section);
+					ISourceReference type = (ISourceReference)((IJavaElement) isr).getAncestor(IJavaElement.TYPE);
+					addSetToGroup(type,(ISourceReference)isr);
+				}
+			}
+			for(ISourceReference type:groups.keySet()) {
+				AdvancedViewGroup grouptitle = new AdvancedViewGroup(mainSection,type);
+				GridData gridData = new GridData();
+				gridData.horizontalAlignment = GridData.FILL;
+				gridData.verticalIndent = 10;
+				grouptitle.setLayoutData(gridData);
+				sections.put(type, grouptitle);
+				for (ISourceReference element:groups.get(type)) {
+					AdvancedViewSection section = new AdvancedViewSection(mainSection, element, set.srcCache.source(element, summarySize));
+					sections.put(element, section);
 
 
 				}
@@ -155,13 +173,22 @@ public class AdvancedViewController implements ICodeSetListener  {
 	}
 
 	public void clear() {
-		for(AdvancedViewSection sect:sections.values())
-			sect.dispose();
-		sections = new HashMap<ISourceReference, AdvancedViewSection>();
+		for(Control sect:mainSection.getChildren())
+			sect.dispose(); 
+//		sections = new HashMap<ISourceReference, Composite>();
 	}
 
 	public void setAdded(CodeSet set) {
 
 
+	}
+	
+	public void addSetToGroup(ISourceReference groupname, ISourceReference element) {
+		ArrayList<ISourceReference> group = groups.get(groupname);
+		if (group == null) {
+			group = new ArrayList<ISourceReference>();
+			groups.put(groupname, group);
+		}
+		group.add(element);
 	}
 }
