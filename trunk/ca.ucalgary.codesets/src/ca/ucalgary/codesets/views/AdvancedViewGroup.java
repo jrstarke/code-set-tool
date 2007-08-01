@@ -32,17 +32,24 @@ public class AdvancedViewGroup extends Composite {
 	//Just displaying the name of the set right now, not doing anything else
 	public AdvancedViewGroup(Composite parent, ISourceReference name) {
 		super(parent, SWT.NONE);
-		FillLayout layout = new FillLayout();
-		layout.type = SWT.HORIZONTAL;
+		RowLayout layout = new RowLayout();
 		layout.marginHeight = 3;
+		layout.fill = true;
 		this.setLayout(layout);
-		
 		this.setBackground(backgroundColor);
 		this.isr = name;
+		setIcon();
 		setText();
 		this.layout();
 	}
 
+	private void setIcon() {
+		if (isr != null) {
+			Label label = new Label(this, SWT.NONE);
+			label.setImage(new JavaElementLabelProvider().getImage(isr));
+		}
+	}
+	
 	private void setText() {
 		if(isr != null) {
 			Label label = new Label(this, SWT.NONE);
