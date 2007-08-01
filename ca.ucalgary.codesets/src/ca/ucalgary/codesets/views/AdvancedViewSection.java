@@ -50,7 +50,11 @@ public class AdvancedViewSection extends Composite {
 
 	private void setText() {
 		if(isr != null) {
-			Label label = new Label(this, SWT.NONE);
+			Composite container = new Composite(this,SWT.NONE);
+			container.setLayout(new RowLayout());
+			Label image = new Label(container, SWT.NONE);
+			image.setImage(new JavaElementLabelProvider().getImage(isr));
+			Label label = new Label(container, SWT.NONE);
 			label.setText(new JavaElementLabelProvider().getText(isr));
 			fontStyle(label, SWT.BOLD);
 
