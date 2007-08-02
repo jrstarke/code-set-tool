@@ -10,6 +10,7 @@ import org.osgi.framework.BundleContext;
 
 import ca.ucalgary.codesets.models.DebugEventListener;
 import ca.ucalgary.codesets.models.EditorFocusListener;
+import ca.ucalgary.codesets.controllers.Logger;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -35,6 +36,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		Logger log = Logger.instance();
 
 		// start listening to editor events 
 		IEditorPart part = null; //= getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();

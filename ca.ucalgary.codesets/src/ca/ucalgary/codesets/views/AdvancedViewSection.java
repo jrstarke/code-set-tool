@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
+import ca.ucalgary.codesets.controllers.Logger;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.LineValue;
 
@@ -54,13 +55,14 @@ public class AdvancedViewSection extends Composite {
 			container.setLayout(new RowLayout());
 			Label image = new Label(container, SWT.NONE);
 			image.setImage(new JavaElementLabelProvider().getImage(isr));
-			Label label = new Label(container, SWT.NONE);
+			final Label label = new Label(container, SWT.NONE);
 			label.setText(new JavaElementLabelProvider().getText(isr));
 			fontStyle(label, SWT.BOLD);
 
 //			Double Click Listener, to open the element in the Java Editor
 			label.addListener(SWT.MouseDoubleClick, new Listener() {
 				public void handleEvent(Event event) {
+					Logger.instance().addEvent("Double Clicked" +"\t" + label);
 					openElement((IJavaElement)isr);
 //					label.setBackground(new Color(null,255,255,255));
 				}
