@@ -2,9 +2,21 @@ package ca.ucalgary.codesets.models;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.search.IJavaSearchConstants;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.internal.core.ResolvedSourceMethod;
+import org.eclipse.jdt.internal.ui.search.JavaSearchQuery;
+import org.eclipse.jdt.internal.ui.search.JavaSearchResult;
+import org.eclipse.jdt.ui.search.PatternQuerySpecification;
+import org.eclipse.search.ui.ISearchResultListener;
+import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -42,6 +54,7 @@ public class SearchBox extends Composite{
 		button.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				search();
+				searchNumeroTwo();
 			}
 		});		
 	}
@@ -69,6 +82,29 @@ public class SearchBox extends Composite{
 			CodeSetManager.instance.addSet(searchSet);
 			Logger.instance().addEvent("Searched for "+"\t"+text.getText());
 		}
+	}
+	
+	private void searchNumeroTwo() {
+		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().equals("")) {
+
+			IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
+			SearchEngine.createWorkspaceScope().setIncludesClasspaths(true);
+			searchScope = SearchEngine.createWorkspaceScope();
+			JavaSearchQuery query= new JavaSearchQuery(new PatternQuerySpecification(text.getText(), IJavaSearchConstants.METHOD | IJavaSearchConstants.CLASS | IJavaSearchConstants.PACKAGE | IJavaSearchConstants.FIELD | IJavaSearchConstants.ALL_OCCURRENCES,false,  IJavaSearchConstants.ALL_OCCURRENCES, searchScope ,"Search"));
+			
+			query.getSearchResult().addListener(new ISearchResultListener() {
+				public void searchResultChanged(SearchResultEvent e) {
+					CodeSet searchSet = new CodeSet(text.getText(), "SearchSet");
+					JavaSearchResult jsr = (JavaSearchResult) e.getSearchResult();
+					Object[] elements = jsr.getElements();
+					for (int i = 0; i < elements.length; i++) {
+						searchSet.add((ISourceReference)elements[i]);
+					}
+					CodeSetManager.instance.addSet(searchSet);
+				}
+			});
+			query.run(new NullProgressMonitor());
+		}		
 	}
 
 	//Adds a text box to the composite. 
