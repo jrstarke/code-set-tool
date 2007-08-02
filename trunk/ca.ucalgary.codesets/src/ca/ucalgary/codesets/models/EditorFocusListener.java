@@ -2,9 +2,9 @@ package ca.ucalgary.codesets.models;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
@@ -21,30 +21,30 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import ca.ucalgary.codesets.views.ElementLabelProvider;
 
-// this class listens to editor selection events and in response to events
-// creates three kinds of code sets: (1) the navigation history set, (2) the 
-// references to set, and (3) the references from set
+//this class listens to editor selection events and in response to events
+//creates three kinds of code sets: (1) the navigation history set, (2) the 
+//references to set, and (3) the references from set
 public class EditorFocusListener implements ISelectionChangedListener, IPartListener {
 	JavaEditor editor;
 	ISelectionProvider selectionProvider;
 	IJavaElement last;
 	int lastCaret;
-	
+
 	public EditorFocusListener(IEditorPart part) {
 		if (part instanceof JavaEditor)
 			register((JavaEditor)part);
 	}
-	
+
 	// retruns a suitable name for the given element
 	String name(IJavaElement element) {
 		return new ElementLabelProvider().getText(element);
 	}
-	
+
 	void register(JavaEditor part) {
 		unregister();
 		editor = part;
 		selectionProvider = editor.getSelectionProvider();
-		
+
 		if (selectionProvider != null) {
 			if (selectionProvider instanceof IPostSelectionProvider) {
 				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
@@ -54,38 +54,42 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			}
 		}
 	}
-	
+
 	void unregister() {
 		if (selectionProvider != null) {
 			selectionProvider.removeSelectionChangedListener(this);
 		}
-		
+
 		selectionProvider = null;
 		editor = null;
 	}
-	
+
 	/**
 	 * Entry point for handling each change event.
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		IJavaElement element = computeSelection(); 
-		if (element != null && ! element.equals(last) && !(element instanceof PackageDeclaration)) {
-//			System.out.println(element);
-			last = element;
-			
-			try {
-				String s = ((ISourceReference)element).getSource();
-			} catch (JavaModelException e) {
-				e.printStackTrace();
+		IJavaElement element = computeSelection(); 			
+		if ((element != null) && !(element.equals(last))) {
+			// We don't want to include package declarations in our sets, so ignore them
+			boolean isPackageDeclaration = (element instanceof IPackageDeclaration);
+			if (!isPackageDeclaration) {
+//				System.out.println(element);
+				last = element;
+
+				try {
+					String s = ((ISourceReference)element).getSource();
+				} catch (JavaModelException e) {
+					e.printStackTrace();
+				}
+
+				CodeSetManager.instance().setFocus((ISourceReference)element, lastCaret);
+				new ReferenceToSearch().search(element, name(element));
+				new ReferenceFromSearch().search(element, name(element));
+				new MembersOfType().search(element);
 			}
-			
-			CodeSetManager.instance().setFocus((ISourceReference)element, lastCaret);
-			new ReferenceToSearch().search(element, name(element));
-			new ReferenceFromSearch().search(element, name(element));
-			new MembersOfType().search(element);
 		}
 	}
-	
+
 	IJavaElement computeSelection() {
 		ISourceViewer sourceViewer = editor.getViewer();
 		if (sourceViewer == null) return null;
@@ -99,7 +103,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 		IWorkingCopyManager manager = JavaPlugin.getDefault().getWorkingCopyManager();
 		ICompilationUnit unit = manager.getWorkingCopy(editor.getEditorInput());
 		if (unit == null) return null;
-		
+
 		try {
 			IJavaElement element = getElementAt(unit, caret, false);
 			if (!(element instanceof ISourceReference))
@@ -109,10 +113,10 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			if (!x.isDoesNotExist())
 				JavaPlugin.log(x.getStatus());
 		}
-		
+
 		return null;
 	}
-	
+
 	protected static IJavaElement getElementAt(ICompilationUnit unit, int offset,
 			boolean reconcile) throws JavaModelException {
 		if (reconcile) {
@@ -122,7 +126,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			return unit.getElementAt(offset);
 		} else if (unit.isConsistent())
 			return unit.getElementAt(offset);
-		
+
 		return null;
 	}
 
