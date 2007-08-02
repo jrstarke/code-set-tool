@@ -29,6 +29,7 @@ public class CodeSetManager {
 	// the maximum number of raw sets that will be saved
 	final static int MAX_RAW_SETS = 20;
 	static CodeSetManager instance = new CodeSetManager();
+	public Boolean allCleared = false;
 	
 	// there is one global instance of this class
 	public static CodeSetManager instance() {

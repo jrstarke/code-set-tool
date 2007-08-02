@@ -14,6 +14,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
+import ca.ucalgary.codesets.controllers.Logger;
+
 public class SearchBox extends Composite{
 	private final Text text = new Text(this, SWT.SINGLE | SWT.BORDER);
 	private Button button = new Button(this,SWT.PUSH);
@@ -65,6 +67,7 @@ public class SearchBox extends Composite{
 				}
 			}
 			CodeSetManager.instance.addSet(searchSet);
+			Logger.instance().addEvent("Searched for "+"\t"+text.getText());
 		}
 	}
 

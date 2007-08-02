@@ -8,6 +8,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import ca.ucalgary.codesets.controllers.Logger;
 import ca.ucalgary.codesets.controllers.SideBarController;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
@@ -36,7 +37,9 @@ public class SelectionView extends ViewPart {
 	private void makeActions() {
 		clearSetsAction = new Action() {
 			public void run(){
+				CodeSetManager.instance().allCleared = true;
 				CodeSetManager.instance().clearStates();
+				CodeSetManager.instance().allCleared = false;
 			}
 		};
 

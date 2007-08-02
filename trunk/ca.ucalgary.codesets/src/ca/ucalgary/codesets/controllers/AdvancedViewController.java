@@ -82,7 +82,10 @@ public class AdvancedViewController implements ICodeSetListener  {
 
 			public void widgetSelected(SelectionEvent e) {
 				Scale scale = (Scale)e.getSource();
+				int temp = summarySize;
 				view.setSummarySize(scale.getSelection());
+				if(temp != summarySize)
+					Logger.instance().addEvent("Scale Changed" + "\t" + temp +"\t to \t" + summarySize);
 			}
 		});
 		return scale;

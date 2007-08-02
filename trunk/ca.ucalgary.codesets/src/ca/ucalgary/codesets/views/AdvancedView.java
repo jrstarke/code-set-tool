@@ -11,6 +11,7 @@ import org.eclipse.ui.part.ViewPart;
 import ca.ucalgary.codesets.controllers.AdvancedViewController;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
+import ca.ucalgary.codesets.controllers.Logger;
 
 public class AdvancedView extends ViewPart  {
 
@@ -43,6 +44,7 @@ public class AdvancedView extends ViewPart  {
 				currentSet.name = name;
 				currentSet.category = "named";
 				CodeSetManager.instance().addSet(currentSet);
+				Logger.instance().addEvent("Set Named " + "\t" + name);
 			}
 		}
 	};
