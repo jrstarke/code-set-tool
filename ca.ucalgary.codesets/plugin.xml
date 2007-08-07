@@ -22,12 +22,19 @@
             class="ca.ucalgary.codesets.views.SelectionView"
             id="ca.ucalgary.codesets.views.SelectionView">
       </view>
-        <view
+      <view
             name="Code Set"
             icon="icons/sample.gif"
             category="ca.ucalgary.codesets"
             class="ca.ucalgary.codesets.views.AdvancedView"
             id="ca.ucalgary.codesets.views.MainSectionView">
+      </view>
+      <view
+            name="Combined set"
+            icon="icons/sample.gif"
+            category="ca.ucalgary.codesets"
+            class="ca.ucalgary.codesets.views.CombinedView"
+            id="ca.ucalgary.codesets.views.CombinedView">
       </view>
    </extension>
    <extension

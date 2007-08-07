@@ -20,12 +20,14 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
 
 // Listens to debug events and creates a CodeSet for each debugging session
 public class DebugEventListener implements IDebugEventSetListener {
 	CodeSet set;
+	NodeSet nodeSet;
 	
 	public DebugEventListener() {
 		DebugPlugin.getDefault().addDebugEventListener(this);
@@ -43,18 +45,23 @@ public class DebugEventListener implements IDebugEventSetListener {
 				if (event.getKind() == DebugEvent.CREATE && source instanceof IProcess) {
 					// start recording new set
 					String name = new SimpleDateFormat("hh:mm a").format(new Date());
-					set = new CodeSet(name, "debugging xession");
+					set = new CodeSet(name, "debugging session");
+					nodeSet = new NodeSet(name, "debugging session");
 					
 				} else if (source instanceof IThread) {
 					// add entity from each stack frame to set
 					IStackFrame[] frames = ((IThread)source).getStackFrames();
-					for (int j = 0; j < frames.length; j++)
+					for (int j = 0; j < frames.length; j++) {
 						set.add((ISourceReference)getSourceReference(frames[j]));
+						nodeSet.add(getNode(frames[j]));
+					}
 					
 				} else if (event.getKind() == DebugEvent.TERMINATE && source instanceof IProcess) {
 					// session is ending so add set to code manager
-					if (set.size() != 0)
+					if (set.size() != 0) {
 						CodeSetManager.instance().addSet(set);
+						NodeSetManager.instance().addSet(nodeSet);
+					}
 				}
 			} catch (DebugException ex) {
 				ex.printStackTrace();
@@ -62,21 +69,21 @@ public class DebugEventListener implements IDebugEventSetListener {
 		}
 	}
 	
-	void addFrameElements(IThread thread) {
-		
-	}
-	
-	// returns the character position at the start of the given line number
-	static int getPosition(String source, int lineNumber) {
-		int lines = 0;
-		for (int i = 0; i < source.length(); i++) {
-			if (lines == lineNumber - 1)
-				return i;
-			if (source.charAt(i) == '\n')
-				lines++;
+	ASTNode getNode(IStackFrame frame) {
+		try {
+			ISourceLocator locator = frame.getLaunch().getSourceLocator();
+			Object source = locator.getSourceElement(frame);
+			
+			if (source instanceof IFile) {
+				ICompilationUnit unit = (ICompilationUnit) JavaCore.create((IFile) source);
+				return ASTHelper.getNodeAtPosition(unit, 
+						ASTHelper.getPosition(unit.getSource(), frame.getLineNumber()));
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
 		}
 		
-		return -1;
+		return null;
 	}
 	
 	// computes and returns the java element corresponding to the given frame
@@ -88,7 +95,7 @@ public class DebugEventListener implements IDebugEventSetListener {
 			if (source instanceof IFile) {
 				ICompilationUnit unit = (ICompilationUnit) JavaCore.create((IFile) source);
 				return EditorFocusListener.getElementAt(unit, 
-					getPosition(unit.getSource(), frame.getLineNumber()), false);
+						ASTHelper.getPosition(unit.getSource(), frame.getLineNumber()), false);
 			}
 		} catch (CoreException e) {
 			e.printStackTrace();

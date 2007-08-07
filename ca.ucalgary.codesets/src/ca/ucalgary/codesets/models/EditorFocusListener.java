@@ -5,6 +5,9 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
+
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
@@ -73,7 +76,6 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			// We don't want to include package declarations in our sets, so ignore them
 			boolean isPackageDeclaration = (element instanceof IPackageDeclaration);
 			if (!isPackageDeclaration) {
-//				System.out.println(element);
 				last = element;
 
 				try {
@@ -106,8 +108,12 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 
 		try {
 			IJavaElement element = getElementAt(unit, caret, false);
-			if (!(element instanceof ISourceReference))
+			ASTNode node = ASTHelper.getNodeAtPosition(unit, caret);
+			NodeSetManager.instance().setFocus(node);
+			
+			if (!(element instanceof ISourceReference)) 
 				return null;
+			
 			return element;
 		} catch (JavaModelException x) {
 			if (!x.isDoesNotExist())
@@ -123,6 +129,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			synchronized (unit) {
 				unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
 			}
+			
 			return unit.getElementAt(offset);
 		} else if (unit.isConsistent())
 			return unit.getElementAt(offset);
@@ -143,7 +150,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 
 	public void partActivated(IWorkbenchPart part) {
 		if (part instanceof JavaEditor) {
-			System.out.println("Selection Changed " + (JavaEditor)part);
+//			System.out.println("Selection Changed " + (JavaEditor)part);
 			register((JavaEditor)part);
 		}
 	}

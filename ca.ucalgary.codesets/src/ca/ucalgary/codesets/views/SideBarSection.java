@@ -10,7 +10,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-import ca.ucalgary.codesets.models.CodeSet;
+import ca.ucalgary.codesets.models.NodeSet;
 
 
 // displays a title and a list of labels for code sets which are expected to be 
@@ -36,22 +36,22 @@ public class SideBarSection extends Composite {
 		}
 	}
 	
-	public List<CodeSetLabel> labels() {
-		ArrayList<CodeSetLabel> result = new ArrayList<CodeSetLabel>();
+	public List<NodeSetLabel> labels() {
+		ArrayList<NodeSetLabel> result = new ArrayList<NodeSetLabel>();
 		for (Control child : getChildren())
-			if (child instanceof CodeSetLabel)
-				result.add((CodeSetLabel)child);
+			if (child instanceof NodeSetLabel)
+				result.add((NodeSetLabel)child);
 		return result;
 	}
 	
 	// dispose of all CodeSetLabel's being displayed
 	public void clear() {
-		for (CodeSetLabel label : labels())
+		for (NodeSetLabel label : labels())
 			label.dispose();
 	}
 	
-	public CodeSetLabel addSet(CodeSet set) {
-		return new CodeSetLabel(this, set);
+	public NodeSetLabel addSet(NodeSet set) {
+		return new NodeSetLabel(this, set);
 	}
 	
 	// there has to be a better way than this, what is it?

@@ -16,12 +16,13 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.osgi.framework.Bundle;
 
 import ca.ucalgary.codesets.models.CodeSet;
+import ca.ucalgary.codesets.models.NodeSet;
 
-public class CodeSetLabel extends Composite {
+public class NodeSetLabel extends Composite {
 	static Color demphasizeColor = new Color(null, 150,150,150);
 	static Color emphasizeColor = new Color(null, 200, 50, 50);
 	
-	CodeSet set = null;
+	NodeSet set = null;
 	Hyperlink link = new Hyperlink(this, SWT.NONE);
 	Label sizeLabel = new Label(this, SWT.NONE);
 	Label iconLabel = new Label(this, SWT.NONE);
@@ -29,7 +30,7 @@ public class CodeSetLabel extends Composite {
 	// images for indicating the state of the set
 	Image[] images = new Image[] {getImage("blank.png"), getImage("plus.png"), getImage("x.png"), getImage("full.png")};
 		
-	public CodeSetLabel(Composite parent, CodeSet set) {
+	public NodeSetLabel(Composite parent, NodeSet set) {
 		super(parent, SWT.NO_BACKGROUND);
 		this.set = set;
 		
@@ -52,7 +53,7 @@ public class CodeSetLabel extends Composite {
 	public void setSizeText() {
 		sizeLabel.setText("- " + getSet().size());
 	}
-	public void setIcon(CodeSet.State state) {
+	public void setIcon(NodeSet.State state) {
 		iconLabel.setImage(images[state.ordinal()]);
 	}
 	public void emphasizeLink() {
@@ -69,12 +70,12 @@ public class CodeSetLabel extends Composite {
 		URL url = FileLocator.find(bundle, path, null);
 		return ImageDescriptor.createFromURL(url).createImage();
 	}
-
+	
 	public Hyperlink getLink() {
 		return link;
 	}
-
-	public CodeSet getSet() {
+	
+	public NodeSet getSet() {
 		return set;
 	}
 }
