@@ -25,8 +25,8 @@ entering the word in the search box and clicking search, the tool will search th
 contain that keyword.  The results will be added into the Search group, named for the word that you searched for.
 
 Creating new sets using debug: 
-To add elements from a debug session is easy.  From a breakpoint, every step will create a new set of elements that are
-contained on the stack at that point.  
+To add elements from a debug session is easy.  From a breakpoint or when a method is stepped into, everything on the stack will
+be added to a new set that will be labeled with the start time of the debugging session.  
 
 Setting set the current set to include elements of a set:
 To set a set to be included, just click on the name of the set until the box beside the name changes to have a +
