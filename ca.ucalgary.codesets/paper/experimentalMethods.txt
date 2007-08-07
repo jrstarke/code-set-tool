@@ -1,0 +1,54 @@
+overview:
+We conducted a small scale user study to evaluate the usability and usefulness of our plugin.
+The study was segmented into a number of sections.  We first spent some time to give the
+participants training in the use of our plugin and familiarize them with our tool.  Once the
+participant was comfortable with the use of the tool, we gave them some questions to answer
+with the use of our tool, if they saw fit to do so.  Once the questions were completed, each
+participant was interviewed.
+
+participants:
+Participants were selected for this study through... The participants were expected to have
+some background in programming, as well as a comfortable understanding of the use of the
+Eclipse Integrated Development Environment.  The participants were then placed into pairs
+as it was decided that we might get more useful information as to the participants thought
+process if they have to talk through it to work as a group.  
+
+training:
+The participants were provided with training for the use of the plugin and its several 
+features.  We started by demonstarting how the participant could add possible states to the
+available sets, such as references to, references from, debug elements, navigation, and members of type, by clicking on
+an area of the code.  We then showed the user how they could easily see all of the elements
+of these sets.  This included demonstrating the changing of set states for the consideration of
+the current set.  The set functions included including a set in the currently considered set
+(include), excluding the elements of a specific set from the currently considered set 
+(exclude), removing all elements that are not in a specific set (exclusive), and not 
+considering a set in the building of the currently considered set (ignore).  We also showed
+the participants how they could increase or decrease the size of the summary for the 
+currently considered set by sliding the slider to the left, effectively decreasing the
+summary size, and sliding the slider to the right, effectively increasing the summary size.
+We then showed the users how they could combine the sets through the use of a combination of
+including several sets, excluding some sets, and restricting to a specific set.  
+
+questions+code base:  
+For the code base, we have selected to use _______.  
+
+Using the code base, the participants were instructed to use the tool, if applicable, to anwer
+a series of questions.  These questions were designed in such a way as to test the usefulness, 
+and usability of the pluggin.  For instance, to test the usability of the plugin, we asked the
+participants to make a set which contained all of the elements in a class, which referenced a 
+specific method, but not those that have been visited already.  To test the usefulness, we decided
+to give the participants a question like, how were a and b related, where there were several things between 
+a and b, or how is a effected by b, or if you were to want to make this change, how would it be done.
+Using our plugin, we would suspect that this should be an easier process, but this will test this.
+
+interview portion: 
+During the interview, we asked for feedback from the participants in a variety of areas.  For
+instance we chose to ask the participants, "How did the tool assist you in answering the questions".
+This would allow us to get a little feedback into in what ways our tool actually was useful, and
+in what ways we taught that it might be, but was actually lacking.  We could also ask "in what ways
+the plugin could be improved".  This might give us ways in which we aren't hitting the mark with
+our idea how how the tool could be used.  "How easy was it to answer the questions" might also 
+be useful to know, as it will tell us if the use of the tool helps in the way that we thought it
+would.  
+
+some “why’s” (ex: why pairs)):
