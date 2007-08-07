@@ -1,0 +1,65 @@
+Training:
+
+During the training, we will show the participants how to use the features of our tool.  These features can be broken into 4 
+groups: Creation of new Sets, Setting interest for a set, Accessing information, and viewing information.  
+
+Opening the Tool:
+The tool is not open by default in Eclipse.  It is separated into 2 separate views, which can be accessed by selecting the
+"Window" menu -> Scroll down to "Show View" -> Select "Other ...".  At this point the "Show View" window will display.  Scroll
+down to the "Code Sets" folder, and click the expansion arrow, and select "All Sets".  At this point, the "All Sets" view will
+be added to the Eclipse workbench.  Repeat the steps above, and from the "Show View" window, after expanding the "Code Sets" 
+folder, select "Code Set". At this point, the Code Set Tool will be active in Eclipse.
+
+Rearranging the Tool Views:  
+The "Code Sets" views can be rearranged in any manner, just like any native Eclipse views.  By clicking and dragging the Tab
+labeled with the name of a view, it can arbitrarily be moved to any point on the Eclipse workbench
+
+Creating new sets with the cursor:
+From an open editor, to designate a place of interest, all you need to do is click on that point.  When the cursor gets moved 
+to this point, the tool will calculate what sets might be related to this element.  Any sets that are related to this set will
+automatically be added to the list in the All Sets view.
+
+Creating new sets with the search box:
+If there is a keyword that you feel would be of interest to you, you can search the code base using the search tool.  By 
+entering the word in the search box and clicking search, the tool will search the code base for any elements of the code that
+contain that keyword.  The results will be added into the Search group, named for the word that you searched for.
+
+Creating new sets using debug: 
+To add elements from a debug session is easy.  From a breakpoint, every step will create a new set of elements that are
+contained on the stack at that point.  
+
+Setting set the current set to include elements of a set:
+To set a set to be included, just click on the name of the set until the box beside the name changes to have a +
+
+Setting the current set to excluded elements of a set:
+To set a set to be excluded, click on the name of the set until the box beside the name changes to an x
+
+Setting the current set to exclusively contain elements of a set:
+To set a set to be exclusive, click on the name of the set until the box beside the name changes to filled in
+
+Setting the current set to ignore a set:
+by default, all new sets will be ignored, with the exception of the navigation set.  To ignore a set, click on the sets name
+until the box beside it changes to an empty box. 
+
+Creating more sophisticated sets:
+To create more sophicated sets, you can set multiple sets to either included, excluded, or exclusive.  For instance, you can
+can create a set that has all members of a type that have not yet been visited, and reference a method by setting the members
+of type set for that type to included, the navigation set to excluded, and set reference to the method to exclusive.
+
+Clearing the current set:
+To clear the current set, click on the "Set all sets to be ignored" button.
+
+Naming the Current Set:
+With the current set (simple or sophisticated), you can create a new set from it.  By clicking the name this set button, a
+dialog will be opened prompting for a name to be given to this set.  Enter the name in the box and click OK. If you have
+clicked this by mistake, click cancel.  Once you have given a name to the current set, it will be added to the Named group of
+the All Sets view, with the name provided.
+
+Change the Summary Detail level:
+Above the Current Set view, there is a slider.  This slider can be moved from left to right.  When the slider is moved towards
+the left, less details will be displayed in the summary.  When the slider is moved towards the right, more details will be
+shown in the summary.
+
+Going to an element of the current set:
+To jump to an element of the current set, first find it in the Current Set view, then double click on its name.  If the type
+is not yet open, it will be opened in a new editor window.  The cursor will then be set to this element in the editor window.
