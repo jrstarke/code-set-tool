@@ -22,6 +22,8 @@ public class NodeSetManager {
 	
 	// a collection of objects that are listening to code set events
 	HashSet<INodeSetListener> listeners = new HashSet<INodeSetListener>();
+
+	public boolean allCleared = false;
 	
 	// the maximum number of raw sets that will be saved
 	final static int MAX_RAW_SETS = 20;
