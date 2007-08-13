@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -17,7 +18,9 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 
 import ca.ucalgary.codesets.models.ASTHelper;
 import ca.ucalgary.codesets.models.NodeWrapper;
@@ -25,39 +28,39 @@ import ca.ucalgary.codesets.views.CombinedView;
 import ca.ucalgary.codesets.views.ElementLabelProvider;
 
 
-// this uses the visitor pattern to create the appropriate UI elements for the given 
-// NodeSet's. the basic idea is to create a composite for each type declaration and 
-// nested composites for each of the field and method declarations. declaration names,
-// comment lines and method bodies are represented using labels. in method bodies, 
-// code not in the given set are replaced with "...":
-// show the code contained in the sets, 
-//
-//   ...getName() ... means this is not the first line in the block
-//   getName()...   skipped line(s) in this block
-//   getName() ...} skipped to end of block
-//   getName() ...} ...} skipped to end of multiple blocks
-//   getName() } ... skipped line(s) after this block
-//
+//this uses the visitor pattern to create the appropriate UI elements for the given 
+//NodeSet's. the basic idea is to create a composite for each type declaration and 
+//nested composites for each of the field and method declarations. declaration names,
+//comment lines and method bodies are represented using labels. in method bodies, 
+//code not in the given set are replaced with "...":
+//show the code contained in the sets, 
+
+//...getName() ... means this is not the first line in the block
+//getName()...   skipped line(s) in this block
+//getName() ...} skipped to end of block
+//getName() ...} ...} skipped to end of multiple blocks
+//getName() } ... skipped line(s) after this block
+
 public class NodeSetViewBuilder extends ASTVisitor {
 	Composite parent;
 	Composite classView;
 	Composite methodView;
-	
+
 	HashSet<NodeWrapper> includeSet;
-	
+
 	// used to temporarily store lines from method bodies until they are
 	// added to the UI as labels
 	Stack<String> lines = new Stack<String>();
 	ElementLabelProvider labelProvider = new ElementLabelProvider();
-	
+
 	// indent is used to keep track of the white space for lines of code 
 	int indent = 0;
-	
+
 	NodeSetViewBuilder(Composite parent, HashSet<NodeWrapper> includeSet) {
 		this.parent = parent;
 		this.includeSet = includeSet;
 	}
-	
+
 	// this is the main entry point
 	public static void build(Composite parent, ASTNode node, HashSet<NodeWrapper> includeSet) {
 		NodeSetViewBuilder builder = new NodeSetViewBuilder(parent, includeSet);
@@ -68,16 +71,16 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	boolean shouldVisit(ASTNode node) {
 		return includeSet.contains(new NodeWrapper(node));
 	}
-	
+
 	// methods for building up a set of lines
-	
+
 	boolean isLeadingLine(String line) {
 		Pattern p1 = Pattern.compile(" *\\{");
 		Pattern p2 = Pattern.compile(" *\\{\\.\\.\\.");
 		boolean result = p1.matcher(line).matches() || p2.matcher(line).matches();
 		return result;
 	}
-	
+
 	void addLine(String line) {
 		line = whiteSpace() + line.trim();
 		if (!lines.empty()) {
@@ -94,21 +97,21 @@ public class NodeSetViewBuilder extends ASTVisitor {
 			lines.push(line);
 		}
 	}
-	
+
 	void appendToLine(String content) {
 		if (!lines.empty()) 
 			lines.push(lines.pop() + content);
 		else
 			lines.push(content);
 	}
-	
+
 	void elide() {
 		if (lines.empty())
 			addLine("...");
 		else if (!lines.peek().endsWith("..."))
 			appendToLine("...");
 	}
-	
+
 	boolean appendIf(ASTNode node, String content) {
 		if (shouldVisit(node)) {
 			appendToLine(content);
@@ -116,7 +119,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	boolean printIf(ASTNode node, String content) {
 		if (shouldVisit(node)) {
 			addLine(content);
@@ -126,24 +129,24 @@ public class NodeSetViewBuilder extends ASTVisitor {
 			return false;
 		}
 	}
-	
+
 	boolean printIf(ASTNode node) {
 		return printIf(node, node.toString());
 	}
-	
+
 	String whiteSpace() {
 		StringBuffer buffer = new StringBuffer();
 		for (int i=0; i<indent; i++)
 			buffer.append("    ");
 		return buffer.toString();
 	}
-	
+
 	// generalized visitor methods (not visited automatically)
-	
+
 	boolean visit(ASTNode node) {
 		return shouldVisit(node);
 	}
-	
+
 	boolean visit(Expression node) {
 		return shouldVisit(node);
 	}
@@ -159,7 +162,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	boolean visit(Type node) {
 		return shouldVisit(node);
 	}
-	
+
 	boolean blockStatement(Statement node, String line) {
 		if (shouldVisit(node)) {
 			addLine(line);
@@ -170,15 +173,15 @@ public class NodeSetViewBuilder extends ASTVisitor {
 			return false;
 		}
 	}
-	
+
 	void endBlockStatement(Statement node) {
 		if (shouldVisit(node))
 			indent--;
 	}
-	
+
 	// standard visitor methods... (most of these are not used, but they are left in,
 	// for the time being, in case they become useful)
-	
+
 	public void preVisit(ASTNode node) {
 		ASTNode parent = node.getParent();
 		if (shouldVisit(node) && parent instanceof IfStatement) {
@@ -190,7 +193,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 			}
 		}
 	}
-	
+
 	public boolean visit(AnnotationTypeDeclaration node) {
 		return visit((BodyDeclaration)node);
 	}
@@ -347,7 +350,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 		}
 		return null;
 	}
-	
+
 	public boolean visit(Javadoc node) {
 		String commentLine = getFirstLine(node.toString());
 		Composite parent = methodView != null ? methodView : classView;
@@ -358,7 +361,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(LabeledStatement node) {
 		return visit((Statement)node);
 	}
-	
+
 	public boolean visit(LineComment node) {
 		return visit((ASTNode)node);
 	}
@@ -390,19 +393,19 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(Modifier node) {
 		return visit((ASTNode)node);
 	}
-	
+
 	public boolean visit(NormalAnnotation node) {
 		return visit((Expression)node);
 	}
-	
+
 	public boolean visit(NullLiteral node) {
 		return visit((Expression)node);
 	}
-	
+
 	public boolean visit(NumberLiteral node) {
 		return visit((Expression)node);
 	}
-	
+
 	public boolean visit(PackageDeclaration node) {
 		return visit((ASTNode)node);
 	}
@@ -410,7 +413,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(ParameterizedType node) {
 		return visit((Type)node);
 	}
-	
+
 	public boolean visit(ParenthesizedExpression node) {
 		return visit((Expression)node);
 	}
@@ -418,7 +421,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(PostfixExpression node) {
 		return visit((Expression)node);
 	}
-	
+
 	public boolean visit(PrefixExpression node) {
 		return visit((Expression)node);
 	}
@@ -430,7 +433,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(QualifiedName node) {
 		return visit((Expression)node);
 	}
-	
+
 	public boolean visit(QualifiedType node) {
 		return visit((Type)node);
 	}
@@ -438,7 +441,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(ReturnStatement node) {
 		return visit((Statement)node);
 	}
-	
+
 	public boolean visit(SimpleName node) {
 		return visit((Expression)node);
 	}
@@ -470,7 +473,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(SuperMethodInvocation node) {
 		return visit((Expression)node);
 	}
-	
+
 	public boolean visit(SwitchCase node) {
 		return visit((Statement)node);
 	}
@@ -478,7 +481,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(SwitchStatement node) {
 		return blockStatement(node, "switch (" + node.getExpression() + ")");
 	}
-	
+
 	public boolean visit(SynchronizedStatement node) {
 		return printIf(node, "synchronized (" + node.getExpression() + ")");
 	}
@@ -494,7 +497,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(ThisExpression node) {
 		return visit((Expression)node);
 	}
-	
+
 	public boolean visit(ThrowStatement node) {
 		return printIf(node, "throw ");
 	}
@@ -506,8 +509,9 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// start a new composite corresponding to this type declaration
 	public boolean visit(TypeDeclaration node) {
 		if (shouldVisit(node)) {
-			String line = labelProvider.getText(ASTHelper.getJavaElement(node));
-			classView = CombinedView.classView(parent, line, "");
+			IJavaElement element = ASTHelper.getJavaElement(node);
+			String line = labelProvider.getText(element);
+			classView = CombinedView.classView(parent, line, "", makeListener(element,line));
 			return true;
 		}
 		return false;
@@ -516,14 +520,15 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// start a new composite corresponding to this method declaration
 	public boolean visit(MethodDeclaration node) {		
 		if (shouldVisit(node)) {
-			String line = labelProvider.getText(ASTHelper.getJavaElement(node));
-			methodView = CombinedView.methodView(classView, line);
+			IJavaElement element = ASTHelper.getJavaElement(node);
+			String line = labelProvider.getText(element);
+			methodView = CombinedView.methodView(classView, line, makeListener(element,line));
 			indent++;
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean visit(TypeDeclarationStatement node) {
 		return visit((Statement)node);
 	}
@@ -551,11 +556,11 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(WhileStatement node) {
 		return blockStatement(node, "while (" + node.getExpression().toString() + ")");
 	}
-	
+
 	public boolean visit(WildcardType node) {
 		return visit((Type)node);
 	}
-	
+
 	public void endVisit(AnnotationTypeDeclaration node) {
 		// default implementation: do nothing
 	}
@@ -651,11 +656,11 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public void endVisit(EnhancedForStatement node) {
 		endBlockStatement(node);
 	}
-	
+
 	public void endVisit(EnumConstantDeclaration node) {
 		// default implementation: do nothing
 	}	
-	
+
 	public void endVisit(EnumDeclaration node) {
 		// default implementation: do nothing
 	}	
@@ -683,7 +688,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public void endVisit(ImportDeclaration node) {
 		// default implementation: do nothing
 	}
-	
+
 	public void endVisit(InfixExpression node) {
 		// default implementation: do nothing
 	}
@@ -703,11 +708,11 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public void endVisit(LabeledStatement node) {
 		// default implementation: do nothing
 	}
-	
+
 	public void endVisit(LineComment node) {
 		// default implementation: do nothing
 	}
-	
+
 	public void endVisit(MarkerAnnotation node) {
 		// default implementation: do nothing
 	}
@@ -829,7 +834,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 
 	public void endVisit(SwitchCase node) {
 	}
-	
+
 	public void endVisit(SwitchStatement node) {
 		endBlockStatement(node);
 	}
@@ -846,11 +851,11 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public void endVisit(ThisExpression node) {
 		// default implementation: do nothing
 	}
-	
+
 	public void endVisit(ThrowStatement node) {
 		// default implementation: do nothing
 	}
-	
+
 	public void endVisit(TryStatement node) {
 		endBlockStatement(node);
 	}
@@ -874,7 +879,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public void endVisit(VariableDeclarationExpression node) {
 		// default implementation: do nothing
 	}
-	
+
 	public void endVisit(VariableDeclarationStatement node) {
 		// default implementation: do nothing
 	}
@@ -886,8 +891,29 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public void endVisit(WhileStatement node) {
 		endBlockStatement(node);
 	}
-	
+
 	public void endVisit(WildcardType node) {
 		// default implementation: do nothing
+	}
+
+	public Listener makeListener (final IJavaElement element, final String text) {
+		Listener result = new Listener() {
+			public void handleEvent(Event event) {
+				Logger.instance().addEvent("Double Clicked" +"\t" + text);
+				openElement((IJavaElement)element);
+//				label.setBackground(new Color(null,255,255,255));
+			}
+		};
+		return result;
+	}
+
+	private void openElement(IJavaElement element) {
+		try {
+			IJavaElement unit = element.getAncestor(IJavaElement.COMPILATION_UNIT);
+			if (unit != null)
+				JavaUI.revealInEditor(JavaUI.openInEditor(unit), element);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
 	}
 }

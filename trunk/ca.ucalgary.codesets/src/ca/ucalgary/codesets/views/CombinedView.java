@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -62,22 +63,22 @@ public class CombinedView extends ViewPart  {
 		widget.setFont(new Font(f.getDevice(), fd));
 	}
 	
-	public static Composite classView(Composite parent, String text, String comment) {
+	public static Composite classView(Composite parent, String text, String comment, Listener listener) {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		result.setLayout(layout);
-		label(result, text, SWT.BOLD, 13, classNameColor);
+		label(result, text, SWT.BOLD, 13, classNameColor).addListener(SWT.MouseDoubleClick, listener);
 		return result;
 	}
-	public static Composite methodView(Composite parent, String text) {
+	public static Composite methodView(Composite parent, String text, Listener listener) {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		result.setLayout(layout);
-		label(result, text, SWT.BOLD, 11, methodNameColor);
+		label(result, text, SWT.BOLD, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
 		
 		return result;
 	}
