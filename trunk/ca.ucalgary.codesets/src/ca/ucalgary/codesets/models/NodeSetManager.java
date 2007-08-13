@@ -135,4 +135,8 @@ public class NodeSetManager {
 		
 		return combined.copy(true);
 	}
+	
+	public boolean containsSet(NodeSet set) {
+		return rawSets.contains(set);
+	}
 }

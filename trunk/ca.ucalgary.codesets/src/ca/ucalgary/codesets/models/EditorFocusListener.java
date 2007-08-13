@@ -85,9 +85,9 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 				}
 
 				CodeSetManager.instance().setFocus((ISourceReference)element, lastCaret);
-				new ReferenceToSearch().search(element, name(element));
-				new ReferenceFromSearch().search(element, name(element));
-				new MembersOfType().search(element);
+//				new ReferenceToSearch().search(element, name(element));
+//				new ReferenceFromSearch().search(element, name(element));
+//				new MembersOfType().search(element);
 			}
 		}
 	}
@@ -110,6 +110,10 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			IJavaElement element = getElementAt(unit, caret, false);
 			ASTNode node = ASTHelper.getNodeAtPosition(unit, caret);
 			NodeSetManager.instance().setFocus(node);
+			new ReferenceFromSearch().search(node);
+			new ReferenceToSearch().search(node);
+			new MembersOfType().search(node);
+			
 			
 			if (!(element instanceof ISourceReference)) 
 				return null;
