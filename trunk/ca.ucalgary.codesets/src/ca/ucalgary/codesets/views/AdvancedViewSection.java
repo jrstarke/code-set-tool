@@ -62,7 +62,7 @@ public class AdvancedViewSection extends Composite {
 //			Double Click Listener, to open the element in the Java Editor
 			label.addListener(SWT.MouseDoubleClick, new Listener() {
 				public void handleEvent(Event event) {
-					Logger.instance().addEvent("Double Clicked" +"\t" + label);
+					Logger.instance().addEvent("Double Clicked" +"\t" + label.getText());
 					openElement((IJavaElement)isr);
 //					label.setBackground(new Color(null,255,255,255));
 				}

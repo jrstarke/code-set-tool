@@ -12,6 +12,7 @@ import ca.ucalgary.codesets.controllers.Logger;
 import ca.ucalgary.codesets.controllers.SideBarController;
 import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.CodeSetManager;
+import ca.ucalgary.codesets.models.NodeSetManager;
 
 public class SelectionView extends ViewPart {
 //	Action nameSetAction;   
@@ -37,9 +38,14 @@ public class SelectionView extends ViewPart {
 	private void makeActions() {
 		clearSetsAction = new Action() {
 			public void run(){
-				CodeSetManager.instance().allCleared = true;
-				CodeSetManager.instance().clearStates();
-				CodeSetManager.instance().allCleared = false;
+//				CodeSetManager.instance().allCleared = true;
+//				CodeSetManager.instance().clearStates();
+//				CodeSetManager.instance().allCleared = false;
+				
+				NodeSetManager.instance().allCleared = true;
+				NodeSetManager.instance().clearStates();
+				NodeSetManager.instance().allCleared = false;
+				
 			}
 		};
 
