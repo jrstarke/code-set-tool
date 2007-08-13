@@ -1,9 +1,12 @@
 package ca.ucalgary.codesets.models;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.internal.ui.search.JavaSearchQuery;
 import org.eclipse.jdt.internal.ui.search.JavaSearchResult;
@@ -15,23 +18,31 @@ import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 
-// uses eclipse's search api to produce a set of all elements that reference
-// a given IJavaElement
+import ca.ucalgary.codesets.views.ElementLabelProvider;
+
+//uses eclipse's search api to produce a set of all elements that reference
+//a given IJavaElement
 public class ReferenceToSearch implements ISearchResultListener {
 	int REFERENCETOVALUE = 1;
-	IJavaElement element;
-	CodeSet set;
-	
-	void search(IJavaElement element, String name) {
-		this.element = element;
-		set = new CodeSet(name, "references to");
-		
-		// TODO: really we should just add to the existing set if there is one
-		if (CodeSetManager.instance().containsSet(set))
+	NodeWrapper method;
+	NodeSet set;
+	ElementLabelProvider labelProvider = new ElementLabelProvider();
+
+	void search(ASTNode node) {
+		MethodDeclaration method = (MethodDeclaration)ASTHelper.getMethodAncestor(node);
+		if (method == null)
 			return;
-		
+		this.method = new NodeWrapper(method);
+		IJavaElement methodElement = ASTHelper.getJavaElement(method);
+
+		set = new NodeSet(labelProvider.getFullText(methodElement), "references to");
+
+		// TODO: really we should just add to the existing set if there is one
+		if (NodeSetManager.instance().containsSet(set))
+			return;
+
 		try {
-			JavaSearchQuery query= new JavaSearchQuery(createQuery(element));
+			JavaSearchQuery query= new JavaSearchQuery(createQuery(methodElement));
 			query.getSearchResult().addListener(this);
 			query.run(new NullProgressMonitor());
 			//SearchUtil.runQueryInBackground(query);
@@ -39,7 +50,7 @@ public class ReferenceToSearch implements ISearchResultListener {
 			// TODO what should we do here?
 		}
 	}
-	
+
 	/**
 	 * Notifies the system of a change in the results for a given search.  Any matches
 	 * from the Search Result Event are added to the searchSet
@@ -48,20 +59,18 @@ public class ReferenceToSearch implements ISearchResultListener {
 		if (event instanceof MatchEvent) {
 			Match[] matches = ((MatchEvent)event).getMatches();
 			boolean empty = set.size() == 0;
-			JavaSearchResult results = (JavaSearchResult)event.getSearchResult();
-			Object[] elements = results.getElements();
-			for (int i = 0; i < matches.length; i++) {
-				ISourceReference isr = (ISourceReference)matches[i].getElement();
-				if (!element.equals(isr)) {
-					set.add(isr);
-					set.srcCache.incrementPosition(isr, matches[i].getOffset(), REFERENCETOVALUE);
+			for (Match m:matches) {
+				ICompilationUnit unit = (ICompilationUnit)((IJavaElement)m.getElement()).getAncestor(IJavaElement.COMPILATION_UNIT);
+				ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
+				if (!method.equals(new NodeWrapper((MethodDeclaration)ASTHelper.getAncestorByType(node, ASTNode.METHOD_DECLARATION)))) {
+					set.add(node);
 				}
 			}
 			if (empty && set.size() > 0)
-				CodeSetManager.instance().addSet(set);
+				NodeSetManager.instance().addSet(set);
 		}
 	}
-	
+
 	/**
 	 * Create a new search query for the given element that will look for all things that 
 	 * reference it in the workspace

@@ -28,7 +28,6 @@ public class AdvancedView extends ViewPart  {
 	private void createToolbar() {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(nameSetAction);
-		
 	}
 
 	private void makeActions() {

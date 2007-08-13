@@ -1,7 +1,11 @@
 package ca.ucalgary.codesets.views;
 
 import ca.ucalgary.codesets.models.CodeSetManager;
+
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.swt.graphics.Color;
@@ -36,13 +40,15 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 		return black;
 	}
 
-//	public String getText(Object element) {
-//		String text = super.getText(element);
-//		if (element instanceof IJavaElement) {
-//			IJavaElement source = (IJavaElement)element;
-//			text = source.getParent().getElementName() + "." + text;
-//		} 
-//		return text;
-//	}
+	public String getFullText(Object element) {
+		if (element instanceof IMethod) {
+			IMethod method = (IMethod) element;
+			IType type = (IType) method.getAncestor(IJavaElement.TYPE);
+			return (super.getText(type) + "." + super.getText(method));
+		}
+		else 
+			return super.getText(element);
+		
+	}
 
 }

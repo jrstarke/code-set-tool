@@ -19,30 +19,27 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 
+import ca.ucalgary.codesets.views.ElementLabelProvider;
+
 //uses eclipse's ast parser to compute the set of all references from a
 //given element.
 public class ReferenceFromSearch extends GenericVisitor {
 	int REFERENCEFROMVALUE = 1;
 	IMember element;
-	CodeSet set;
+	NodeSet set;
+	ElementLabelProvider labelProvider = new ElementLabelProvider();
 
-	public void search(IJavaElement element, String name) {
-		set = new CodeSet(name, "references from");
-		if (CodeSetManager.instance().containsSet(set))
+	public void search(ASTNode node) {
+		MethodDeclaration method = (MethodDeclaration)ASTHelper.getAncestorByType(node, ASTNode.METHOD_DECLARATION);
+		if (method == null) return;
+
+		set = new NodeSet(labelProvider.getFullText(ASTHelper.getJavaElement(method)), "references from");
+		if (NodeSetManager.instance().containsSet(set))
 			return;
+		method.accept(this);
 
-		if (element instanceof IMember) {
-			this.element = (IMember) element;
-			ICompilationUnit unit = this.element.getCompilationUnit();
-			ASTParser parser = ASTParser.newParser(AST.JLS3);
-			parser.setSource(unit);
-			parser.setResolveBindings(true);
-
-			CompilationUnit node = (CompilationUnit) parser.createAST(null);
-			node.accept(this);
-			if (set.size() != 0)
-				CodeSetManager.instance().addSet(set);
-		}
+		if (set.size() > 0)
+			NodeSetManager.instance().addSet(set);
 	}
 
 	protected boolean visitNode(ASTNode node) {
@@ -58,8 +55,19 @@ public class ReferenceFromSearch extends GenericVisitor {
 		IMethodBinding binding = node.resolveMethodBinding();
 		IJavaElement element = binding.getJavaElement();
 		if (element != null) {
-			set.add((ISourceReference)element);
-			set.srcCache.incrementPosition((ISourceReference)this.element, node.getStartPosition(), REFERENCEFROMVALUE);
+			ICompilationUnit unit = (ICompilationUnit) element.getAncestor(IJavaElement.COMPILATION_UNIT);
+			if (unit == null)
+				return !visitNode(node);
+			ISourceReference isr = (ISourceReference) element;
+			try {
+				ASTNode bindedNode = ASTHelper.getNodeAtPosition(unit, isr.getSourceRange().getOffset());
+				NodeWrapper key = new NodeWrapper(bindedNode);
+				if (set.containsKey(key))
+					set.get(key).clear();
+				set.add(bindedNode);
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			}
 		}
 		return visitNode(node);
 	}
@@ -68,30 +76,20 @@ public class ReferenceFromSearch extends GenericVisitor {
 		IMethodBinding binding = node.resolveConstructorBinding();
 		IJavaElement element = binding.getJavaElement();
 		if (element != null) {
-			set.add((ISourceReference)element);
-			set.srcCache.incrementPosition((ISourceReference)this.element, node.getStartPosition(), REFERENCEFROMVALUE);
+			ICompilationUnit unit = (ICompilationUnit) element.getAncestor(IJavaElement.COMPILATION_UNIT);
+			if (unit == null)
+				return !visitNode(node);
+			ISourceReference isr = (ISourceReference) element;
+			try {
+				ASTNode bindedNode = ASTHelper.getNodeAtPosition(unit, isr.getSourceRange().getOffset());
+				NodeWrapper key = new NodeWrapper(bindedNode);
+				if (set.containsKey(key))
+					set.get(key).clear();
+				set.add(bindedNode);
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			}
 		}
 		return visitNode(node);
-	}
-
-	public boolean visit(MethodDeclaration node) {
-		return checkElement(node);
-	}
-
-	public boolean visit (FieldDeclaration node) {
-		return checkElement(node);
-	}
-
-	// returns true if the given node is within the range of the IJavaElement we
-	// are searching on
-	public boolean checkElement (ASTNode node) {
-		try {
-			if ((node.getStartPosition() == element.getSourceRange().getOffset()) && 
-					(node.getLength() == element.getSourceRange().getLength()))
-				return visitNode(node);
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-		return !visitNode(node);
 	}
 }

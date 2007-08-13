@@ -1,5 +1,8 @@
 package ca.ucalgary.codesets.views;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -10,14 +13,26 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ca.ucalgary.codesets.controllers.CombinedViewController;
+import ca.ucalgary.codesets.controllers.Logger;
+import ca.ucalgary.codesets.models.CodeSet;
+import ca.ucalgary.codesets.models.CodeSetManager;
+import ca.ucalgary.codesets.models.NodeSet;
+import ca.ucalgary.codesets.models.NodeSetManager;
 
 // this view is the main presentation of the currently applicable set of ASTNode's.
 public class CombinedView extends ViewPart  {
+	Action nameSetAction;
+	CombinedViewController cvc;
+	
 	public void createPartControl(Composite parent) {
 		new CombinedViewController(parent);
+		makeActions();
+		createToolbar();
 	}
 	
 	public void setFocus() {
@@ -71,5 +86,36 @@ public class CombinedView extends ViewPart  {
 	}
 	public static Widget commentLabel(Composite parent, String text){
 		return label(parent, text, SWT.NORMAL, 11, commentColor);
+	}
+	
+	private void makeActions() {
+		nameSetAction = new Action() {
+		public void run(){
+			InputDialog dialog = new InputDialog(null, 
+					"Set Name",
+					"Please enter a name for the new set:", "", null);
+			dialog.open();
+			String name = dialog.getValue();
+			if (name != null) {
+				NodeSet currentSet = NodeSetManager.instance().combinedSet();
+				currentSet.name = name;
+				currentSet.category = "named";
+				NodeSetManager.instance().addSet(currentSet);
+				Logger.instance().addEvent("Set Named " + "\t" + name);
+			}
+		}
+	};
+	
+	nameSetAction.setToolTipText("Name this Set");  //change this for specified tooltip
+	nameSetAction.setText("Name this Set");
+	nameSetAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
+			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+
+		
+	}
+	
+	private void createToolbar() {
+		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+		mgr.add(nameSetAction);
 	}
 }
