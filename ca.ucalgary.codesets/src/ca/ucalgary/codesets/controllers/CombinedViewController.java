@@ -32,10 +32,16 @@ import ca.ucalgary.codesets.views.AdvancedViewSection;
 // controls what is shown in the CombinedView by listening to the NodeSetManager.
 public class CombinedViewController implements INodeSetListener  {
 	Composite parent;
+	ScrolledComposite sc;
 	Color background = new Color(null,255,255,255);
 
 	public CombinedViewController(Composite parent) {
-		this.parent = new Composite(parent, SWT.NONE);
+		
+		sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+		this.parent = new Composite(sc, SWT.NONE);
+		sc.setContent(this.parent);
 		Layout layout = new RowLayout(SWT.VERTICAL);
 		this.parent.setLayout(layout);
 		NodeSetManager.instance().addListener(this);
@@ -51,6 +57,7 @@ public class CombinedViewController implements INodeSetListener  {
 		for (NodeWrapper key : combined.keySet())
 			NodeSetViewBuilder.build(parent, key.getNode(), combined.get(key));
 		
+		sc.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		parent.layout();
 	}
 	
