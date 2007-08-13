@@ -44,6 +44,8 @@ public class CombinedViewController implements INodeSetListener  {
 		sc.setContent(this.parent);
 		Layout layout = new RowLayout(SWT.VERTICAL);
 		this.parent.setLayout(layout);
+		this.parent.setBackground(background);
+		this.parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		NodeSetManager.instance().addListener(this);
 	}
 	
