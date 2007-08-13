@@ -6,8 +6,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
@@ -17,6 +20,8 @@ import org.eclipse.jdt.internal.ui.search.JavaSearchResult;
 import org.eclipse.jdt.ui.search.PatternQuerySpecification;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
+import org.eclipse.search.ui.text.Match;
+import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -53,7 +58,6 @@ public class SearchBox extends Composite{
 		button.setText("Search");
 		button.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				search();
 				searchNumeroTwo();
 			}
 		});		
@@ -62,48 +66,55 @@ public class SearchBox extends Composite{
 	//checks whether or not the there has been something typed in the text box.
 	//If something has been typed into the text box, the listener searches through all sets that are not search sets
 	//and adds the ISourceReferences to a CodeSet with the name of the search that was performed. 
-	private void search() {
-		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().equals("")){
-			List<CodeSet> list = CodeSetManager.instance.sets();
-			CodeSet searchSet = new CodeSet(text.getText(),"search");
-			//Checks every set, to see if contains the word that was written in the text box
-			for(CodeSet set: list){
-				if(!set.category.equals("search")) {
-					for(ISourceReference isr: set){
-						try {
-							if(isr instanceof ResolvedSourceMethod && isr.getSource().contains(text.getText()))
-								searchSet.add(isr);
-						} catch (JavaModelException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-			CodeSetManager.instance.addSet(searchSet);
-			Logger.instance().addEvent("Searched for "+"\t"+text.getText());
-		}
-	}
+//	private void search() {
+//		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().equals("")){
+//			List<CodeSet> list = CodeSetManager.instance.sets();
+//			CodeSet searchSet = new CodeSet(text.getText(),"search");
+//			//Checks every set, to see if contains the word that was written in the text box
+//			for(CodeSet set: list){
+//				if(!set.category.equals("search")) {
+//					for(ISourceReference isr: set){
+//						try {
+//							if(isr instanceof ResolvedSourceMethod && isr.getSource().contains(text.getText()))
+//								searchSet.add(isr);
+//						} catch (JavaModelException e) {
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//			}
+//			CodeSetManager.instance.addSet(searchSet);
+//			
+//		}
+//	}
 	
-	private void searchNumeroTwo() {
+	private void searchNumeroTwo() {		
 		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().equals("")) {
-
 			IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
 			SearchEngine.createWorkspaceScope().setIncludesClasspaths(true);
 			searchScope = SearchEngine.createWorkspaceScope();
 			JavaSearchQuery query= new JavaSearchQuery(new PatternQuerySpecification(text.getText(), IJavaSearchConstants.METHOD | IJavaSearchConstants.CLASS | IJavaSearchConstants.PACKAGE | IJavaSearchConstants.FIELD | IJavaSearchConstants.ALL_OCCURRENCES,false,  IJavaSearchConstants.ALL_OCCURRENCES, searchScope ,"Search"));
 			
+			final NodeSet searchSet = new NodeSet(text.getText(),"Search");
+			
 			query.getSearchResult().addListener(new ISearchResultListener() {
 				public void searchResultChanged(SearchResultEvent e) {
-					CodeSet searchSet = new CodeSet(text.getText(), "SearchSet");
-					JavaSearchResult jsr = (JavaSearchResult) e.getSearchResult();
-					Object[] elements = jsr.getElements();
-					for (int i = 0; i < elements.length; i++) {
-						searchSet.add((ISourceReference)elements[i]);
+					if(e instanceof MatchEvent){
+						Match[] matches = ((MatchEvent)e).getMatches();
+						for (Match m:matches) {
+							ICompilationUnit unit = (ICompilationUnit)((IJavaElement)m.getElement()).getAncestor(IJavaElement.COMPILATION_UNIT);
+							if(unit != null){
+								ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
+								searchSet.add(node);
+							}
+						}	
+						if(searchSet.size() > 0)	
+							NodeSetManager.instance.addSet(searchSet);
 					}
-					CodeSetManager.instance.addSet(searchSet);
 				}
 			});
 			query.run(new NullProgressMonitor());
+			Logger.instance().addEvent("Searched for "+"\t"+text.getText());
 		}		
 	}
 
