@@ -1,6 +1,7 @@
 package ca.ucalgary.codesets.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -45,6 +46,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	Composite parent;
 	Composite classView;
 	Composite methodView;
+
+	HashMap<NodeWrapper,Composite> compositeTracker = new HashMap<NodeWrapper,Composite>();
 
 	HashSet<NodeWrapper> includeSet;
 
@@ -520,10 +523,13 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// start a new composite corresponding to this method declaration
 	public boolean visit(MethodDeclaration node) {		
 		if (shouldVisit(node)) {
-			IJavaElement element = ASTHelper.getJavaElement(node);
-			String line = labelProvider.getText(element);
-			methodView = CombinedView.methodView(classView, line, makeListener(element,line));
-			indent++;
+			if (methodView == null) {
+				IJavaElement element = ASTHelper.getJavaElement(node);
+				String line = labelProvider.getText(element);
+				methodView = CombinedView.methodView(classView, line, makeListener(element,line));
+				compositeTracker.put(new NodeWrapper(node), methodView);
+				indent++;
+			}
 			return true;
 		}
 		return false;
@@ -737,13 +743,16 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// to the method composite
 	public void endVisit(MethodDeclaration node) {
 		if (shouldVisit(node)) {
-			StringBuffer buf = new StringBuffer();
-			for (String line : lines)
-				buf.append(line + "\n");
-			lines.clear();
-			indent--;
-			CombinedView.methodBodyWidget(methodView, buf.toString());
-			methodView = null;
+			if (compositeTracker.get(new NodeWrapper(node)) != null) {
+				StringBuffer buf = new StringBuffer();
+				for (String line : lines)
+					buf.append(line + "\n");
+				lines.clear();
+				indent--;
+				CombinedView.methodBodyWidget(methodView, buf.toString());
+				methodView = null;
+				compositeTracker.remove(node);
+			}
 		}
 	}
 
