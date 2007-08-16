@@ -1,6 +1,7 @@
 package ca.ucalgary.codesets.controllers;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -56,7 +57,8 @@ public class CombinedViewController implements INodeSetListener  {
 			w.dispose();
 		
 		NodeSet combined = NodeSetManager.instance().combinedSet();
-		for (NodeWrapper key : combined.keySet())
+		Set<NodeWrapper> keyset = combined.keySet();
+		for (NodeWrapper key : keyset)
 			NodeSetViewBuilder.build(parent, key.getNode(), combined.get(key));
 		
 		sc.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
