@@ -34,7 +34,7 @@ For the code base, we have selected to use _______.
 
 Using the code base, the participants were instructed to use the tool, if applicable, to anwer
 a series of questions.  These questions were designed in such a way as to test the usefulness, 
-and usability of the pluggin.  For instance, to test the usability of the plugin, we asked the
+and usability of the plug-in.  For instance, to test the usability of the plugin, we asked the
 participants to make a set which contained all of the elements in a class, which referenced a 
 specific method, but not those that have been visited already.  To test the usefulness, we decided
 to give the participants a question like, how were a and b related, where there were several things between 

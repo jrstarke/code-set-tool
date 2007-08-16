@@ -97,7 +97,7 @@ public class CombinedView extends ViewPart  {
 					"Please enter a name for the new set:", "", null);
 			dialog.open();
 			String name = dialog.getValue();
-			if (name != null) {
+			if ((name != null) && (name != "")) {
 				NodeSet currentSet = NodeSetManager.instance().combinedSet();
 				currentSet.name = name;
 				currentSet.category = "named";
