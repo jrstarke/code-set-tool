@@ -117,42 +117,6 @@ public class SearchBox extends Composite{
 		return TextSearchQueryProvider.getPreferred().createQuery(input);
 	}
 
-//	public ISearchResultViewPart getActiveSearchView() {
-//	IWorkbenchPage activePage= SearchPlugin.getActivePage();
-//	if (activePage != null) {
-//	return findLRUSearchResultView(activePage, false);
-//	}
-//	return null;
-//	}
-
-//	private IWorkbenchSiteProgressService getProgressService() {
-//	ISearchResultViewPart view= getActiveSearchView();
-//	if (view != null) {
-//	IWorkbenchPartSite site= view.getSite();
-//	if (site != null)
-//	return (IWorkbenchSiteProgressService)view.getSite().getAdapter(IWorkbenchSiteProgressService.class);
-//	}
-//	return null;
-//	}
-
-//	private class SearchJobRecord {
-//	public ISearchQuery query;
-//	public Job job;
-//	public boolean background;
-//	public boolean isRunning;
-
-//	public SearchJobRecord(ISearchQuery job, boolean bg) {
-//	this.query= job;
-//	this.background= bg;
-//	this.isRunning= false;
-//	this.job= null;
-//	}
-//	}
-
-
-
-
-
 	private void searchNumeroTwo() {		
 		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().equals("")) {
 			IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
@@ -186,65 +150,7 @@ public class SearchBox extends Composite{
 				e2.printStackTrace();
 			}
 
-		}
-
-
-
-
-
-
-
-//		SearchPattern sp = SearchPattern.createPattern(text.getText(), IJavaSearchConstants.CLASS
-//		| IJavaSearchConstants.INTERFACE
-//		| IJavaSearchConstants.ENUM
-//		| IJavaSearchConstants.ANNOTATION_TYPE
-//		| IJavaSearchConstants.CLASS_AND_ENUM
-//		| IJavaSearchConstants.CLASS_AND_INTERFACE
-//		| IJavaSearchConstants.TYPEton
-//		| IJavaSearchConstants.FIELD
-//		| IJavaSearchConstants.METHOD
-//		| IJavaSearchConstants.CONSTRUCTOR
-//		| IJavaSearchConstants.PACKAGE,IJavaSearchConstants.ALL_OCCURRENCES,SearchPattern.R_PATTERN_MATCH | SearchPattern.R_CASE_SENSITIVE);
-
-//		JavaSearchQuery query= new JavaSearchQuery(new PatternQuerySpecification(text.getText(), IJavaSearchConstants.METHOD | IJavaSearchConstants.CLASS | IJavaSearchConstants.DECLARATIONS | IJavaSearchConstants.CONSTRUCTOR | IJavaSearchConstants.IMPLEMENTORS | IJavaSearchConstants.PREFIX_MATCH | IJavaSearchConstants.PACKAGE | IJavaSearchConstants.FIELD | IJavaSearchConstants.TYPE,true,  IJavaSearchConstants.ALL_OCCURRENCES, searchScope ,"Search"));
-////		JavaSearchQuery query= new JavaSearchQuery(new PatternQuerySpecification(text.getText(), IJavaSearchConstants.ALL_OCCURRENCES,true,  IJavaSearchConstants.ALL_OCCURRENCES, searchScope ,"Search"));
-////		JavaSearchQuery query= new JavaSearchQuery(new PatternQuerySpecification(sp, searchScope ,"Search"));
-
-//		SearchParticipant[] sp2 = null;
-
-//		SearchRequestor SearchRequestor = null;
-//		IProgressMonitor IProgressMonitor = null;
-//		SearchEngine searchEngine = new SearchEngine();
-
-//		try {
-//		searchEngine.search(sp, sp2, searchScope, SearchRequestor, IProgressMonitor);
-//		} catch (CoreException e1) {
-//		// TODO Auto-generated catch block
-//		e1.printStackTrace();
-//		}
-
-//		final NodeSet searchSet = new NodeSet(text.getText(),"Search");
-
-
-//		query.getSearchResult().addListener(new ISearchResultListener() {
-//		public void searchResultChanged(SearchResultEvent e) {
-//		if(e instanceof MatchEvent){
-//		Match[] matches = ((MatchEvent)e).getMatches();
-//		for (Match m:matches) {
-//		ICompilationUnit unit = (ICompilationUnit)((IJavaElement)m.getElement()).getAncestor(IJavaElement.COMPILATION_UNIT);
-//		if(unit != null){
-//		ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
-//		searchSet.add(node);
-//		}
-//		}	
-////		if(searchSet.size() > 0)	
-//		NodeSetManager.instance.addSet(searchSet);
-//		}
-//		}
-//		});
-//		query.run(new NullProgressMonitor());
-//		Logger.instance().addEvent("Searched for "+"\t"+text.getText());
-//		}		
+		}		
 	}
 
 	//Adds a text box to the composite. 
