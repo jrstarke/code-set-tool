@@ -118,7 +118,7 @@ public class SearchBox extends Composite{
 	}
 
 	private void search() {		
-		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().equals("")) {
+		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().trim().equals("")) {
 			IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
 			SearchEngine.createWorkspaceScope().setIncludesClasspaths(true);
 			searchScope = SearchEngine.createWorkspaceScope();
