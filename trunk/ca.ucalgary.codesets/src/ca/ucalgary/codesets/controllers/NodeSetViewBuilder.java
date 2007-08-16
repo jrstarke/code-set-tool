@@ -512,12 +512,15 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// start a new composite corresponding to this type declaration
 	public boolean visit(TypeDeclaration node) {
 		if (shouldVisit(node)) {
-			IJavaElement element = ASTHelper.getJavaElement(node);
-			String line = labelProvider.getText(element);
-			classView = CombinedView.classView(parent, line, "", makeListener(element,line));
+			if(classView == null){
+				IJavaElement element = ASTHelper.getJavaElement(node);
+				String line = labelProvider.getText(element);
+				classView = CombinedView.classView(parent, line, "", makeListener(element,line));
+			}
 			return true;
 		}
 		return false;
+		
 	}
 
 	// start a new composite corresponding to this method declaration
@@ -870,7 +873,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public void endVisit(TypeDeclaration node) {
-		classView = null;
+		if (compositeTracker.get(new NodeWrapper(node)) != null)
+			classView = null;
 	}
 
 	public void endVisit(TypeDeclarationStatement node) {
