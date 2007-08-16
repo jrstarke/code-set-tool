@@ -69,7 +69,7 @@ public class SearchBox extends Composite{
 		button.setText("Search");
 		button.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				searchNumeroTwo();
+				search();
 			}
 		});		
 	}
@@ -117,7 +117,7 @@ public class SearchBox extends Composite{
 		return TextSearchQueryProvider.getPreferred().createQuery(input);
 	}
 
-	private void searchNumeroTwo() {		
+	private void search() {		
 		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().equals("")) {
 			IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
 			SearchEngine.createWorkspaceScope().setIncludesClasspaths(true);
