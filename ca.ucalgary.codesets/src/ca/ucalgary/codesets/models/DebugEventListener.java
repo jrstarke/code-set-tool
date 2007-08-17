@@ -26,7 +26,7 @@ import org.eclipse.jdt.ui.IWorkingCopyManager;
 
 // Listens to debug events and creates a CodeSet for each debugging session
 public class DebugEventListener implements IDebugEventSetListener {
-	CodeSet set;
+//	CodeSet set;
 	NodeSet nodeSet;
 	
 	public DebugEventListener() {
@@ -45,21 +45,18 @@ public class DebugEventListener implements IDebugEventSetListener {
 				if (event.getKind() == DebugEvent.CREATE && source instanceof IProcess) {
 					// start recording new set
 					String name = new SimpleDateFormat("hh:mm a").format(new Date());
-					set = new CodeSet(name, "debugging session");
 					nodeSet = new NodeSet(name, "debugging session");
 					
 				} else if (source instanceof IThread) {
 					// add entity from each stack frame to set
 					IStackFrame[] frames = ((IThread)source).getStackFrames();
 					for (int j = 0; j < frames.length; j++) {
-						set.add((ISourceReference)getSourceReference(frames[j]));
 						nodeSet.add(getNode(frames[j]));
 					}
 					
 				} else if (event.getKind() == DebugEvent.TERMINATE && source instanceof IProcess) {
 					// session is ending so add set to code manager
-					if (set.size() != 0) {
-						CodeSetManager.instance().addSet(set);
+					if (nodeSet.size() != 0) {
 						NodeSetManager.instance().addSet(nodeSet);
 					}
 				}

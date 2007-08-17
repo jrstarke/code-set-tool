@@ -84,7 +84,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 					e.printStackTrace();
 				}
 
-				CodeSetManager.instance().setFocus((ISourceReference)element, lastCaret);
+//				CodeSetManager.instance().setFocus((ISourceReference)element, lastCaret);
 //				new ReferenceToSearch().search(element, name(element));
 //				new ReferenceFromSearch().search(element, name(element));
 //				new MembersOfType().search(element);
