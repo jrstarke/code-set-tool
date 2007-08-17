@@ -123,35 +123,35 @@ public class SearchBox extends Composite{
 		if (name != null)
 		name = name.trim();
 		if(!name.equals("Enter Search") && name != null  && !name.equals("")) {
-			IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
-			SearchEngine.createWorkspaceScope().setIncludesClasspaths(true);
-			searchScope = SearchEngine.createWorkspaceScope();
 			final NodeSet searchSet = new NodeSet(name,"search");
-			try {
-				ISearchQuery query = newQuery();
-				query.getSearchResult().addListener(new ISearchResultListener() {
-					public void searchResultChanged(SearchResultEvent e) {
-						if(e instanceof MatchEvent){
-							Match[] matches = ((MatchEvent)e).getMatches();
-							for (Match m:matches) {
-								FileMatch fm = (FileMatch)m;
-								ICompilationUnit unit = JavaCore.createCompilationUnitFrom(fm.getFile());
-								ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
-								//if (node != null)// && !searchSet.containsNode(node))
+			if(!NodeSetManager.instance.containsSet(searchSet)){
+				IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
+				SearchEngine.createWorkspaceScope().setIncludesClasspaths(true);
+				searchScope = SearchEngine.createWorkspaceScope();
+				try {
+					ISearchQuery query = newQuery();
+					query.getSearchResult().addListener(new ISearchResultListener() {
+						public void searchResultChanged(SearchResultEvent e) {
+							if(e instanceof MatchEvent){
+								Match[] matches = ((MatchEvent)e).getMatches();
+								for (Match m:matches) {
+									FileMatch fm = (FileMatch)m;
+									ICompilationUnit unit = JavaCore.createCompilationUnitFrom(fm.getFile());
+									ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
 									searchSet.add(node);
-							}	
-							NodeSetManager.instance.addSet(searchSet);
+								}	
+								NodeSetManager.instance.addSet(searchSet);
+							}
 						}
-					}
-				});
-				query.run(new NullProgressMonitor());
-
-			} catch (IllegalArgumentException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			} catch (CoreException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
+					});
+					query.run(new NullProgressMonitor());
+				} catch (IllegalArgumentException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				} catch (CoreException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
 			}
 		}	
 		else
