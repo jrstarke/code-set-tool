@@ -47,6 +47,7 @@ import ca.ucalgary.codesets.controllers.Logger;
 public class SearchBox extends Composite{
 	private final Text text = new Text(this, SWT.SINGLE | SWT.BORDER);
 	private Button button = new Button(this,SWT.PUSH);
+	private String name = null;
 
 	public SearchBox(Composite parent) {
 
@@ -113,16 +114,19 @@ public class SearchBox extends Composite{
 	}
 
 	private ISearchQuery newQuery() throws CoreException { 
-		TextSearchPageInput input= new TextSearchPageInput(text.getText(), true, false, createTextSearchScope());
+		TextSearchPageInput input= new TextSearchPageInput(name, true, false, createTextSearchScope());
 		return TextSearchQueryProvider.getPreferred().createQuery(input);
 	}
 
 	private void search() {		
-		if(!text.getText().equals("Enter Search") && text.getText() != null  && !text.getText().trim().equals("")) {
+		name = text.getText();
+		if (name != null)
+		name = name.trim();
+		if(!name.equals("Enter Search") && name != null  && !name.equals("")) {
 			IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
 			SearchEngine.createWorkspaceScope().setIncludesClasspaths(true);
 			searchScope = SearchEngine.createWorkspaceScope();
-			final NodeSet searchSet = new NodeSet(text.getText(),"search");
+			final NodeSet searchSet = new NodeSet(name,"search");
 			try {
 				ISearchQuery query = newQuery();
 				query.getSearchResult().addListener(new ISearchResultListener() {
