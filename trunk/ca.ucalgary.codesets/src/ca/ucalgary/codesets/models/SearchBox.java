@@ -153,8 +153,9 @@ public class SearchBox extends Composite{
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
 			}
-
-		}		
+		}	
+		else
+			text.setText("Enter Search");
 	}
 
 	//Adds a text box to the composite. 
