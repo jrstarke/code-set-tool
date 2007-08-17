@@ -20,8 +20,6 @@ import org.eclipse.ui.part.ViewPart;
 
 import ca.ucalgary.codesets.controllers.CombinedViewController;
 import ca.ucalgary.codesets.controllers.Logger;
-import ca.ucalgary.codesets.models.CodeSet;
-import ca.ucalgary.codesets.models.CodeSetManager;
 import ca.ucalgary.codesets.models.NodeSet;
 import ca.ucalgary.codesets.models.NodeSetManager;
 

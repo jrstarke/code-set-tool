@@ -28,7 +28,6 @@ import ca.ucalgary.codesets.models.NodeSet;
 import ca.ucalgary.codesets.models.NodeWrapper;
 import ca.ucalgary.codesets.models.NodeSetManager;
 import ca.ucalgary.codesets.models.INodeSetListener;
-import ca.ucalgary.codesets.views.AdvancedViewSection;
 
 // controls what is shown in the CombinedView by listening to the NodeSetManager.
 public class CombinedViewController implements INodeSetListener  {

@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.osgi.framework.Bundle;
 
-import ca.ucalgary.codesets.models.CodeSet;
 import ca.ucalgary.codesets.models.NodeSet;
 
 public class NodeSetLabel extends Composite {

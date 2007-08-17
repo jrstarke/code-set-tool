@@ -18,9 +18,6 @@ import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.osgi.framework.Bundle;
 
-import ca.ucalgary.codesets.models.CodeSet;
-import ca.ucalgary.codesets.models.CodeSetManager;
-import ca.ucalgary.codesets.models.ICodeSetListener;
 import ca.ucalgary.codesets.models.INodeSetListener;
 import ca.ucalgary.codesets.models.NodeSet;
 import ca.ucalgary.codesets.models.NodeSetManager;
