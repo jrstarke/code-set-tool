@@ -46,6 +46,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	Composite parent;
 	Composite classView;
 	Composite methodView;
+	Listener lastListener;
 
 	HashMap<NodeWrapper,Composite> compositeTracker = new HashMap<NodeWrapper,Composite>();
 
@@ -357,7 +358,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(Javadoc node) {
 		String commentLine = getFirstLine(node.toString());
 		Composite parent = methodView != null ? methodView : classView;
-		CombinedView.commentLabel(parent, commentLine);
+		CombinedView.commentLabel(parent, commentLine, this.lastListener);
 		return false;
 	}
 
@@ -529,7 +530,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 			if (methodView == null) {
 				IJavaElement element = ASTHelper.getJavaElement(node);
 				String line = labelProvider.getText(element);
-				methodView = CombinedView.methodView(classView, line, makeListener(element,line));
+				this.lastListener = makeListener(element,line);
+				methodView = CombinedView.methodView(classView, line, this.lastListener);
 				compositeTracker.put(new NodeWrapper(node), methodView);
 				indent++;
 			}
@@ -752,8 +754,9 @@ public class NodeSetViewBuilder extends ASTVisitor {
 					buf.append(line + "\n");
 				lines.clear();
 				indent--;
-				CombinedView.methodBodyWidget(methodView, buf.toString());
+				CombinedView.methodBodyWidget(methodView, buf.toString(),this.lastListener);
 				methodView = null;
+				lastListener = null;
 				compositeTracker.remove(node);
 			}
 		}

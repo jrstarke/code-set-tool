@@ -80,11 +80,15 @@ public class CombinedView extends ViewPart  {
 		
 		return result;
 	}
-	public static Widget methodBodyWidget(Composite parent, String text) {
-		return label(parent, text, SWT.NORMAL, 11, methodColor);
+	public static Widget methodBodyWidget(Composite parent, String text, Listener listener) {
+		Label label = label(parent, text, SWT.NORMAL, 11, methodColor);
+		label.addListener(SWT.MouseDoubleClick, listener);
+		return label;
 	}
-	public static Widget commentLabel(Composite parent, String text){
-		return label(parent, text, SWT.NORMAL, 11, commentColor);
+	public static Widget commentLabel(Composite parent, String text, Listener listener){
+		Label label = label(parent, text, SWT.NORMAL, 11, commentColor);
+		label.addListener(SWT.MouseDoubleClick, listener);
+		return label;
 	}
 	
 	private void makeActions() {
