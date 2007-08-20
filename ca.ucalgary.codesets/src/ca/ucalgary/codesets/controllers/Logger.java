@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.ISourceReference;
@@ -32,7 +34,7 @@ public class Logger implements INodeSetListener {
 	
 	private Logger() { 
 		NodeSetManager.instance().addListener(this);
-		file = new File("/Users/logs/"+DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT, Locale.CANADA).format(Calendar.getInstance().getTime()) +".txt");
+		file = getFile(""+DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.SHORT, Locale.CANADA).format(Calendar.getInstance().getTime()) +".log");
 	}
 	
 	// there is one global instance of this class
@@ -69,10 +71,10 @@ public class Logger implements INodeSetListener {
  	}
 	
 	File getFile(String name) {
-		Bundle bundle = Platform.getBundle("ca.ucalgary.codesets");
-		Path path = new Path("logs/" + name);
-		URL url = FileLocator.find(bundle,path,null);
-		return new File(url.getFile());
+		IPath path = Platform.getLocation();
+		path = path.append("/" + name);
+		File file = path.toFile();
+		return file;
 	}
 	
 	
