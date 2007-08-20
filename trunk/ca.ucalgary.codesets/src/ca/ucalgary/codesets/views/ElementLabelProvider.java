@@ -2,6 +2,7 @@ package ca.ucalgary.codesets.views;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
@@ -47,6 +48,20 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 		else 
 			return super.getText(element);
 		
+	}
+	
+	public String getText(IType element) {
+		return super.getText(element);
+	}
+	
+	public String getText(Object element) {
+		if (element instanceof IType) {
+			IType type = (IType) element;
+			IPackageFragment currentPackage = type.getPackageFragment();
+			return (super.getText(currentPackage) + "." + super.getText(type));
+		}
+		else
+			return super.getText(element);
 	}
 
 }
