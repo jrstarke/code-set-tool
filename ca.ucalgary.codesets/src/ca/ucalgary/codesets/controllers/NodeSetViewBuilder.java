@@ -3,6 +3,7 @@ package ca.ucalgary.codesets.controllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -193,6 +194,14 @@ public class NodeSetViewBuilder extends ASTVisitor {
 			if (els != null && els.equals(node)) {
 				indent--;
 				addLine("else");
+				indent++;
+			}
+		}
+		else if (shouldVisit(node) && parent instanceof TryStatement) {
+			List catches = ((TryStatement)parent).catchClauses();
+			if (catches.size() > 0 && catches.contains(node)) {
+				indent--;
+				addLine("catch");
 				indent++;
 			}
 		}
