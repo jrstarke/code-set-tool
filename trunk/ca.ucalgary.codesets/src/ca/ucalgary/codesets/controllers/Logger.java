@@ -47,12 +47,11 @@ public class Logger implements INodeSetListener {
 	 * DATE	Set Added		Name of Set				Category of Set   
 	 * DATE	Double Clicked  Label double clicked 
 	 * DATE	State Changed 	Set Name				State changed to
-	 * DATE	Scale Changed	from #	  		to 		to #
 	 * DATE	Searched For	Search Entry
 	 * DATE	All Sets		Ignored
-	 * DATE	Set Named 		Name of state
+	 * DATE	Set Named 		Name of set
 	 * 
-	 * @param action
+	 * @param action : A string representing the action
 	 */
 	public void addEvent(String action) {
 		try {

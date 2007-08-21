@@ -146,10 +146,8 @@ public class SearchBox extends Composite{
 									searchSet.add(node);
 								}	
 								NodeSetManager.instance.addSet(searchSet);
+								Logger.instance().addEvent("Searched For:"+'\t'+name);
 								text.setText("Enter Search");
-							}
-							else if(e instanceof RemoveAllEvent){
-								text.setText("Done");
 							}
 						}
 					});
