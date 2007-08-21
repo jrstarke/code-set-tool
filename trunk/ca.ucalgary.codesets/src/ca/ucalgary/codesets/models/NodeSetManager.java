@@ -133,7 +133,7 @@ public class NodeSetManager {
 			if (s.state == NodeSet.State.RESTRICTEDTO)
 				combined = combined.intersection(s);
 		
-		return combined.copy(false);
+		return combined.copy(true);
 	}
 	
 	public boolean containsSet(NodeSet set) {
