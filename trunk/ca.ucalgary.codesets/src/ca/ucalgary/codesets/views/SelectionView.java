@@ -36,9 +36,6 @@ public class SelectionView extends ViewPart {
 	private void makeActions() {
 		clearSetsAction = new Action() {
 			public void run(){
-//				CodeSetManager.instance().allCleared = true;
-//				CodeSetManager.instance().clearStates();
-//				CodeSetManager.instance().allCleared = false;
 				
 				NodeSetManager.instance().allCleared = true;
 				NodeSetManager.instance().clearStates();
@@ -51,27 +48,6 @@ public class SelectionView extends ViewPart {
 		clearSetsAction.setText("Clear");		
 		clearSetsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-
-//		nameSetAction = new Action() {
-//			public void run(){
-//				InputDialog dialog = new InputDialog(barController.getSideBar().getShell(), 
-//						"Set Name",
-//						"Please enter a name for the new set:", "", null);
-//				dialog.open();
-//				String name = dialog.getValue();
-//				if (name != null) {
-//					CodeSet currentSet = CodeSetManager.instance().displaySet();
-//					currentSet.name = name;
-//					currentSet.category = "named";
-//					CodeSetManager.instance().addSet(currentSet);
-//				}
-//			}
-//		};
-		
-//		nameSetAction.setToolTipText("Renames this set");  //change this for specified tooltip
-//		nameSetAction.setText("Name this Set");
-//		nameSetAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-//				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
 	}
 	
     /**
@@ -79,7 +55,6 @@ public class SelectionView extends ViewPart {
      */
     private void createToolbar() {
             IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
-//            mgr.add(nameSetAction);
             mgr.add(clearSetsAction);
     }
 	

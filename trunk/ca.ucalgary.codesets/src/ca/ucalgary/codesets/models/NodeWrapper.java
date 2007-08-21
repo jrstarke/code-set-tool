@@ -11,6 +11,8 @@ import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 public class NodeWrapper {
 	ASTNode node;
 	public NodeWrapper(ASTNode node) {
+		if(node == null)
+			return;
 		node.getParent();
 		this.node = node;
 	}
