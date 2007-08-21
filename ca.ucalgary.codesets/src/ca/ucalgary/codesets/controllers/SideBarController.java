@@ -68,6 +68,7 @@ public class SideBarController implements INodeSetListener {
 			public void linkExited(HyperlinkEvent e) {
 			}
 		});
+		sideBar.layout();
 	}
 	
 	void addLinks(String category, List<NodeSet> sets) {

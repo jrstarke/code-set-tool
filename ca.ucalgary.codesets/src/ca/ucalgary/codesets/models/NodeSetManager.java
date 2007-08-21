@@ -91,11 +91,9 @@ public class NodeSetManager {
 	public synchronized void addSet(NodeSet set) {
 		boolean removed = rawSets.remove(set); // O(n), but n <= SET_NUM_LIMIT
 		rawSets.add(set);
-		
 		if (rawSets.size() > MAX_RAW_SETS)
 			// remove oldest set (not counting the navigation history set)
 			rawSets.remove(1);
-		
 		if (!removed)
 			for (INodeSetListener listener : listeners)
 				listener.setAdded(set);
@@ -135,7 +133,7 @@ public class NodeSetManager {
 			if (s.state == NodeSet.State.RESTRICTEDTO)
 				combined = combined.intersection(s);
 		
-		return combined.copy(true);
+		return combined.copy(false);
 	}
 	
 	public boolean containsSet(NodeSet set) {
