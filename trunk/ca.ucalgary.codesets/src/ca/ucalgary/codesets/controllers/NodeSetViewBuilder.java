@@ -525,7 +525,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 			if(classView == null){
 				IJavaElement element = ASTHelper.getJavaElement(node);
 				String line = labelProvider.getText(element);
-				classView = CombinedView.classView(parent, line, "", makeListener(element,line));
+				this.lastListener = makeListener(element,line);
+				classView = CombinedView.classView(parent, line, "", this.lastListener);
 			}
 			return true;
 		}

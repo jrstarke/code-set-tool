@@ -31,6 +31,7 @@ import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
+import org.eclipse.search.ui.text.RemoveAllEvent;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
 import org.eclipse.search.ui.text.TextSearchQueryProvider.TextSearchInput;
 import org.eclipse.swt.SWT;
@@ -70,9 +71,19 @@ public class SearchBox extends Composite{
 		button.setText("Search");
 		button.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				search();
+				getTextBoxText();
 			}
-		});		
+		});	
+	}
+	
+	//Method for retrieving the text that's in the text box when either the search button was clicked, or 
+	//return was applied while typing
+	private void getTextBoxText() {
+		name = text.getText();
+		if(name!=null)
+			name = name.trim();
+		button.setEnabled(false);  //positive feedback... hopefully
+		search();
 	}
 
 	
@@ -119,28 +130,26 @@ public class SearchBox extends Composite{
 	}
 
 	private void search() {		
-		name = text.getText();
-		if (name != null)
-		name = name.trim();
 		if(!name.equals("Enter Search") && name != null  && !name.equals("")) {
 			final NodeSet searchSet = new NodeSet(name,"search");
 			if(!NodeSetManager.instance.containsSet(searchSet)){
-				IJavaSearchScope searchScope = org.eclipse.jdt.core.search.SearchEngine.createWorkspaceScope();
-				SearchEngine.createWorkspaceScope().setIncludesClasspaths(true);
-				searchScope = SearchEngine.createWorkspaceScope();
 				try {
-					ISearchQuery query = newQuery();
+					ISearchQuery query = newQuery(); //Creates a query for the given text
 					query.getSearchResult().addListener(new ISearchResultListener() {
 						public void searchResultChanged(SearchResultEvent e) {
 							if(e instanceof MatchEvent){
 								Match[] matches = ((MatchEvent)e).getMatches();
 								for (Match m:matches) {
-									FileMatch fm = (FileMatch)m;
+									FileMatch fm = (FileMatch)m; //Returns IFiles, and create a compilation unit for each one
 									ICompilationUnit unit = JavaCore.createCompilationUnitFrom(fm.getFile());
 									ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
 									searchSet.add(node);
 								}	
 								NodeSetManager.instance.addSet(searchSet);
+								text.setText("Enter Search");
+							}
+							else if(e instanceof RemoveAllEvent){
+								text.setText("Done");
 							}
 						}
 					});
@@ -156,6 +165,7 @@ public class SearchBox extends Composite{
 		}	
 		else
 			text.setText("Enter Search");
+		button.setEnabled(true);
 	}
 
 	//Adds a text box to the composite. 
@@ -169,5 +179,15 @@ public class SearchBox extends Composite{
 					text.setText("");
 			}
 		});
+		
+		text.addListener(SWT.KeyDown, new Listener(){
+			public void handleEvent(Event event) {
+				if(event.character == '\r'){   // When the user hits enter in the text box, this event happens
+					getTextBoxText();
+				}
+			}
+			
+		});
+		
 	}	
 }
