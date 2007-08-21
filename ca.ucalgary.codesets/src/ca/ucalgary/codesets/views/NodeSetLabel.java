@@ -50,6 +50,7 @@ public class NodeSetLabel extends Composite {
 	}
 
 	public void setSizeText() {
+		NodeSet blah = getSet();
 		sizeLabel.setText("- " + getSet().size());
 	}
 	public void setIcon(NodeSet.State state) {
