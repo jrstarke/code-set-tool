@@ -2,10 +2,8 @@ package ca.ucalgary.codesets.controllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
@@ -135,6 +133,5 @@ public class SideBarController implements INodeSetListener {
 	public Composite getSideBar() {
 		return this.sideBar;
 	}
-
 }
 

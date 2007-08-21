@@ -91,12 +91,22 @@ public class NodeSetManager {
 	public synchronized void addSet(NodeSet set) {
 		boolean removed = rawSets.remove(set); // O(n), but n <= SET_NUM_LIMIT
 		rawSets.add(set);
+		
+		NodeSet set2;
+		List<NodeSet> list;
+		
 		if (rawSets.size() > MAX_RAW_SETS)
 			// remove oldest set (not counting the navigation history set)
-			rawSets.remove(1);
+			while(rawSets.size() > MAX_RAW_SETS) {
+				set2 = rawSets.remove(1);
+//				list = NodeSetManager.instance().sets(set2.category);
+//				if(list.size() < 1)
+//					rawSets.remove(rawSets.indexOf(list));
+			}
 		if (!removed)
 			for (INodeSetListener listener : listeners)
 				listener.setAdded(set);
+		
 	}
 	
 	// returns the list of all "raw" sets
@@ -115,7 +125,7 @@ public class NodeSetManager {
 	
 	// returns a new node set that is a combination of all of the raw sets
 	// taking states into account (the resulting set is indexed by type)
-	public NodeSet combinedSet() {
+	public NodeSet combinedSet(boolean b) {
 		NodeSet combined = new NodeSet("x", "display");
 		
 		// add in elements from all included sets
@@ -133,7 +143,7 @@ public class NodeSetManager {
 			if (s.state == NodeSet.State.RESTRICTEDTO)
 				combined = combined.intersection(s);
 		
-		return combined.copy(true);
+		return combined.copy(b);
 	}
 	
 	public boolean containsSet(NodeSet set) {

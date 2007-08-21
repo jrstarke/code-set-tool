@@ -55,7 +55,7 @@ public class CombinedViewController implements INodeSetListener  {
 		for (Control w : parent.getChildren())
 			w.dispose();
 		
-		NodeSet combined = NodeSetManager.instance().combinedSet();
+		NodeSet combined = NodeSetManager.instance().combinedSet(true);
 		Set<NodeWrapper> keyset = combined.keySet();
 		for (NodeWrapper key : keyset)
 			NodeSetViewBuilder.build(parent, key.getNode(), combined.get(key));
