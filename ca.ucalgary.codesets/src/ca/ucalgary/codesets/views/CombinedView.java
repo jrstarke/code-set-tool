@@ -90,7 +90,8 @@ public class CombinedView extends ViewPart  {
 	}
 	public static Widget commentLabel(Composite parent, String text, Listener listener){
 		Label label = label(parent, text, SWT.NORMAL, 11, commentColor);
-		label.addListener(SWT.MouseDoubleClick, listener);
+		if(listener != null)
+			label.addListener(SWT.MouseDoubleClick, listener);
 		return label;
 	}
 
