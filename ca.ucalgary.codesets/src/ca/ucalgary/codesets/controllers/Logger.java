@@ -118,5 +118,10 @@ public class Logger implements INodeSetListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void setRemoved(NodeSet set) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
