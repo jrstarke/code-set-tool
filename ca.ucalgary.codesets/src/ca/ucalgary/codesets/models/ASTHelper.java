@@ -1,5 +1,7 @@
 package ca.ucalgary.codesets.models;
 
+import java.util.HashMap;
+
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceRange;
@@ -16,7 +18,10 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 
+import ca.ucalgary.codesets.controllers.Logger;
+
 public class ASTHelper {
+	private static HashMap<ICompilationUnit,CompilationUnit> ASTCache = new HashMap<ICompilationUnit,CompilationUnit>();
 
 	// returns the IJavaElement corresponding to the given node
 	public static IJavaElement getJavaElement(MethodDeclaration node) {
@@ -31,16 +36,26 @@ public class ASTHelper {
 
 	// returns a root AST node based on the given compilation unit
 	static CompilationUnit getStartNode(ICompilationUnit unit) {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		return (CompilationUnit) parser.createAST(null);
+		Logger.instance().start("ASTHelper.getStartNode(ICompilationUnit)");
+		CompilationUnit compUnit = ASTCache.get(unit);
+		if (compUnit == null) {
+			ASTParser parser = ASTParser.newParser(AST.JLS3);
+			parser.setSource(unit);
+			parser.setResolveBindings(true);
+			compUnit = (CompilationUnit) parser.createAST(null);
+			ASTCache.put(unit, compUnit);
+		}
+		Logger.instance().stop("ASTHelper.getStartNode(ICompilationUnit)");
+		return compUnit;
 	}
 
 	// returns the most specific ASTNode for the given compilation unit and
 	// position
 	public static ASTNode getNodeAtPosition(ICompilationUnit unit, int position) {
-		return new Visitor().findNode(unit, position);
+		Logger.instance().start("ASTHelper.getNodeAtPosition(ICompilationUnit,int)");
+		ASTNode node = new Visitor().findNode(unit,position);
+		Logger.instance().stop("ASTHelper.getNodeAtPosition(ICompilationUnit,int)");
+		return node;
 	}
 
 	// returns the character position at the start of the given line number
@@ -52,10 +67,10 @@ public class ASTHelper {
 			if (source.charAt(i) == '\n')
 				lines++;
 		}
-		
+
 		return -1;
 	}
-	
+
 	// returns the most specific ASTNode for the given compilation unit and
 	// line
 	public static ASTNode getNodeAtLine(ICompilationUnit unit, int line) {
@@ -69,7 +84,7 @@ public class ASTHelper {
 				if (line==0)
 					break;
 			}
-			
+
 			return getNodeAtPosition(unit, position);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -109,40 +124,44 @@ public class ASTHelper {
 				found = node;
 			}
 		}
-		
+
 		public void postVisit(ASTNode node) {
 		}
-		
+
 		char precedingChar(char[] source, int position) {
 			for (int i = position; i >= 0; i--)
 				if (!Character.isWhitespace(source[i]))
 					return source[i];
 			return 0;
 		}
-		
+
 		void doSearch(ICompilationUnit unit, int position) {
+			Logger.instance().start("ASTHelper.Visitor.doSearch(ICompilationUnit,int)");
 			CompilationUnit node = getStartNode(unit);
 			found = null;
 			this.position = position;
 			node.accept(this);
+			Logger.instance().start("ASTHelper.Visitor.doSearch(ICompilationUnit,int)");
 		}
-		
+
 		// returns the most specific ASTNode for the given compilation unit and
 		// position (exception: if a block is found we try to find a statement in
 		// the block to return, if possible.)
 		public ASTNode findNode(ICompilationUnit unit, int position) {
+			Logger.instance().start("ASTHelper.Visitor.findNode(ICompilationUnit,int)");
 			try {
 				char[] source = unit.getSource().toCharArray();
 				doSearch(unit, position);
 				while (found != null && found.getNodeType() == ASTNode.BLOCK && 
-					precedingChar(source, position) == ';')
-						doSearch(unit, --position);
+						precedingChar(source, position) == ';')
+					doSearch(unit, --position);
 			} catch (JavaModelException e) {
 				e.printStackTrace();
 			}
+			Logger.instance().stop("ASTHelper.Visitor.findNode(ICompilationUnit,int)");
 			return found;
 		}
-		
+
 		ASTNode previousNode() {
 			return null;
 		}
