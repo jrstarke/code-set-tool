@@ -18,5 +18,8 @@ public interface INodeSetListener {
 	
 	// called when the given set changes state
 	public void stateChanged(NodeSet set);
+	
+	// called when a set is removed
+	public void setRemoved(NodeSet set);
 
 }

@@ -81,4 +81,9 @@ public class CombinedViewController implements INodeSetListener  {
 	public void stateChanged(NodeSet set) {
 		changeDisplaySet();
 	}
+
+	public void setRemoved(NodeSet set) {
+		// TODO Auto-generated method stub
+		
+	}
 }

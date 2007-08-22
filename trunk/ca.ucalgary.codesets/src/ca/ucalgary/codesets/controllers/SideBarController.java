@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -132,6 +133,25 @@ public class SideBarController implements INodeSetListener {
 	
 	public Composite getSideBar() {
 		return this.sideBar;
+	}
+	
+	public void setRemoved(NodeSet set){
+		SideBarSection sect;
+		if(set != null){
+			sect = sections.get(set.category);
+			for (NodeSetLabel label : sect.labels())
+				if (label.getSet() == set)
+					label.dispose();
+			
+			if (sect.labels().size()==0) {
+				sections.remove(set.category);
+				sect.dispose();
+			}
+
+		}
+		sideBar.layout();
+		
+		
 	}
 }
 
