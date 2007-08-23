@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import ca.ucalgary.codesets.models.ASTHelper;
-import ca.ucalgary.codesets.models.NodeWrapper;
+import ca.ucalgary.codesets.models.ASTNodePlaceholder;
 import ca.ucalgary.codesets.views.CombinedView;
 import ca.ucalgary.codesets.views.ElementLabelProvider;
 
@@ -38,9 +38,9 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	Composite methodView;
 	Listener lastListener;
 
-	HashMap<NodeWrapper,Composite> compositeTracker = new HashMap<NodeWrapper,Composite>();
+	HashMap<ASTNode,Composite> compositeTracker = new HashMap<ASTNode,Composite>();
 
-	HashSet<NodeWrapper> includeSet;
+	HashSet<ASTNodePlaceholder> includeSet;
 
 	// used to temporarily store lines from method bodies until they are
 	// added to the UI as labels
@@ -50,20 +50,22 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// indent is used to keep track of the white space for lines of code 
 	int indent = 0;
 
-	NodeSetViewBuilder(Composite parent, HashSet<NodeWrapper> includeSet) {
+	NodeSetViewBuilder(Composite parent, HashSet<ASTNodePlaceholder> includeSet) {
 		this.parent = parent;
+		this.classView = parent;
 		this.includeSet = includeSet;
 	}
 
 	// this is the main entry point
-	public static void build(Composite parent, ASTNode node, HashSet<NodeWrapper> includeSet) {
+	public static void build(Composite parent, IJavaElement node, HashSet<ASTNodePlaceholder> includeSet) {
 		NodeSetViewBuilder builder = new NodeSetViewBuilder(parent, includeSet);
-		node.accept(builder);
+		ASTNode result = ASTHelper.getNode(node); 
+		result.accept(builder);
 	}
 
 	// returns true if the given node should be included in this view
 	boolean shouldVisit(ASTNode node) {
-		return includeSet.contains(new NodeWrapper(node));
+		return includeSet.contains(new ASTNodePlaceholder(node));
 	}
 
 	// methods for building up a set of lines
@@ -510,16 +512,17 @@ public class NodeSetViewBuilder extends ASTVisitor {
 
 	// start a new composite corresponding to this type declaration
 	public boolean visit(TypeDeclaration node) {
-		if (shouldVisit(node)) {
-			if(classView == null){
-				IJavaElement element = ASTHelper.getJavaElement(node);
-				String line = labelProvider.getText(element);
-				this.lastListener = makeListener(element,line);
-				classView = CombinedView.classView(parent, line, "", this.lastListener);
-			}
-			return true;
-		}
-		return false;
+		return true;
+//		if (shouldVisit(node)) {
+//			if(classView == null){
+//				IJavaElement element = ASTHelper.getJavaElement(node);
+//				String line = labelProvider.getText(element);
+//				this.lastListener = makeListener(element,line);
+//				classView = CombinedView.classView(parent, line, "", this.lastListener);
+//			}
+//			return true;
+//		}
+//		return false;
 		
 	}
 
@@ -531,7 +534,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 				String line = labelProvider.getText(element);
 				this.lastListener = makeListener(element,line);
 				methodView = CombinedView.methodView(classView, line, this.lastListener);
-				compositeTracker.put(new NodeWrapper(node), methodView);
+				compositeTracker.put(node, methodView);
 				indent++;
 			}
 			return true;
@@ -747,7 +750,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// to the method composite
 	public void endVisit(MethodDeclaration node) {
 		if (shouldVisit(node)) {
-			if (compositeTracker.get(new NodeWrapper(node)) != null) {
+			if (compositeTracker.get(node) != null) {
 				StringBuffer buf = new StringBuffer();
 				for (String line : lines)
 					buf.append(line + "\n");
@@ -875,7 +878,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public void endVisit(TypeDeclaration node) {
-		if (compositeTracker.get(new NodeWrapper(node)) != null)
+		if (compositeTracker.get(node) != null)
 			classView = null;
 	}
 

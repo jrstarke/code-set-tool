@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -52,14 +53,13 @@ public class NodeSetManager {
 		// update navigation history set (including clearing out previous entries so
 		// that we are just saving the most recently visited node for each method)
 		NodeSet nav = navigationHistorySet();
-		ASTNode method = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);
-		if (method == null) return;
-
-		NodeWrapper key = new NodeWrapper(method);
+		ASTNode key = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);
+		if (key == null) return;
+		
 		if (nav.containsKey(key))
 			nav.get(key).clear();
 		navigationHistorySet().add(newFocus);
-
+		
 		// notify listeners
 		currentFocus = newFocus;
 		for (INodeSetListener listener : listeners) {
@@ -129,7 +129,7 @@ public class NodeSetManager {
 
 	// returns a new node set that is a combination of all of the raw sets
 	// taking states into account (the resulting set is indexed by type)
-	public NodeSet combinedSet(boolean b) {
+	public NodeSet combinedSet() {
 		NodeSet combined = new NodeSet("x", "display");
 
 		// add in elements from all included sets
@@ -147,7 +147,7 @@ public class NodeSetManager {
 			if (s.state == NodeSet.State.RESTRICTEDTO)
 				combined = combined.intersection(s);
 
-		return combined.copy(b);
+		return combined.copy();
 	}
 
 	public boolean containsSet(NodeSet set) {

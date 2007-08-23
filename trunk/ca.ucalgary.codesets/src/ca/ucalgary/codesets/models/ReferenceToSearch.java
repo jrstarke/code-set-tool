@@ -24,7 +24,7 @@ import ca.ucalgary.codesets.views.ElementLabelProvider;
 //a given IJavaElement
 public class ReferenceToSearch implements ISearchResultListener {
 	int REFERENCETOVALUE = 1;
-	NodeWrapper method;
+	ASTNode method;
 	NodeSet set;
 	ElementLabelProvider labelProvider = new ElementLabelProvider();
 
@@ -32,7 +32,7 @@ public class ReferenceToSearch implements ISearchResultListener {
 		MethodDeclaration method = (MethodDeclaration)ASTHelper.getMethodAncestor(node);
 		if (method == null)
 			return;
-		this.method = new NodeWrapper(method);
+		this.method = method;
 		IJavaElement methodElement = ASTHelper.getJavaElement(method);
 
 		set = new NodeSet(labelProvider.getFullText(methodElement), "references to");
@@ -45,6 +45,7 @@ public class ReferenceToSearch implements ISearchResultListener {
 			JavaSearchQuery query= new JavaSearchQuery(createQuery(methodElement));
 			query.getSearchResult().addListener(this);
 			query.run(new NullProgressMonitor());
+			query.getSearchResult().removeListener(this);
 			//SearchUtil.runQueryInBackground(query);
 		} catch (JavaModelException ex) {
 			// TODO what should we do here?
@@ -62,7 +63,7 @@ public class ReferenceToSearch implements ISearchResultListener {
 			for (Match m:matches) {
 				ICompilationUnit unit = (ICompilationUnit)((IJavaElement)m.getElement()).getAncestor(IJavaElement.COMPILATION_UNIT);
 				ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
-				if (!method.equals(new NodeWrapper((MethodDeclaration)ASTHelper.getAncestorByType(node, ASTNode.METHOD_DECLARATION)))) {
+				if (!method.equals(ASTHelper.getAncestorByType(node, ASTNode.METHOD_DECLARATION))) {
 					set.add(node);
 				}
 			}

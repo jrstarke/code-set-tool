@@ -114,7 +114,6 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			new ReferenceToSearch().search(node);
 			new MembersOfType().search(node);
 			
-			
 			if (!(element instanceof ISourceReference)) 
 				return null;
 			

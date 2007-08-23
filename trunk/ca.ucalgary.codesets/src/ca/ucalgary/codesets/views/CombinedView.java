@@ -60,7 +60,7 @@ public class CombinedView extends ViewPart  {
 		widget.setFont(new Font(f.getDevice(), fd));
 	}
 
-	public static Composite classView(Composite parent, String text, String comment, Listener listener) {
+	public static Composite classView(Composite parent, String text, String comment) { //, Listener listener) {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
@@ -69,7 +69,7 @@ public class CombinedView extends ViewPart  {
 		Control[] siblings = parent.getChildren();
 		if (siblings.length >= 2)
 			new Label (result, SWT.SEPARATOR | SWT.HORIZONTAL);
-		label(result, text, SWT.BOLD, 13, classNameColor).addListener(SWT.MouseDoubleClick, listener);
+		label(result, text, SWT.BOLD, 13, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
 		return result;
 	}
 	public static Composite methodView(Composite parent, String text, Listener listener) {
@@ -104,7 +104,7 @@ public class CombinedView extends ViewPart  {
 				String name = dialog.getValue();
 				name = name.trim();
 				if ((name != null) && (name != "")) {
-					NodeSet currentSet = NodeSetManager.instance().combinedSet(false);
+					NodeSet currentSet = NodeSetManager.instance().combinedSet();
 					currentSet.name = name;
 					currentSet.category = "named";
 					NodeSetManager.instance().addSet(currentSet);
