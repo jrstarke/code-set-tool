@@ -61,7 +61,7 @@ public class ReferenceFromSearch extends GenericVisitor {
 			ISourceReference isr = (ISourceReference) element;
 			try {
 				ASTNode bindedNode = ASTHelper.getNodeAtPosition(unit, isr.getSourceRange().getOffset());
-				NodeWrapper key = new NodeWrapper(bindedNode);
+				ASTNode key = bindedNode;
 				if (set.containsKey(key))
 					set.get(key).clear();
 				set.add(bindedNode);
@@ -82,7 +82,7 @@ public class ReferenceFromSearch extends GenericVisitor {
 			ISourceReference isr = (ISourceReference) element;
 			try {
 				ASTNode bindedNode = ASTHelper.getNodeAtPosition(unit, isr.getSourceRange().getOffset());
-				NodeWrapper key = new NodeWrapper(bindedNode);
+				ASTNode key = bindedNode;
 				if (set.containsKey(key))
 					set.get(key).clear();
 				set.add(bindedNode);

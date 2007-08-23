@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceRange;
+import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -33,30 +34,45 @@ public class ASTHelper {
 		ITypeBinding binding = node.resolveBinding();
 		return binding.getJavaElement();
 	}
+	
+	public static IJavaElement getJavaElement(ASTNode node) {
+		int type = node.getNodeType();
+		if (type == ASTNode.TYPE_DECLARATION)
+			return getJavaElement((TypeDeclaration)node);
+		else if (type == ASTNode.METHOD_DECLARATION)
+			return getJavaElement((MethodDeclaration)node);
+		return null;
+	}
 
 	// returns a root AST node based on the given compilation unit
 	static CompilationUnit getStartNode(ICompilationUnit unit) {
-		Logger.instance().start("ASTHelper.getStartNode(ICompilationUnit)");
+//		Logger.instance().start("ASTHelper.getStartNode(ICompilationUnit)");
 		CompilationUnit compUnit = ASTCache.get(unit);
 		if (compUnit == null) {
 			ASTParser parser = ASTParser.newParser(AST.JLS3);
 			parser.setSource(unit);
 			parser.setResolveBindings(true);
 			compUnit = (CompilationUnit) parser.createAST(null);
-			ASTCache.put(unit, compUnit);
+//			ASTCache.put(unit, compUnit);
 		}
-		Logger.instance().stop("ASTHelper.getStartNode(ICompilationUnit)");
+//		Logger.instance().stop("ASTHelper.getStartNode(ICompilationUnit)");
+
+		System.out.println("Size of cache: " + ASTCache.size());
 		return compUnit;
 	}
-
+	
 	// returns the most specific ASTNode for the given compilation unit and
 	// position
 	public static ASTNode getNodeAtPosition(ICompilationUnit unit, int position) {
-		Logger.instance().start("ASTHelper.getNodeAtPosition(ICompilationUnit,int)");
-		ASTNode node = new Visitor().findNode(unit,position);
-		Logger.instance().stop("ASTHelper.getNodeAtPosition(ICompilationUnit,int)");
-		return node;
+		return getNodeAtPosition(unit, position, false);
 	}
+	
+	public static ASTNode getNodeAtPosition(ICompilationUnit unit, int position, boolean lookForDeclaration) {
+//		Logger.instance().start("ASTHelper.getNodeAtPosition(ICompilationUnit,int)");
+		ASTNode node = new Visitor(lookForDeclaration).findNode(unit,position);
+//		Logger.instance().stop("ASTHelper.getNodeAtPosition(ICompilationUnit,int)");
+		return node;
+	}	
 
 	// returns the character position at the start of the given line number
 	static int getPosition(String source, int lineNumber) {
@@ -71,6 +87,22 @@ public class ASTHelper {
 		return -1;
 	}
 
+	public static ASTNode getNode(IJavaElement element) {
+		if (element instanceof ISourceReference) {
+			ISourceReference ref = (ISourceReference)element;
+			ICompilationUnit unit = (ICompilationUnit)element.getAncestor(IJavaElement.COMPILATION_UNIT);
+			
+			if (unit != null)
+				try {
+					return getNodeAtPosition(unit, ref.getSourceRange().getOffset(), true);
+				} catch (JavaModelException e) {
+					// we'll just return null in this situation
+				}
+		}
+
+		return null;
+	}
+	
 	// returns the most specific ASTNode for the given compilation unit and
 	// line
 	public static ASTNode getNodeAtLine(ICompilationUnit unit, int line) {
@@ -118,10 +150,20 @@ public class ASTHelper {
 	static class Visitor extends ASTVisitor {
 		ASTNode found = null;
 		int position = 0;
+		boolean lookForDeclaration = false;
 
+		Visitor(boolean lookForDeclaration) {
+			this.lookForDeclaration = lookForDeclaration;
+		}
+		
 		public void preVisit(ASTNode node) {
 			if (contains(node.getStartPosition(), node.getLength(), position)) {
-				found = node;
+				if (!lookForDeclaration)
+					found = node;
+				else if (node.getNodeType() == ASTNode.TYPE_DECLARATION ||
+						node.getNodeType() == ASTNode.METHOD_DECLARATION ||
+						node.getNodeType() == ASTNode.FIELD_DECLARATION)
+					found = node;
 			}
 		}
 
@@ -136,19 +178,19 @@ public class ASTHelper {
 		}
 
 		void doSearch(ICompilationUnit unit, int position) {
-			Logger.instance().start("ASTHelper.Visitor.doSearch(ICompilationUnit,int)");
+//			Logger.instance().start("ASTHelper.Visitor.doSearch(ICompilationUnit,int)");
 			CompilationUnit node = getStartNode(unit);
 			found = null;
 			this.position = position;
 			node.accept(this);
-			Logger.instance().start("ASTHelper.Visitor.doSearch(ICompilationUnit,int)");
+//			Logger.instance().start("ASTHelper.Visitor.doSearch(ICompilationUnit,int)");
 		}
 
 		// returns the most specific ASTNode for the given compilation unit and
 		// position (exception: if a block is found we try to find a statement in
 		// the block to return, if possible.)
 		public ASTNode findNode(ICompilationUnit unit, int position) {
-			Logger.instance().start("ASTHelper.Visitor.findNode(ICompilationUnit,int)");
+//			Logger.instance().start("ASTHelper.Visitor.findNode(ICompilationUnit,int)");
 			try {
 				char[] source = unit.getSource().toCharArray();
 				doSearch(unit, position);
@@ -158,7 +200,7 @@ public class ASTHelper {
 			} catch (JavaModelException e) {
 				e.printStackTrace();
 			}
-			Logger.instance().stop("ASTHelper.Visitor.findNode(ICompilationUnit,int)");
+//			Logger.instance().stop("ASTHelper.Visitor.findNode(ICompilationUnit,int)");
 			return found;
 		}
 

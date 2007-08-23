@@ -3,6 +3,7 @@ package ca.ucalgary.codesets.controllers;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -25,15 +26,18 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ca.ucalgary.codesets.models.NodeSet;
-import ca.ucalgary.codesets.models.NodeWrapper;
 import ca.ucalgary.codesets.models.NodeSetManager;
 import ca.ucalgary.codesets.models.INodeSetListener;
+import ca.ucalgary.codesets.models.TypeMembers;
+import ca.ucalgary.codesets.views.CombinedView;
+import ca.ucalgary.codesets.views.ElementLabelProvider;
 
 // controls what is shown in the CombinedView by listening to the NodeSetManager.
 public class CombinedViewController implements INodeSetListener  {
 	Composite parent;
 	ScrolledComposite sc;
 	Color background = new Color(null,255,255,255);
+	ElementLabelProvider labelProvider = new ElementLabelProvider();
 
 	public CombinedViewController(Composite parent) {
 		
@@ -55,10 +59,13 @@ public class CombinedViewController implements INodeSetListener  {
 		for (Control w : parent.getChildren())
 			w.dispose();
 		
-		NodeSet combined = NodeSetManager.instance().combinedSet(true);
-		Set<NodeWrapper> keyset = combined.keySet();
-		for (NodeWrapper key : keyset)
-			NodeSetViewBuilder.build(parent, key.getNode(), combined.get(key));
+		NodeSet combined = NodeSetManager.instance().combinedSet();
+		for (TypeMembers tm : combined.elementsByType()) {
+			String line = labelProvider.getText(tm.type);
+			Composite classView = CombinedView.classView(parent, line, "");
+			for (TypeMembers.Entry entry : tm.entries)
+				NodeSetViewBuilder.build(classView, entry.element, entry.placeholders);
+		}
 		
 		sc.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		parent.layout();

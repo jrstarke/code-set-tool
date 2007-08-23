@@ -113,14 +113,14 @@ public class SideBarController implements INodeSetListener {
 	}
 	
 	public void focusChanged(ASTNode focus) {
-		for (NodeSetLabel label : labels()) {
-			if (label.getSet().containsNode(focus))
-				label.emphasizeLink();
-			else
-				label.demphasizeLink();
-		}
-		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		sideBar.layout();
+//		for (NodeSetLabel label : labels()) {
+//			if (label.getSet().containsNode(focus))
+//				label.emphasizeLink();
+//			else
+//				label.demphasizeLink();
+//		}
+//		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+//		sideBar.layout();
 	}
 	
 	public void stateChanged(NodeSet set) {

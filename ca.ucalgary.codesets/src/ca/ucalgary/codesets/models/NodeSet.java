@@ -1,37 +1,32 @@
 package ca.ucalgary.codesets.models;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
 
-// a named and categorized collection of ASTNode'ss. the set is indexed by type declarations
-// or by method and field declarations (depending on the value of classIndex). when a node
-// is added all of its ancestors up to the index node are also added. 
-//
-// (actually rather than store ASTNode's directly we store NodeWrapper's, because ast nodes
-// don't work properly in a hash table.)
-public class NodeSet extends HashMap<NodeWrapper, HashSet<NodeWrapper>> {
-	public enum State {
-		IGNORED, INCLUDED, EXCLUDED, RESTRICTEDTO }
 
-	public State state = State.IGNORED;
+// a named and categorized collection of IJavaElements (method declarations) mapped to 
+// ASTNode's (actually ASTNodePlacehoder's). when a node is added all of its ancestors 
+// upto the method declaration level are added as well.
+public class NodeSet extends HashMap<IJavaElement, HashSet<ASTNodePlaceholder>> {
 
 	public String name;
 	public String category;
-
-	// if this is true types are mapped to descendants, otherwise field and
-	// method declarations are mapped to descendants
-	boolean classIndex;
+	
+	// state is used to create combined sets (based on set operations)
+	public enum State {
+		IGNORED, INCLUDED, EXCLUDED, RESTRICTEDTO }
+	public State state = State.IGNORED;
 
 	public NodeSet(String name, String category) {
-		this(name, category, false);
-	}
-
-	public NodeSet(String name, String category, boolean typeLevel) {
 		this.name = name;
 		this.category = category;
-		this.classIndex = typeLevel;
 	}
 
 	// move to the "next" state
@@ -52,30 +47,15 @@ public class NodeSet extends HashMap<NodeWrapper, HashSet<NodeWrapper>> {
 		return category + "/" + name + " " + super.toString();
 	}
 
-	// returns true if the given node is the type this instance is mapping
-	// to descendants (this is based on the value of the classIndex field)
-	boolean isIndexType(ASTNode node) {
-		int type = node.getNodeType();
-		if (classIndex)
-			return type == ASTNode.TYPE_DECLARATION;
-		else
-			return type == ASTNode.METHOD_DECLARATION
-					|| type == ASTNode.FIELD_DECLARATION;
-	}
-
-	public NodeWrapper add(NodeWrapper node) {
-		return add(node.getNode());
-	}
-
 	// returns the key (the type of which depends on the value of classIndex)
-	public NodeWrapper add(ASTNode node) {
-		HashSet<NodeWrapper> set = new HashSet<NodeWrapper>();
-		NodeWrapper key = null;
+	public IJavaElement add(ASTNode node) {
+		HashSet<ASTNodePlaceholder> set = new HashSet<ASTNodePlaceholder>();
+		IJavaElement key = null;
 		while (node != null) {
-			set.add(new NodeWrapper(node));
+			set.add(new ASTNodePlaceholder(node));
 
-			if (isIndexType(node)) {
-				key = new NodeWrapper(node);
+			key = ASTHelper.getJavaElement(node);
+			if (key != null) {
 				if (containsKey(key))
 					get(key).addAll(set);
 				else
@@ -89,43 +69,65 @@ public class NodeSet extends HashMap<NodeWrapper, HashSet<NodeWrapper>> {
 		return key;
 	}
 
+	// if the key is not found, the key is added and the node is added as
+	// a member of the set the key maps to. if the key is found, the node
+	// is just added to the corresponding set.
+	void putOrAdd(IJavaElement key, ASTNodePlaceholder node) {
+		HashSet<ASTNodePlaceholder> set = null;
+		if (containsKey(key)) {
+			set = get(key);
+		} else {
+			set = new HashSet<ASTNodePlaceholder>();
+			put(key, set);
+		}
+		set.add(node);
+	}
+	
 	// returns a copy of this node set (the copy doesn't need to have the same
 	// value for classIndex)
-	NodeSet copy(boolean classIndex) {
-		NodeSet result = new NodeSet(this.name, this.category, classIndex);
-		for (NodeWrapper key : keySet())
-			for (NodeWrapper node : get(key))
-				result.add(node);
+	NodeSet copy() {
+		NodeSet result = new NodeSet(this.name, this.category);
+		for (IJavaElement key : keySet())
+			for (ASTNodePlaceholder node : get(key))
+				result.putOrAdd(key, node);
 
 		return result;
 	}
-
-	// returns true if the given node is in this set, returns false otherwise
-	public boolean containsNode(ASTNode node) {
-		int type = classIndex ? ASTNode.TYPE_DECLARATION : ASTNode.METHOD_DECLARATION;
-		NodeWrapper key = new NodeWrapper(ASTHelper.getAncestorByType(node, type));
-		if (containsKey(key))
-			return get(key).contains(new NodeWrapper(node));
-		return false;
+	
+	// returns a collection of TypeMember instances constructed from the elements
+	// of this set
+	public Collection<TypeMembers> elementsByType() {
+		HashMap<ICompilationUnit, TypeMembers> byType = new HashMap<ICompilationUnit, TypeMembers>();
+		for (IJavaElement key : keySet()) {
+			ICompilationUnit unit = (ICompilationUnit)key.getAncestor(IJavaElement.COMPILATION_UNIT);
+			if (!byType.containsKey(unit)) {
+				TypeMembers tm = new TypeMembers(unit);
+				byType.put(unit, tm);
+			}
+			
+			byType.get(unit).addEntry(key, get(key));
+		}
+		
+		return byType.values();
 	}
 
 	// various set operations
 
 	// returns a new set that is the union of this set and
 	public NodeSet union(NodeSet set) {
-		NodeSet result = copy(this.classIndex);
-		for (NodeWrapper key : set.keySet())
+		NodeSet result = copy();
+		for (IJavaElement key : set.keySet())
 			if (result.containsKey(key))
 				result.get(key).addAll(set.get(key));
 			else
-				result.put(key, (HashSet<NodeWrapper>) set.get(key).clone());
+				result.put(key, (HashSet<ASTNodePlaceholder>) set.get(key).clone());
 		return result;
 	}
 
 	// returns a new set that is the set difference of this and the given set
 	public NodeSet setDifference(NodeSet set) {
 		NodeSet result = new NodeSet("", "");
-		for (NodeWrapper key : keySet())
+		for (IJavaElement key : keySet())
 			if (!set.containsKey(key))
 				result.put(key, get(key));
 		return result;
@@ -134,7 +136,7 @@ public class NodeSet extends HashMap<NodeWrapper, HashSet<NodeWrapper>> {
 	// returns a set that represent the intersection of this and the given set
 	public NodeSet intersection(NodeSet set) {
 		NodeSet result = new NodeSet(this.name, this.category);
-		for (NodeWrapper key : keySet())
+		for (IJavaElement key : keySet())
 			if (set.containsKey(key)) {
 				result.put(key, get(key));
 				result.get(key).addAll(set.get(key));
