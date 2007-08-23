@@ -26,7 +26,7 @@ public class NodeSetManager {
 	public boolean allCleared = false;
 
 	// the maximum number of raw sets that will be saved
-	final static int MAX_RAW_SETS = 10;
+	final static int MAX_RAW_SETS = 15;
 	static NodeSetManager instance = new NodeSetManager();
 
 	// there is one global instance of this class
