@@ -1,12 +1,20 @@
 package ca.ucalgary.codesets.views;
 
+import java.net.URL;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.Bundle;
 
 import ca.ucalgary.codesets.controllers.Logger;
 import ca.ucalgary.codesets.controllers.SideBarController;
@@ -45,9 +53,16 @@ public class SelectionView extends ViewPart {
 		};
 
 		clearSetsAction.setToolTipText("Sets all sets to being ignored");  //change this for specified tooltip
-		clearSetsAction.setText("Clear");		
-		clearSetsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
+		clearSetsAction.setText("Clear");
+		clearSetsAction.setImageDescriptor(getImageDescriptor("blanks.png"));
+	}
+	
+	// getting the right path to the icons is tricky, but this seems to do it...
+	ImageDescriptor getImageDescriptor(String name) {
+		Bundle bundle = Platform.getBundle("ca.ucalgary.codesets");
+		Path path = new Path("icons/" + name);
+		URL url = FileLocator.find(bundle, path, null);
+		return ImageDescriptor.createFromURL(url);
 	}
 	
     /**
