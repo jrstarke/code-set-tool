@@ -42,6 +42,9 @@ public class NodeSetViewBuilder extends ASTVisitor {
 
 	HashSet<ASTNodePlaceholder> includeSet;
 
+	// used to determine what elements we want to show
+	int level;
+
 	// used to temporarily store lines from method bodies until they are
 	// added to the UI as labels
 	Stack<String> lines = new Stack<String>();
@@ -50,15 +53,16 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// indent is used to keep track of the white space for lines of code 
 	int indent = 0;
 
-	NodeSetViewBuilder(Composite parent, HashSet<ASTNodePlaceholder> includeSet) {
+	NodeSetViewBuilder(Composite parent, HashSet<ASTNodePlaceholder> includeSet, int level) {
 		this.parent = parent;
 		this.classView = parent;
 		this.includeSet = includeSet;
+		this.level = level;
 	}
 
 	// this is the main entry point
-	public static void build(Composite parent, IJavaElement node, HashSet<ASTNodePlaceholder> includeSet) {
-		NodeSetViewBuilder builder = new NodeSetViewBuilder(parent, includeSet);
+	public static void build(Composite parent, IJavaElement node, HashSet<ASTNodePlaceholder> includeSet, int level) {
+		NodeSetViewBuilder builder = new NodeSetViewBuilder(parent, includeSet, level);
 		ASTNode result = ASTHelper.getNode(node); 
 		result.accept(builder);
 	}
@@ -357,9 +361,11 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(Javadoc node) {
-		String commentLine = getFirstLine(node.toString());
-		Composite parent = methodView != null ? methodView : classView;
-		CombinedView.commentLabel(parent, commentLine, this.lastListener);
+		if (this.level >= 1) {
+			String commentLine = getFirstLine(node.toString());
+			Composite parent = methodView != null ? methodView : classView;
+			CombinedView.commentLabel(parent, commentLine, this.lastListener);
+		}
 		return false;
 	}
 
@@ -757,7 +763,9 @@ public class NodeSetViewBuilder extends ASTVisitor {
 					buf.append(line + "\n");
 				lines.clear();
 				indent--;
+				if (level >= 2) {
 				CombinedView.methodBodyWidget(methodView, buf.toString(),this.lastListener);
+				}
 				methodView = null;
 				lastListener = null;
 				compositeTracker.remove(node);
