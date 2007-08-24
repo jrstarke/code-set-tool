@@ -27,8 +27,8 @@ public class NodeSetManager {
 
 	public boolean allCleared = false;
 
-	// the maximum number of raw sets that will be saved
-	final static int MAX_RAW_SETS = 15;
+	// the maximum number of raw sets that will be saved per category
+	static int MAX_SETS_PER_CATEGORY = 3;
 	static NodeSetManager instance = new NodeSetManager();
 
 	// there is one global instance of this class
@@ -91,30 +91,34 @@ public class NodeSetManager {
 	}
 
 	public synchronized void addSet(NodeSet set) {
-		boolean removed = rawSets.remove(set); // O(n), but n <= SET_NUM_LIMIT
-		rawSets.add(set);
+		boolean removed = rawSets.remove(set);
 
-		NodeSet set2 = null;
-		List<NodeSet> list;
-		
-		if(rawSets.size() > MAX_RAW_SETS){
-			// remove oldest set (not counting the navigation history set)
-			int index = 1;
-			while(rawSets.size() > MAX_RAW_SETS) {
-				if(!rawSets.get(index).category.equals("Members of Type")  && !rawSets.get(index).category.equals("history"))
-					set2 = rawSets.remove(index);
-				index++;
+		// count the number of sets in the added category...
+		int total = 0;
+		ArrayList<NodeSet> toRemove = new ArrayList<NodeSet>();
+		for (NodeSet s : sets())
+			if (s.category.equals(set.category)) {
+				// we only want to remove ignored states
+				if (s.state == NodeSet.State.IGNORED)
+					toRemove.add(s);
+				total++;
 			}
-			for(INodeSetListener listener : listeners)
-				listener.setRemoved(set2);
+
+		for (NodeSet s : toRemove) {
+			if (total < MAX_SETS_PER_CATEGORY) break;
+			rawSets.remove(s);
+			for (INodeSetListener listener : listeners)
+				listener.setRemoved(s);
+			total--;
 		}
 
+		rawSets.add(set);
 		if (!removed)
 			for (INodeSetListener listener : listeners)
 				listener.setAdded(set);
-
 	}
 
+	
 	// returns the list of all "raw" sets
 	public List<NodeSet> sets() {
 		return rawSets;
