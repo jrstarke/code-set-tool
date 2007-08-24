@@ -1,5 +1,6 @@
 package ca.ucalgary.codesets.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -40,13 +41,16 @@ public class CombinedViewController implements INodeSetListener  {
 	ElementLabelProvider labelProvider = new ElementLabelProvider();
 
 	public CombinedViewController(Composite parent) {
-		
 		sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
 		this.parent = new Composite(sc, SWT.NONE);
 		sc.setContent(this.parent);
-		Layout layout = new RowLayout(SWT.VERTICAL);
+		RowLayout layout = new RowLayout(SWT.VERTICAL);
+		layout.fill = true;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.spacing = 0;
 		this.parent.setLayout(layout);
 		this.parent.setBackground(background);
 		this.parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -63,8 +67,22 @@ public class CombinedViewController implements INodeSetListener  {
 		for (TypeMembers tm : combined.elementsByType()) {
 			String line = labelProvider.getText(tm.type);
 			Composite classView = CombinedView.classView(parent, line, "");
-			for (TypeMembers.Entry entry : tm.entries)
+			for (TypeMembers.Entry entry : tm.entries) {
 				NodeSetViewBuilder.build(classView, entry.element, entry.placeholders);
+				
+				// a quick start on displaying some meta information...
+//				String info = null;
+//				for (NodeSet set : NodeSetManager.instance().sets()) {
+//					if (set.containsKey(entry.element)) {
+//						if (info == null)
+//							info = set.displayName();
+//						else
+//							info += ", " + set.displayName();
+//					}
+//				}
+//				if (info != null)
+//					CombinedView.infoLabel(classView, "In: " + info);
+			}
 		}
 		
 		sc.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -87,10 +105,9 @@ public class CombinedViewController implements INodeSetListener  {
 
 	public void stateChanged(NodeSet set) {
 		changeDisplaySet();
+		parent.setFocus();
 	}
 
 	public void setRemoved(NodeSet set) {
-		// TODO Auto-generated method stub
-		
 	}
 }

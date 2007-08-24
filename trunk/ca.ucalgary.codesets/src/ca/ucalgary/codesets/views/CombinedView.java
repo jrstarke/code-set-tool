@@ -7,10 +7,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ISharedImages;
@@ -27,7 +29,7 @@ public class CombinedView extends ViewPart  {
 	Action nameSetAction;
 //	CombinedViewController cvc;
 
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent) {		
 		new CombinedViewController(parent);
 		makeActions();
 		createToolbar();
@@ -39,10 +41,11 @@ public class CombinedView extends ViewPart  {
 	// static methods and fields for creating the various widgets and composites used
 	// to display node sets
 
-	static Color methodColor = new Color(null, 100,100,100);
-	static Color commentColor = new Color(null, 100,100,175);
+	static Color methodColor = new Color(null, 140,140,140);
+	static Color commentColor = new Color(null, 140,140,175);
 	static Color methodNameColor = new Color(null, 0,0,0);
 	static Color classNameColor = methodNameColor;
+	static Color classBGColor = new Color(null, 240,240,240);
 
 	static Label label(Composite parent, String text, int style, int height, Color color) {
 		Label label = new Label(parent, SWT.NONE);
@@ -61,25 +64,29 @@ public class CombinedView extends ViewPart  {
 	}
 
 	public static Composite classView(Composite parent, String text, String comment) { //, Listener listener) {
-		Composite result = new Composite(parent, SWT.NONE);
-		RowLayout layout = new RowLayout(SWT.VERTICAL);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		result.setLayout(layout);
-		Control[] siblings = parent.getChildren();
-		if (siblings.length >= 2)
-			new Label (result, SWT.SEPARATOR | SWT.HORIZONTAL);
-		label(result, text, SWT.BOLD, 13, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
-		return result;
+//		Composite result = new Composite(parent, SWT.NONE);
+//		RowLayout layout = new RowLayout(SWT.VERTICAL);
+//		layout.marginHeight = 0;
+//		layout.marginWidth = 0;
+//		layout.fill = true;
+//		result.setLayout(layout);
+//		Control[] siblings = parent.getChildren();
+//		if (siblings.length >= 2)
+//			new Label (result, SWT.SEPARATOR | SWT.HORIZONTAL);
+		Label label = label(parent, text, SWT.BOLD, 11, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
+		label.setBackground(classBGColor);
+//		return result;
+		return parent;
 	}
 	public static Composite methodView(Composite parent, String text, Listener listener) {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
+		layout.spacing = 0;
+		layout.fill = true;
 		result.setLayout(layout);
 		label(result, text, SWT.BOLD, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
-
 		return result;
 	}
 	public static Widget methodBodyWidget(Composite parent, String text, Listener listener) {
@@ -124,5 +131,9 @@ public class CombinedView extends ViewPart  {
 	private void createToolbar() {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(nameSetAction);
+	}
+
+	public static Label infoLabel(Composite parent, String text) {
+		return label(parent, text, SWT.NORMAL, 11, commentColor);
 	}
 }

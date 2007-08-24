@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -56,8 +57,10 @@ public class NodeSetManager {
 		ASTNode key = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);
 		if (key == null) return;
 		
-		if (nav.containsKey(key))
-			nav.get(key).clear();
+		IJavaElement element = ASTHelper.getJavaElement(key);
+		
+		if (nav.containsKey(element))
+			nav.get(element).clear();
 		navigationHistorySet().add(newFocus);
 		
 		// notify listeners

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 
@@ -97,9 +98,9 @@ public class NodeSet extends HashMap<IJavaElement, HashSet<ASTNodePlaceholder>> 
 	// returns a collection of TypeMember instances constructed from the elements
 	// of this set
 	public Collection<TypeMembers> elementsByType() {
-		HashMap<ICompilationUnit, TypeMembers> byType = new HashMap<ICompilationUnit, TypeMembers>();
+		HashMap<IType, TypeMembers> byType = new HashMap<IType, TypeMembers>();
 		for (IJavaElement key : keySet()) {
-			ICompilationUnit unit = (ICompilationUnit)key.getAncestor(IJavaElement.COMPILATION_UNIT);
+			IType unit = (IType)key.getAncestor(IJavaElement.TYPE);
 			if (!byType.containsKey(unit)) {
 				TypeMembers tm = new TypeMembers(unit);
 				byType.put(unit, tm);
@@ -142,5 +143,9 @@ public class NodeSet extends HashMap<IJavaElement, HashSet<ASTNodePlaceholder>> 
 				result.get(key).addAll(set.get(key));
 			}
 		return result;
+	}
+
+	public String displayName() {
+		return name;
 	}
 }
