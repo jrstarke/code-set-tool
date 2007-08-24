@@ -1,13 +1,19 @@
 package ca.ucalgary.codesets.views;
 
+import java.net.URL;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -18,6 +24,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.Bundle;
 
 import ca.ucalgary.codesets.controllers.CombinedViewController;
 import ca.ucalgary.codesets.controllers.Logger;
@@ -27,10 +34,12 @@ import ca.ucalgary.codesets.models.NodeSetManager;
 //this view is the main presentation of the currently applicable set of ASTNode's.
 public class CombinedView extends ViewPart  {
 	Action nameSetAction;
-//	CombinedViewController cvc;
+	Action incDefAction;
+	Action decDefAction;
+	CombinedViewController cvc;
 
-	public void createPartControl(Composite parent) {		
-		new CombinedViewController(parent);
+	public void createPartControl(Composite parent) {
+		cvc = new CombinedViewController(parent);
 		makeActions();
 		createToolbar();
 	}
@@ -72,7 +81,7 @@ public class CombinedView extends ViewPart  {
 //		result.setLayout(layout);
 //		Control[] siblings = parent.getChildren();
 //		if (siblings.length >= 2)
-//			new Label (result, SWT.SEPARATOR | SWT.HORIZONTAL);
+//		new Label (result, SWT.SEPARATOR | SWT.HORIZONTAL);
 		Label label = label(parent, text, SWT.BOLD, 11, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
 		label.setBackground(classBGColor);
 //		return result;
@@ -123,15 +132,42 @@ public class CombinedView extends ViewPart  {
 		nameSetAction.setToolTipText("Name this Set");  //change this for specified tooltip
 		nameSetAction.setText("Name this Set");
 		nameSetAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(org.eclipse.ui.internal.IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));
+				getImageDescriptor(org.eclipse.ui.internal.IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));  //image of action
+
+		incDefAction = new Action() {
+			public void run() {
+				cvc.incLevel();
+			}
+		};
+		incDefAction.setToolTipText("Increase Detail");
+		incDefAction.setText("Increase Detail");
+		incDefAction.setImageDescriptor(getImageDescriptor("incdetail.png")); 
+
+		decDefAction = new Action() {
+			public void run() {
+				cvc.decLevel();
+			}
+		};
+		decDefAction.setToolTipText("Decrease Detail");
+		decDefAction.setText("Decrease Detail");
+		decDefAction.setImageDescriptor(getImageDescriptor("decdetail.png"));
 	}
 
 	private void createToolbar() {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
+		mgr.add(incDefAction);
+		mgr.add(decDefAction);
 		mgr.add(nameSetAction);
 	}
 
 	public static Label infoLabel(Composite parent, String text) {
 		return label(parent, text, SWT.NORMAL, 11, commentColor);
+	}
+
+	private ImageDescriptor	getImageDescriptor(String name) {
+		Bundle bundle = Platform.getBundle("ca.ucalgary.codesets");
+		Path path = new Path("icons/" + name);
+		URL url = FileLocator.find(bundle, path, null);
+		return ImageDescriptor.createFromURL(url);
 	}
 }
