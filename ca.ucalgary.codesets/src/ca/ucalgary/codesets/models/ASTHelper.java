@@ -23,7 +23,8 @@ import ca.ucalgary.codesets.controllers.Logger;
 
 public class ASTHelper {
 	private static HashMap<ICompilationUnit,CompilationUnit> ASTCache = new HashMap<ICompilationUnit,CompilationUnit>();
-
+	private static Cache queue = new Cache();
+	
 	// returns the IJavaElement corresponding to the given node
 	public static IJavaElement getJavaElement(MethodDeclaration node) {
 		IMethodBinding binding = node.resolveBinding();
@@ -47,17 +48,22 @@ public class ASTHelper {
 	// returns a root AST node based on the given compilation unit
 	static CompilationUnit getStartNode(ICompilationUnit unit) {
 //		Logger.instance().start("ASTHelper.getStartNode(ICompilationUnit)");
-		CompilationUnit compUnit = ASTCache.get(unit);
-		if (compUnit == null) {
-			ASTParser parser = ASTParser.newParser(AST.JLS3);
-			parser.setSource(unit);
-			parser.setResolveBindings(true);
-			compUnit = (CompilationUnit) parser.createAST(null);
+		CompilationUnit compUnit = queue.get(unit);  //this get will always return not null
+		//ASTCache.get(unit);  
+//		if (compUnit == null) {
+//			queue.Add(unit);
+//			compUnit = queue.get(unit);
+			
+//			ASTParser parser = ASTParser.newParser(AST.JLS3);
+//			parser.setSource(unit);
+//			parser.setResolveBindings(true);
+//			compUnit = (CompilationUnit) parser.createAST(null);
 //			ASTCache.put(unit, compUnit);
-		}
+			
+//		}
 //		Logger.instance().stop("ASTHelper.getStartNode(ICompilationUnit)");
 
-		System.out.println("Size of cache: " + ASTCache.size());
+		System.out.println("Size of cache: " + queue.size());
 		return compUnit;
 	}
 	
