@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IType;
 
 
 public class TypeMembers {
@@ -19,10 +20,10 @@ public class TypeMembers {
 		}
 	}
 	
-	public ICompilationUnit type;
+	public IType type;
 	public ArrayList<Entry> entries = new ArrayList<Entry>();
 	
-	TypeMembers(ICompilationUnit type) {
+	TypeMembers(IType type) {
 		this.type = type;
 	}
 

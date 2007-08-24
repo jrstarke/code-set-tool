@@ -345,11 +345,12 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	String getFirstLine(String comment) {
 		for (String line : comment.split("\n")) {
 			line = line.trim();
-			if (! line.equals("/**")) {
-				if (!line.startsWith("/"))
-					return "/" + line + "...*/";
-				else
-					return line + "...*/";
+			if (!line.equals("/**") && !line.equals("*")) {
+				if (line.startsWith("/"))
+					line = line.substring(1);
+				if (line.startsWith("*"))
+					line = line.substring(1);
+				return line.trim() + "...";
 			}
 		}
 		return null;
