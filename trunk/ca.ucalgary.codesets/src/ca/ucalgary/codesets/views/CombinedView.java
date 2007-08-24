@@ -123,9 +123,7 @@ public class CombinedView extends ViewPart  {
 		nameSetAction.setToolTipText("Name this Set");  //change this for specified tooltip
 		nameSetAction.setText("Name this Set");
 		nameSetAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));  //image of action
-
-
+				getImageDescriptor(org.eclipse.ui.internal.IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));
 	}
 
 	private void createToolbar() {

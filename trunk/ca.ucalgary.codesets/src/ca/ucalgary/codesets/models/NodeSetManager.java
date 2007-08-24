@@ -54,13 +54,12 @@ public class NodeSetManager {
 		// update navigation history set (including clearing out previous entries so
 		// that we are just saving the most recently visited node for each method)
 		NodeSet nav = navigationHistorySet();
-		ASTNode key = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);
-		if (key == null) return;
+		ASTNode method = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);
+		if (method == null) return;
 		
-		IJavaElement element = ASTHelper.getJavaElement(key);
-		
-		if (nav.containsKey(element))
-			nav.get(element).clear();
+		IJavaElement key = ASTHelper.getJavaElement(method);
+		if (nav.containsKey(key))
+			nav.get(key).clear();
 		navigationHistorySet().add(newFocus);
 		
 		// notify listeners
