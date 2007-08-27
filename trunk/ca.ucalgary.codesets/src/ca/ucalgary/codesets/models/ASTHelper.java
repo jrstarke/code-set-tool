@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -13,8 +14,10 @@ import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
@@ -30,7 +33,21 @@ public class ASTHelper {
 		IMethodBinding binding = node.resolveBinding();
 		return binding.getJavaElement();
 	}
+	public static IJavaElement getJavaElement(FieldDeclaration node) {
+		TypeDeclaration typeNode = (TypeDeclaration)getAncestorByType(node, ASTNode.TYPE_DECLARATION);
+		ITypeBinding binding = typeNode.resolveBinding();
+		for (IVariableBinding vb : binding.getDeclaredFields()) {
+			IJavaElement element = vb.getJavaElement();
+			try {
+				if (((ISourceReference)element).getSourceRange().getOffset() == node.getStartPosition())
+					return element;
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			}
+		}
 
+		return null;
+	}
 	public static IJavaElement getJavaElement(TypeDeclaration node) {
 		ITypeBinding binding = node.resolveBinding();
 		return binding.getJavaElement();
@@ -42,6 +59,8 @@ public class ASTHelper {
 			return getJavaElement((TypeDeclaration)node);
 		else if (type == ASTNode.METHOD_DECLARATION)
 			return getJavaElement((MethodDeclaration)node);
+		else if (type == ASTNode.FIELD_DECLARATION)
+			return getJavaElement((FieldDeclaration)node);
 		return null;
 	}
 

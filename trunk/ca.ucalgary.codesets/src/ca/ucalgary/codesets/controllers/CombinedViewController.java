@@ -37,7 +37,7 @@ import ca.ucalgary.codesets.views.ElementLabelProvider;
 public class CombinedViewController implements INodeSetListener  {
 	Composite parent;
 	ScrolledComposite sc;
-	int level = 0;
+	int level = 2;
 	
 	Color background = new Color(null,255,255,255);
 	ElementLabelProvider labelProvider = new ElementLabelProvider();
@@ -49,10 +49,10 @@ public class CombinedViewController implements INodeSetListener  {
 		this.parent = new Composite(sc, SWT.NONE);
 		sc.setContent(this.parent);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
-		layout.fill = true;
+//		layout.fill = true;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		layout.spacing = 0;
+		layout.spacing = 2;
 		this.parent.setLayout(layout);
 		this.parent.setBackground(background);
 		this.parent.setBackgroundMode(SWT.INHERIT_DEFAULT);

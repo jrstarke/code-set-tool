@@ -25,15 +25,14 @@ import ca.ucalgary.codesets.views.ElementLabelProvider;
 //given element.
 public class ReferenceFromSearch extends GenericVisitor {
 	int REFERENCEFROMVALUE = 1;
-	IMember element;
 	NodeSet set;
 	ElementLabelProvider labelProvider = new ElementLabelProvider();
 
-	public void search(ASTNode node) {
+	public void search(IJavaElement element, ASTNode node) {
 		MethodDeclaration method = (MethodDeclaration)ASTHelper.getAncestorByType(node, ASTNode.METHOD_DECLARATION);
 		if (method == null) return;
 
-		set = new NodeSet(labelProvider.getFullText(ASTHelper.getJavaElement(method)), "references from");
+		set = new NodeSet(labelProvider.getFullText(element), "references from");
 		if (NodeSetManager.instance().containsSet(set))
 			return;
 		method.accept(this);
