@@ -74,7 +74,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		IJavaElement element = computeSelection();
-		System.out.println(element.getClass().getName());
+//		System.out.println(element.getClass().getName());
 		
 		if ((element != null) && !(element.equals(last))) {
 			// We don't want to include package declarations in our sets, so ignore them
@@ -107,7 +107,8 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 
 		try {
 			IJavaElement element = getElementAt(unit, caret, false);
-			
+			if(element == null)
+				return null;
 			while (element.getElementType() == IJavaElement.TYPE &&
 					element.getParent().getElementType() != IJavaElement.COMPILATION_UNIT)
 				element = element.getParent();

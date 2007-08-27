@@ -4,15 +4,11 @@ import java.util.HashMap;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -22,7 +18,6 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 
-import ca.ucalgary.codesets.controllers.Logger;
 
 public class ASTHelper {
 	private static HashMap<ICompilationUnit,CompilationUnit> ASTCache = new HashMap<ICompilationUnit,CompilationUnit>();
@@ -82,7 +77,7 @@ public class ASTHelper {
 //		}
 //		Logger.instance().stop("ASTHelper.getStartNode(ICompilationUnit)");
 
-		System.out.println("Size of cache: " + queue.size());
+//		System.out.println("Size of cache: " + queue.size());
 		return compUnit;
 	}
 	
