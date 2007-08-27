@@ -29,18 +29,20 @@ import ca.ucalgary.codesets.views.ElementLabelProvider;
 //given element.
 public class MembersOfType extends GenericVisitor {
 	TypeDeclaration type;
+	IJavaElement key;
 	NodeSet set;
 	ElementLabelProvider labelProvider = new ElementLabelProvider();
 
-	public void search(ASTNode node) {		
-		TypeDeclaration type = (TypeDeclaration) ASTHelper.getAncestorByType(node, ASTNode.TYPE_DECLARATION);
-		if (type == null)
+	public void search(IJavaElement element, ASTNode node) {
+		key = element;
+		TypeDeclaration typeNode = (TypeDeclaration) ASTHelper.getAncestorByType(node, ASTNode.TYPE_DECLARATION);
+		if (typeNode == null)
 			return;
-		set = new NodeSet(labelProvider.getFullText(ASTHelper.getJavaElement(type)), "Members of Type");
+		set = new NodeSet(labelProvider.getFullText(element.getParent()), "Members of Type");
 
 		if (NodeSetManager.instance().containsSet(set))
 			return;
-		type.accept(this);
+		typeNode.accept(this);
 
 		if (set.size() != 0)
 			NodeSetManager.instance().addSet(set);
@@ -51,12 +53,12 @@ public class MembersOfType extends GenericVisitor {
 	}
 
 	public boolean visit(MethodDeclaration node) {
-		set.add(node);
+		set.add(key, node);
 		return visitNode(node);
 	}
 
 	public boolean visit(FieldDeclaration node) {
-		set.add(node);
+		set.add(key, node);
 		return visitNode(node);
 	}
 

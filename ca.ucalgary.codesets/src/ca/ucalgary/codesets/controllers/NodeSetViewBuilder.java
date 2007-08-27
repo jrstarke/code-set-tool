@@ -34,11 +34,13 @@ import ca.ucalgary.codesets.views.ElementLabelProvider;
 
 public class NodeSetViewBuilder extends ASTVisitor {
 	Composite parent;
-	Composite classView;
-	Composite methodView;
+	Stack<Composite> composites = new Stack<Composite>();
+	
+//	Composite classView;
+//	Composite methodView;
 	Listener lastListener;
 
-	HashMap<ASTNode,Composite> compositeTracker = new HashMap<ASTNode,Composite>();
+//	HashMap<ASTNode,Composite> compositeTracker = new HashMap<ASTNode,Composite>();
 
 	HashSet<ASTNodePlaceholder> includeSet;
 
@@ -55,8 +57,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 
 	NodeSetViewBuilder(Composite parent, HashSet<ASTNodePlaceholder> includeSet, int level) {
 		this.parent = parent;
-		this.classView = parent;
 		this.includeSet = includeSet;
+		composites.push(parent);
 		this.level = level;
 	}
 
@@ -83,9 +85,14 @@ public class NodeSetViewBuilder extends ASTVisitor {
 
 	void addLine(String line) {
 		line = whiteSpace() + line.trim();
+		if (line.indexOf("\n") != -1) {
+			line = whiteSpace() + (line.substring(0, line.indexOf("\n")).trim());
+			if (line.endsWith("{")) line += "... }";
+			else line += "...";
+		}
+		
 		if (!lines.empty()) {
 			String last = lines.peek();
-//			if (last.equals("...") || last.equals("{...") || last.equals("{")) {
 			if (isLeadingLine(last)) {
 				line = lines.pop() + line.substring(last.length());
 				lines.push(line);
@@ -122,6 +129,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 
 	boolean printIf(ASTNode node, String content) {
 		if (shouldVisit(node)) {
+			System.out.println(content);
 			addLine(content);
 			return true;
 		} else {
@@ -211,7 +219,9 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(AnonymousClassDeclaration node) {
-		return visit((ASTNode)node);
+		System.out.println(node);
+//		return blockStatement(node, "new " + "X" +  "()");
+		return false;
 	}
 
 	public boolean visit(ArrayAccess node) {
@@ -318,7 +328,14 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(FieldDeclaration node) {
-		return visit((BodyDeclaration)node);
+		if (shouldVisit(node)) {
+			IJavaElement element = ASTHelper.getJavaElement(node);
+			String line = labelProvider.getText(element);
+			Listener listener = makeListener(element,line);
+			composites.push(CombinedView.fieldView(composites.peek(), line, listener));
+			return true;
+		}
+		return false;
 	}
 
 	public boolean visit(ForStatement node) {
@@ -363,8 +380,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public boolean visit(Javadoc node) {
 		if (this.level >= 1) {
 			String commentLine = getFirstLine(node.toString());
-			Composite parent = methodView != null ? methodView : classView;
-			CombinedView.commentLabel(parent, commentLine, this.lastListener);
+//			Composite parent = methodView != null ? methodView : classView;
+			CombinedView.commentLabel(composites.peek(), commentLine, this.lastListener);
 		}
 		return false;
 	}
@@ -532,19 +549,22 @@ public class NodeSetViewBuilder extends ASTVisitor {
 //		return false;
 		
 	}
-
+	
 	// start a new composite corresponding to this method declaration
-	public boolean visit(MethodDeclaration node) {		
+	public boolean visit(MethodDeclaration node) {
 		if (shouldVisit(node)) {
-			if (methodView == null) {
+			if (node.getParent().getNodeType() == ASTNode.ANONYMOUS_CLASS_DECLARATION) {
+				
+				
+			} else {
 				IJavaElement element = ASTHelper.getJavaElement(node);
 				String line = labelProvider.getText(element);
-				this.lastListener = makeListener(element,line);
-				methodView = CombinedView.methodView(classView, line, this.lastListener);
-				compositeTracker.put(node, methodView);
+				this.lastListener = makeListener(element, line);
+				composites.push(CombinedView.methodView(composites.peek(),
+						line, this.lastListener));
 				indent++;
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
@@ -694,7 +714,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public void endVisit(FieldDeclaration node) {
-		// default implementation: do nothing
+		if (shouldVisit(node))
+			composites.pop();
 	}
 
 	public void endVisit(ForStatement node) {
@@ -757,18 +778,21 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// to the method composite
 	public void endVisit(MethodDeclaration node) {
 		if (shouldVisit(node)) {
-			if (compositeTracker.get(node) != null) {
+			if (node.getParent().getNodeType() == ASTNode.ANONYMOUS_CLASS_DECLARATION) {
+				;
+				
+			} else {
 				StringBuffer buf = new StringBuffer();
 				for (String line : lines)
 					buf.append(line + "\n");
 				lines.clear();
 				indent--;
 				if (level >= 2) {
-				CombinedView.methodBodyWidget(methodView, buf.toString(),this.lastListener);
+					CombinedView.methodBodyWidget(composites.peek(),
+							buf.toString(), this.lastListener);
 				}
-				methodView = null;
 				lastListener = null;
-				compositeTracker.remove(node);
+				composites.pop();
 			}
 		}
 	}
@@ -887,8 +911,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public void endVisit(TypeDeclaration node) {
-		if (compositeTracker.get(node) != null)
-			classView = null;
+//		if (compositeTracker.get(node) != null)
+//			classView = null;
 	}
 
 	public void endVisit(TypeDeclarationStatement node) {

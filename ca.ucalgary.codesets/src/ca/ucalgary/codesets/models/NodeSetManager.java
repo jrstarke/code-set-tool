@@ -50,17 +50,21 @@ public class NodeSetManager {
 		return rawSets.getFirst();
 	}
 
-	public void setFocus(ASTNode newFocus) {
+	public void setFocus(IJavaElement key, ASTNode newFocus) {
 		// update navigation history set (including clearing out previous entries so
 		// that we are just saving the most recently visited node for each method)
-		NodeSet nav = navigationHistorySet();
-		ASTNode method = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);
-		if (method == null) return;
+		NodeSet navigationSet = navigationHistorySet();
+
+//		ASTNode method = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);;
+//		while (method != null && method.getParent().getNodeType() == ASTNode.ANONYMOUS_CLASS_DECLARATION)
+//			method = ASTHelper.getAncestorByType(method.getParent(), ASTNode.METHOD_DECLARATION);
+//
+//		if (method == null) return;
 		
-		IJavaElement key = ASTHelper.getJavaElement(method);
-		if (nav.containsKey(key))
-			nav.get(key).clear();
-		navigationHistorySet().add(newFocus);
+//		IJavaElement key = ASTHelper.getJavaElement(method);
+		if (navigationSet.containsKey(key))
+			navigationSet.get(key).clear();
+		navigationSet.add(key, newFocus);
 		
 		// notify listeners
 		currentFocus = newFocus;

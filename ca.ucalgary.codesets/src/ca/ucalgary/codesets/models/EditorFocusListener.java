@@ -4,10 +4,12 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageDeclaration;
 import org.eclipse.jdt.core.ISourceReference;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 
+import org.eclipse.jdt.internal.core.SourceType;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.ui.IWorkingCopyManager;
@@ -71,27 +73,24 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 	 * Entry point for handling each change event.
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
-		IJavaElement element = computeSelection(); 			
+		IJavaElement element = computeSelection();
+		System.out.println(element.getClass().getName());
+		
 		if ((element != null) && !(element.equals(last))) {
 			// We don't want to include package declarations in our sets, so ignore them
 			boolean isPackageDeclaration = (element instanceof IPackageDeclaration);
 			if (!isPackageDeclaration) {
 				last = element;
-
-				try {
-					String s = ((ISourceReference)element).getSource();
-				} catch (JavaModelException e) {
-					e.printStackTrace();
-				}
-
-//				CodeSetManager.instance().setFocus((ISourceReference)element, lastCaret);
-//				new ReferenceToSearch().search(element, name(element));
-//				new ReferenceFromSearch().search(element, name(element));
-//				new MembersOfType().search(element);
 			}
 		}
 	}
 
+	boolean isDeclaration(IJavaElement element) {
+		return element != null && (element.getElementType() == IJavaElement.FIELD ||
+			element.getElementType() == IJavaElement.METHOD ||
+			element.getElementType() == IJavaElement.TYPE);
+	}
+	
 	IJavaElement computeSelection() {
 		ISourceViewer sourceViewer = editor.getViewer();
 		if (sourceViewer == null) return null;
@@ -108,11 +107,24 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 
 		try {
 			IJavaElement element = getElementAt(unit, caret, false);
+			
+			while (element.getElementType() == IJavaElement.TYPE &&
+					element.getParent().getElementType() != IJavaElement.COMPILATION_UNIT)
+				element = element.getParent();
+						
+			// this loop gets past methods declared in anonymous classes
+			while (element != null && 
+					element.getParent().getElementType() == IJavaElement.TYPE &&
+					((IType)element.getParent()).isAnonymous()) {
+				element = element.getParent().getAncestor(IJavaElement.METHOD);
+			}
+			
 			ASTNode node = ASTHelper.getNodeAtPosition(unit, caret);
-			NodeSetManager.instance().setFocus(node);
-			new ReferenceFromSearch().search(node);
-			new ReferenceToSearch().search(node);
-			new MembersOfType().search(node);
+			
+			NodeSetManager.instance().setFocus(element, node);
+			new ReferenceFromSearch().search(element, node);
+			new ReferenceToSearch().search(element);
+			new MembersOfType().search(element, node);
 			
 			if (!(element instanceof ISourceReference)) 
 				return null;

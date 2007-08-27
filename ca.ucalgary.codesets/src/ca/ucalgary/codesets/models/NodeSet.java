@@ -48,26 +48,41 @@ public class NodeSet extends HashMap<IJavaElement, HashSet<ASTNodePlaceholder>> 
 		return category + "/" + name + " " + super.toString();
 	}
 
-	// returns the key (the type of which depends on the value of classIndex)
-	public IJavaElement add(ASTNode node) {
+	public void add(IJavaElement key, ASTNode node) {
+		if (!containsKey(key))
+			put(key, new HashSet<ASTNodePlaceholder>());	
+		addPlaceholders(get(key), node);
+	}
+	
+	void addPlaceholders(HashSet<ASTNodePlaceholder> set, ASTNode node) {
+		while (node != null) {
+			set.add(new ASTNodePlaceholder(node));
+			
+			int type = node.getNodeType();
+			if ((type == ASTNode.METHOD_DECLARATION || 
+					type == ASTNode.FIELD_DECLARATION || 
+					type == ASTNode.TYPE_DECLARATION) && 
+				node.getParent().getNodeType() != ASTNode.ANONYMOUS_CLASS_DECLARATION)
+				break;
+			
+			node = node.getParent();
+		}
+	}
+	
+	public void add(ASTNode node) {
 		HashSet<ASTNodePlaceholder> set = new HashSet<ASTNodePlaceholder>();
 		IJavaElement key = null;
 		while (node != null) {
 			set.add(new ASTNodePlaceholder(node));
-
 			key = ASTHelper.getJavaElement(node);
-			if (key != null) {
-				if (containsKey(key))
-					get(key).addAll(set);
-				else
-					put(key, set);
-				break;
+			if (key != null && key.getParent().getElementType() == IJavaElement.TYPE) {
+				if (containsKey(key)) get(key).addAll(set);
+				else put(key, set);
+				break; // reached a method or field declaration so stop
 			}
 
 			node = node.getParent();
 		}
-
-		return key;
 	}
 
 	// if the key is not found, the key is added and the node is added as

@@ -54,7 +54,7 @@ public class CombinedView extends ViewPart  {
 	static Color commentColor = new Color(null, 140,140,175);
 	static Color methodNameColor = new Color(null, 0,0,0);
 	static Color classNameColor = methodNameColor;
-	static Color classBGColor = new Color(null, 240,240,240);
+	static Color classBGColor = new Color(null, 250,250,200);
 
 	static Label label(Composite parent, String text, int style, int height, Color color) {
 		Label label = new Label(parent, SWT.NONE);
@@ -73,19 +73,15 @@ public class CombinedView extends ViewPart  {
 	}
 
 	public static Composite classView(Composite parent, String text, String comment) { //, Listener listener) {
-//		Composite result = new Composite(parent, SWT.NONE);
-//		RowLayout layout = new RowLayout(SWT.VERTICAL);
-//		layout.marginHeight = 0;
-//		layout.marginWidth = 0;
-//		layout.fill = true;
-//		result.setLayout(layout);
-//		Control[] siblings = parent.getChildren();
-//		if (siblings.length >= 2)
-//		new Label (result, SWT.SEPARATOR | SWT.HORIZONTAL);
-		Label label = label(parent, text, SWT.BOLD, 11, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
+		Composite result = new Composite(parent, SWT.NONE);
+		RowLayout layout = new RowLayout(SWT.VERTICAL);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.spacing = 0;
+		result.setLayout(layout);
+		Label label = label(result, text, SWT.BOLD, 11, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
 		label.setBackground(classBGColor);
-//		return result;
-		return parent;
+		return result;
 	}
 	public static Composite methodView(Composite parent, String text, Listener listener) {
 		Composite result = new Composite(parent, SWT.NONE);
@@ -93,7 +89,18 @@ public class CombinedView extends ViewPart  {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.spacing = 0;
-		layout.fill = true;
+//		layout.fill = true;
+		result.setLayout(layout);
+		label(result, text, SWT.BOLD, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
+		return result;
+	}
+	public static Composite fieldView(Composite parent, String text, Listener listener) {
+		Composite result = new Composite(parent, SWT.NONE);
+		RowLayout layout = new RowLayout(SWT.VERTICAL);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.spacing = 0;
+//		layout.fill = true;
 		result.setLayout(layout);
 		label(result, text, SWT.BOLD, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
 		return result;
@@ -141,7 +148,7 @@ public class CombinedView extends ViewPart  {
 		};
 		incDefAction.setToolTipText("Increase Detail");
 		incDefAction.setText("Increase Detail");
-		incDefAction.setImageDescriptor(getImageDescriptor("incdetail.png")); 
+		incDefAction.setImageDescriptor(getImageDescriptor("plustool.png")); //("incdetail.png")); 
 
 		decDefAction = new Action() {
 			public void run() {
@@ -150,13 +157,13 @@ public class CombinedView extends ViewPart  {
 		};
 		decDefAction.setToolTipText("Decrease Detail");
 		decDefAction.setText("Decrease Detail");
-		decDefAction.setImageDescriptor(getImageDescriptor("decdetail.png"));
+		decDefAction.setImageDescriptor(getImageDescriptor("minustool.png")); //("decdetail.png"));
 	}
 
 	private void createToolbar() {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
-		mgr.add(incDefAction);
 		mgr.add(decDefAction);
+		mgr.add(incDefAction);
 		mgr.add(nameSetAction);
 	}
 
