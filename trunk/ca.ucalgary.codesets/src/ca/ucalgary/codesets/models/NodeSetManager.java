@@ -53,6 +53,9 @@ public class NodeSetManager {
 	public void setFocus(IJavaElement key, ASTNode newFocus) {
 		// update navigation history set (including clearing out previous entries so
 		// that we are just saving the most recently visited node for each method)
+		if (key == null)
+			return;
+		
 		NodeSet navigationSet = navigationHistorySet();
 
 //		ASTNode method = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);;

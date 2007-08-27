@@ -9,6 +9,7 @@ import java.util.Map;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 
@@ -71,14 +72,22 @@ public class NodeSet extends HashMap<IJavaElement, HashSet<ASTNodePlaceholder>> 
 	
 	public void add(ASTNode node) {
 		HashSet<ASTNodePlaceholder> set = new HashSet<ASTNodePlaceholder>();
-		IJavaElement key = null;
 		while (node != null) {
 			set.add(new ASTNodePlaceholder(node));
-			key = ASTHelper.getJavaElement(node);
+			IJavaElement key = ASTHelper.getJavaElement(node);
 			if (key != null && key.getParent().getElementType() == IJavaElement.TYPE) {
-				if (containsKey(key)) get(key).addAll(set);
-				else put(key, set);
-				break; // reached a method or field declaration so stop
+				IType t = (IType) key.getParent();
+				try {
+					if (!t.isAnonymous()) {
+						if (containsKey(key))
+							get(key).addAll(set);
+						else
+							put(key, set);
+						break; // reached a method or field declaration so stop
+					}
+				} catch (JavaModelException e) {
+					// continue ...
+				}
 			}
 
 			node = node.getParent();

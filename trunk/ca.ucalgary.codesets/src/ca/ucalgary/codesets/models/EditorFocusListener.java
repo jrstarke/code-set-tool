@@ -117,7 +117,11 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 			while (element != null && 
 					element.getParent().getElementType() == IJavaElement.TYPE &&
 					((IType)element.getParent()).isAnonymous()) {
-				element = element.getParent().getAncestor(IJavaElement.METHOD);
+				IJavaElement next = element.getParent().getAncestor(IJavaElement.METHOD);
+				if (next == null)
+					next = element.getParent().getAncestor(IJavaElement.FIELD);
+				
+				element =  next;
 			}
 			
 			ASTNode node = ASTHelper.getNodeAtPosition(unit, caret);

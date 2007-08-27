@@ -22,7 +22,6 @@ public class CombinedViewController implements INodeSetListener  {
 	int level = 2;
 	
 	Color background = new Color(null,255,255,255);
-	ElementLabelProvider labelProvider = new ElementLabelProvider();
 
 	public CombinedViewController(Composite parent) {
 		sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
@@ -31,10 +30,9 @@ public class CombinedViewController implements INodeSetListener  {
 		this.parent = new Composite(sc, SWT.NONE);
 		sc.setContent(this.parent);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
-//		layout.fill = true;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		layout.spacing = 2;
+		layout.spacing = 0;
 		this.parent.setLayout(layout);
 		this.parent.setBackground(background);
 		this.parent.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -49,8 +47,7 @@ public class CombinedViewController implements INodeSetListener  {
 		
 		NodeSet combined = NodeSetManager.instance().combinedSet();
 		for (TypeMembers tm : combined.elementsByType()) {
-			String line = labelProvider.getText(tm.type);
-			Composite classView = CombinedView.classView(parent, line, "");
+			Composite classView = CombinedView.classView(parent, tm.type, "");
 			for (TypeMembers.Entry entry : tm.entries)
 				NodeSetViewBuilder.build(classView, entry.element, entry.placeholders, level);
 		}
