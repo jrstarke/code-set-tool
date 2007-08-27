@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
@@ -12,6 +13,8 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 
@@ -35,7 +38,16 @@ public class SideBarController implements INodeSetListener {
 		for (NodeSet set : NodeSetManager.instance().sets()) 
 			setAdded(set);
 		NodeSetManager.instance().addListener(this);
+//		addKeyListeners();
 	}
+
+//	private void addKeyListeners() {
+//		sc.addListener(SWT.KeyDown, new Listener() {
+//			public void handleEvent(Event event) {
+//				System.out.println(event);
+//			}
+//		});
+//	}
 
 	private void addTextBox() {
 		new SearchBox(sideBar);
@@ -112,7 +124,9 @@ public class SideBarController implements INodeSetListener {
 		}
 	}
 	
-	public void focusChanged(ASTNode focus) {
+//	public void focusChanged(IJavaElement focus) {
+		
+		
 //		for (NodeSetLabel label : labels()) {
 //			if (label.getSet().containsNode(focus))
 //				label.emphasizeLink();
@@ -121,6 +135,20 @@ public class SideBarController implements INodeSetListener {
 //		}
 //		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 //		sideBar.layout();
+//	}
+	
+	
+	public void focusChanged(IJavaElement element) {
+		List<NodeSet> list = NodeSetManager.instance().sets();
+		for(NodeSetLabel label : labels()) {
+			NodeSet set = label.getSet();
+			if(set.containsKey(element))
+				label.emphasizeLink();
+			else
+				label.demphasizeLink();
+		}
+		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		sideBar.layout();
 	}
 	
 	public void stateChanged(NodeSet set) {
@@ -150,8 +178,6 @@ public class SideBarController implements INodeSetListener {
 
 		}
 		sideBar.layout();
-		
-		
 	}
 }
 

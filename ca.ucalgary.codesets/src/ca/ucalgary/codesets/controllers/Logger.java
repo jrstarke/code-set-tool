@@ -5,20 +5,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URL;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.osgi.framework.Bundle;
 
 import ca.ucalgary.codesets.models.INodeSetListener;
 import ca.ucalgary.codesets.models.NodeSet;
@@ -114,7 +109,7 @@ public class Logger implements INodeSetListener {
 //		Logger.instance().addEvent("All sets IGNORED");
 	}
 
-	public void focusChanged(ASTNode focus) {
+	public void focusChanged(IJavaElement focus) {
 		// TODO Auto-generated method stub
 		
 	}

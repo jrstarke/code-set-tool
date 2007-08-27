@@ -82,7 +82,7 @@ public class SearchBox extends Composite{
 		name = text.getText();
 		if(name!=null)
 			name = name.trim();
-		button.setEnabled(false);  //positive feedback... hopefully
+		button.setText("Search");  //positive feedback... hopefully
 		search();
 	}
 
@@ -161,9 +161,9 @@ public class SearchBox extends Composite{
 				}
 			}
 		}	
-		else
-			text.setText("Enter Search");
-		button.setEnabled(true);
+		
+		text.setText("Enter Search");
+		
 	}
 
 	//Adds a text box to the composite. 

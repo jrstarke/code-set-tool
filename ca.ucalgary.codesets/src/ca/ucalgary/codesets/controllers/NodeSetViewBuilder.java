@@ -66,7 +66,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	public static void build(Composite parent, IJavaElement node, HashSet<ASTNodePlaceholder> includeSet, int level) {
 		NodeSetViewBuilder builder = new NodeSetViewBuilder(parent, includeSet, level);
 		ASTNode result = ASTHelper.getNode(node); 
-		result.accept(builder);
+		if(result != null)
+			result.accept(builder);
 	}
 
 	// returns true if the given node should be included in this view
@@ -129,7 +130,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 
 	boolean printIf(ASTNode node, String content) {
 		if (shouldVisit(node)) {
-			System.out.println(content);
+//			System.out.println(content);
 			addLine(content);
 			return true;
 		} else {
@@ -219,7 +220,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(AnonymousClassDeclaration node) {
-		System.out.println(node);
+//		System.out.println(node);
 //		return blockStatement(node, "new " + "X" +  "()");
 		return false;
 	}

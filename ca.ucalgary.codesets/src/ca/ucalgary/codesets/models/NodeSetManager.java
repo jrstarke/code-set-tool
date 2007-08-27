@@ -70,7 +70,7 @@ public class NodeSetManager {
 		currentFocus = newFocus;
 		for (INodeSetListener listener : listeners) {
 			listener.setChanged(navigationHistorySet());
-			listener.focusChanged(newFocus);
+			listener.focusChanged(key);
 		}
 	}
 

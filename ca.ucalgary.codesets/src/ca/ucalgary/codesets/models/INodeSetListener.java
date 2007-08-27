@@ -1,7 +1,7 @@
 package ca.ucalgary.codesets.models;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
-import org.eclipse.jdt.core.dom.ASTNode;
 
 // classes that want to respond to code set events should implement this
 // interface and should register themselves like so:
@@ -14,7 +14,7 @@ public interface INodeSetListener {
 	public void setAdded(NodeSet set);
 	
 	// called when a new entity becomes the focus
-	public void focusChanged(ASTNode focus);
+	public void focusChanged(IJavaElement focus);
 	
 	// called when the given set changes state
 	public void stateChanged(NodeSet set);

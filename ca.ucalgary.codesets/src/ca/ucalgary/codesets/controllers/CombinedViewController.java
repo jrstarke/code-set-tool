@@ -1,30 +1,12 @@
 package ca.ucalgary.codesets.controllers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.ISourceReference;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Scale;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.events.IHyperlinkListener;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ca.ucalgary.codesets.models.NodeSet;
 import ca.ucalgary.codesets.models.NodeSetManager;
@@ -79,7 +61,8 @@ public class CombinedViewController implements INodeSetListener  {
 	
 	// methods for listening to NodeSetManager events
 
-	public void focusChanged(ASTNode focus) {
+	public void focusChanged(IJavaElement focus) {
+
 	}
 	
 	public void setAdded(NodeSet set) {
@@ -103,14 +86,14 @@ public class CombinedViewController implements INodeSetListener  {
 		if (level < 2)
 			level++;
 		changeDisplaySet();
-		System.out.println(level);
+//		System.out.println(level);
 	}
 	
 	public void decLevel() {
 		if (level > 0)
 			level--;
 		changeDisplaySet();
-		System.out.println(level);
+//		System.out.println(level);
 	}
 	
 }
