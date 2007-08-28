@@ -20,11 +20,13 @@ import ca.ucalgary.codesets.views.ElementLabelProvider;
 public class CombinedViewController implements INodeSetListener  {
 	Composite parent;
 	ScrolledComposite sc;
+	CombinedView view;
 	int level = 2;
 	
 	Color background = new Color(null,255,255,255);
 
-	public CombinedViewController(Composite parent) {
+	public CombinedViewController(Composite parent, CombinedView view) {
+		this.view = view;
 		sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
@@ -48,6 +50,7 @@ public class CombinedViewController implements INodeSetListener  {
 			w.dispose();
 		
 		NodeSet combined = NodeSetManager.instance().combinedSet();
+		this.view.setNumberElements(combined.size());
 		for (TypeMembers tm : combined.elementsByType()) {
 			Composite classView = CombinedView.classView(parent, tm.type, "");
 			for (TypeMembers.Entry entry : tm.entries)
@@ -55,6 +58,7 @@ public class CombinedViewController implements INodeSetListener  {
 		}
 		
 		sc.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		
 		parent.layout();
 	}
 	

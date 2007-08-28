@@ -39,9 +39,10 @@ public class CombinedView extends ViewPart  {
 	static ElementLabelProvider labelProvider = new ElementLabelProvider();
 
 	public void createPartControl(Composite parent) {
-		cvc = new CombinedViewController(parent);
+		cvc = new CombinedViewController(parent, this);
 		makeActions();
 		createToolbar();
+		this.setContentDescription("Number of elements: 0");
 	}
 
 	public void setFocus() {
@@ -188,5 +189,9 @@ public class CombinedView extends ViewPart  {
 		Path path = new Path("icons/" + name);
 		URL url = FileLocator.find(bundle, path, null);
 		return ImageDescriptor.createFromURL(url);
+	}
+	
+	public void setNumberElements (int numElements) {
+		this.setContentDescription("Number of elements: " + numElements);
 	}
 }
