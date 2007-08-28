@@ -53,7 +53,7 @@ public class CombinedView extends ViewPart  {
 	static Color methodColor = new Color(null, 140,140,140);
 	static Color commentColor = new Color(null, 175,140,140);
 	static Color methodNameColor = new Color(null, 0,0,0);
-	static Color classNameColor = methodNameColor;
+	static Color classNameColor = methodNameColor; //new Color(null, 100,100,100);
 	static Color classBGColor = new Color(null, 250,250,200);
 
 	static Label label(Composite parent, String text, int style, int height, Color color) {
@@ -87,40 +87,41 @@ public class CombinedView extends ViewPart  {
 		layout.marginWidth = 0;
 		layout.spacing = 0;
 		result.setLayout(layout);
-
 		String text = labelProvider.getText(element);
-		Label label = label(result, text, SWT.NORMAL, 12, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
-		label.setBackground(classBGColor);
+		Label label = label(result, text, SWT.BOLD, 11, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
+//		label.setBackground(classBGColor);
 		return result;
 	}
 	public static Composite methodView(Composite parent, String text, Listener listener) {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+//		layout.marginWidth = 10;
+		layout.marginLeft = 12;
 		layout.spacing = 0;
 		result.setLayout(layout);
-		label(result, text, SWT.NORMAL, 12, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
+		label(result, text, SWT.NORMAL, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
 		return result;
 	}
 	public static Composite fieldView(Composite parent, String text, Listener listener) {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+//		layout.marginWidth = 0;
+		layout.marginLeft = 12;
 		layout.spacing = 0;
 //		layout.fill = true;
 		result.setLayout(layout);
-		label(result, text, SWT.NORMAL, 12, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
+		label(result, text, SWT.NORMAL, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
 		return result;
 	}
 	public static Widget methodBodyWidget(Composite parent, String text, Listener listener) {
-		Label label = label(parent, text, SWT.NORMAL, 11, methodColor);
+		Label label = label(parent, text, SWT.NORMAL, 10, methodColor);
 		label.addListener(SWT.MouseDoubleClick, listener);
 		return label;
 	}
 	public static Widget commentLabel(Composite parent, String text, Listener listener){
-		Label label = label(parent, text, SWT.ITALIC, 11, commentColor);
+		Label label = label(parent, text, SWT.ITALIC, 10, commentColor);
 		if(listener != null)
 			label.addListener(SWT.MouseDoubleClick, listener);
 		return label;
@@ -150,7 +151,7 @@ public class CombinedView extends ViewPart  {
 		nameSetAction.setToolTipText("Name this Set");  //change this for specified tooltip
 		nameSetAction.setText("Name this Set");
 		nameSetAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(org.eclipse.ui.internal.IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));  //image of action
+				getImageDescriptor(org.eclipse.ui.internal.IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));
 
 		incDefAction = new Action() {
 			public void run() {
