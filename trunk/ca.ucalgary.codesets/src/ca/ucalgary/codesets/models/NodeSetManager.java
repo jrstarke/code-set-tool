@@ -130,6 +130,30 @@ public class NodeSetManager {
 			for (INodeSetListener listener : listeners)
 				listener.setAdded(set);
 	}
+	
+	public void removeAll() {
+		
+		List<NodeSet> list = sets();
+		
+		int listPosition = list.size();
+		
+		while(listPosition > -1 ){
+			NodeSet set = list.get(listPosition -1);
+			
+			if(set.category != "history"){
+				rawSets.remove(set);
+				for (INodeSetListener listener : listeners)
+					listener.setRemoved(set);
+			}
+			else {
+				//clear the history set
+				set.clear();
+				for (INodeSetListener listener : listeners)
+					listener.setChanged(set);
+			}
+			listPosition--;
+		}
+	}
 
 	
 	// returns the list of all "raw" sets

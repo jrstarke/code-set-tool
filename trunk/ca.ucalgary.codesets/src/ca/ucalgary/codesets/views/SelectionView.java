@@ -1,6 +1,7 @@
 package ca.ucalgary.codesets.views;
 
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -27,11 +28,15 @@ import org.osgi.framework.Bundle;
 import ca.ucalgary.codesets.controllers.Logger;
 import ca.ucalgary.codesets.controllers.SideBarController;
 import ca.ucalgary.codesets.models.EditorFocusListener;
+import ca.ucalgary.codesets.models.INodeSetListener;
+import ca.ucalgary.codesets.models.NodeSet;
 import ca.ucalgary.codesets.models.NodeSetManager;
 
 public class SelectionView extends ViewPart {
 //	Action nameSetAction;   
-	Action clearSetsAction;
+	Action ignoreAllSetAction;
+	Action removeAllSets;
+	
 	SideBarController barController;
 	EditorFocusListener listener = new EditorFocusListener();
 	
@@ -70,19 +75,27 @@ public class SelectionView extends ViewPart {
 	 * Set up actions, need new pictures for them
 	 */
 	private void makeActions() {
-		clearSetsAction = new Action() {
+		ignoreAllSetAction = new Action() {
 			public void run(){
 				
 				NodeSetManager.instance().allCleared = true;
 				NodeSetManager.instance().clearStates();
 				NodeSetManager.instance().allCleared = false;
-				
 			}
 		};
 
-		clearSetsAction.setToolTipText("Sets all sets to being ignored");  //change this for specified tooltip
-		clearSetsAction.setText("Clear");
-		clearSetsAction.setImageDescriptor(getImageDescriptor("blanks.png"));
+		ignoreAllSetAction.setToolTipText("Sets all sets to being ignored");  //change this for specified tooltip
+//		ignoreAllSetAction.setText("Clear");
+		ignoreAllSetAction.setImageDescriptor(getImageDescriptor("blanks.png"));
+		
+		removeAllSets = new Action() {
+			public void run() {
+				NodeSetManager.instance().removeAll();
+			}
+		};
+		removeAllSets.setToolTipText("Removes all sets from the list");  //change this for specified tooltip
+		removeAllSets.setImageDescriptor(getImageDescriptor("decdetail.png"));
+		
 	}
 	
 	// getting the right path to the icons is tricky, but this seems to do it...
@@ -98,7 +111,8 @@ public class SelectionView extends ViewPart {
      */
     private void createToolbar() {
             IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
-            mgr.add(clearSetsAction);
+            mgr.add(ignoreAllSetAction);
+            mgr.add(removeAllSets);
     }
 	
 
