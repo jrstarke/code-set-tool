@@ -24,11 +24,12 @@ import ca.ucalgary.codesets.views.ElementLabelProvider;
 //a given IJavaElement
 public class ReferenceToSearch implements ISearchResultListener {
 	int REFERENCETOVALUE = 1;
-//	ASTNode method;
+	IJavaElement element;
 	NodeSet set;
 	ElementLabelProvider labelProvider = new ElementLabelProvider();
 
 	void search(IJavaElement element) {
+		this.element = element;
 		set = new NodeSet(labelProvider.getFullText(element), "references to");
 
 		// TODO: really we should just add to the existing set if there is one
@@ -57,9 +58,9 @@ public class ReferenceToSearch implements ISearchResultListener {
 			for (Match m:matches) {
 				ICompilationUnit unit = (ICompilationUnit)((IJavaElement)m.getElement()).getAncestor(IJavaElement.COMPILATION_UNIT);
 				ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
-//				if (!method.equals(ASTHelper.getAncestorByType(node, ASTNode.METHOD_DECLARATION))) {
+				if (!element.equals(m.getElement())) { //removes any self references
 					set.add(node);
-//				}
+				}
 			}
 			if (empty && set.size() > 0)
 				NodeSetManager.instance().addSet(set);
