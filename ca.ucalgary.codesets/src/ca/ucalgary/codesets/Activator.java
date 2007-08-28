@@ -41,22 +41,22 @@ public class Activator extends AbstractUIPlugin {
 		// start listening to editor events 
 		IEditorPart part = null; //= getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
 		
-		IWorkbench workbench = getWorkbench();
-		if(workbench != null) {
-			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-			if(activeWindow != null){
-				IWorkbenchPage iwp = activeWindow.getActivePage();
-				if(iwp != null){
-					part = iwp.getActiveEditor();
-				}
-			}
-		}
+//		IWorkbench workbench = getWorkbench();
+//		if(workbench != null) {
+//			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+//			if(activeWindow != null){
+//				IWorkbenchPage iwp = activeWindow.getActivePage();
+//				if(iwp != null){
+//					part = iwp.getActiveEditor();
+//				}
+//			}
+//		}
 		
 		
 //		new EditorFocusListener(part);
 		
 //		if (part != null)
-			getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new EditorFocusListener(part));
+//		getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new EditorFocusListener(part));
 
 		// start listening to debug events
 		new DebugEventListener();
