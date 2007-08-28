@@ -53,13 +53,13 @@ public class MembersOfType extends GenericVisitor {
 	}
 
 	public boolean visit(MethodDeclaration node) {
-		set.add(key, node);
+		set.add(ASTHelper.getJavaElement(node), node);
 		return visitNode(node);
 	}
 
-	public boolean visit(FieldDeclaration node) {
-		set.add(key, node);
-		return visitNode(node);
-	}
+//	public boolean visit(FieldDeclaration node) {
+//		set.add(key, node);
+//		return visitNode(node);
+//	}
 
 }
