@@ -48,18 +48,24 @@ public class MembersOfType extends GenericVisitor {
 			NodeSetManager.instance().addSet(set);
 	}
 
+	void add(ASTNode node) {
+		IJavaElement element = ASTHelper.getJavaElement(node);
+		if (element != null)
+			set.add(element, node);
+	}
+	
 	protected boolean visitNode(ASTNode node) {
 		return true;
 	}
 
 	public boolean visit(MethodDeclaration node) {
-		set.add(ASTHelper.getJavaElement(node), node);
-		return visitNode(node);
+		add(node);
+		return false;
 	}
 
-//	public boolean visit(FieldDeclaration node) {
-//		set.add(key, node);
-//		return visitNode(node);
-//	}
+	public boolean visit(FieldDeclaration node) {
+		add(node);
+		return false;
+	}
 
 }

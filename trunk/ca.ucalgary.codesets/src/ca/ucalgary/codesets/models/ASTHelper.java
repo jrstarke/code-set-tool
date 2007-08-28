@@ -36,6 +36,7 @@ public class ASTHelper {
 			try {
 				if (((ISourceReference)element).getSourceRange().getOffset() == node.getStartPosition())
 					return element;
+
 			} catch (JavaModelException e) {
 				e.printStackTrace();
 			}
