@@ -38,7 +38,7 @@ public class NodeSetManager {
 
 	NodeSetManager() {
 		addSet(new NodeSet("navigation", "history"));
-		navigationHistorySet().state = NodeSet.State.INCLUDED;
+		navigationHistorySet().state = NodeSet.State.RESTRICTEDTO;
 	}
 
 	public void addListener(INodeSetListener listener) {
@@ -91,6 +91,12 @@ public class NodeSetManager {
 		return currentFocus;
 	}
 
+	public void changeState(NodeSet set, NodeSet.State newState) {
+		set.state = newState;
+		for (INodeSetListener listener : listeners)
+			listener.stateChanged(set);
+	}
+	
 	public void changeState(NodeSet set) {
 		set.transition();
 		for (INodeSetListener listener : listeners)
@@ -143,11 +149,12 @@ public class NodeSetManager {
 	// returns a new node set that is a combination of all of the raw sets
 	// taking states into account (the resulting set is indexed by type)
 	public NodeSet combinedSet() {
-		NodeSet combined = new NodeSet("x", "display");
+		NodeSet combined = new NodeSet("display", "display");
 
-		// add in elements from all included sets
+		// add in elements from all included or restricted-to sets
 		for (NodeSet s : sets())
-			if (s.state == NodeSet.State.INCLUDED)
+			if (s.state == NodeSet.State.INCLUDED || 
+				s.state == NodeSet.State.RESTRICTEDTO)
 				combined = combined.union(s);
 
 		// remove elements from all excluded sets

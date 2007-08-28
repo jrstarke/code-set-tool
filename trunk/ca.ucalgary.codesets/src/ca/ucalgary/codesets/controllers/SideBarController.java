@@ -72,7 +72,23 @@ public class SideBarController implements INodeSetListener {
 		final NodeSetLabel label = section.addSet(set);
 		label.getLink().addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
-				NodeSetManager.instance().changeState(set);
+				// the state we transition to depends on which keys were held down and
+				// also on the current state. 
+				int mask = e.getStateMask();
+				NodeSet.State newState = NodeSet.State.IGNORED;
+				
+				if ((mask & SWT.COMMAND) != 0) {
+					if (set.state != NodeSet.State.INCLUDED)
+						newState = NodeSet.State.INCLUDED;
+				} else if ((mask & SWT.ALT) != 0) {
+					if (set.state != NodeSet.State.EXCLUDED)
+						newState = NodeSet.State.EXCLUDED;
+				} else {
+					if (set.state != NodeSet.State.RESTRICTEDTO)
+						newState = NodeSet.State.RESTRICTEDTO;
+				}
+				
+				NodeSetManager.instance().changeState(set, newState);
 			}
 			public void linkEntered(HyperlinkEvent e) {
 			}
