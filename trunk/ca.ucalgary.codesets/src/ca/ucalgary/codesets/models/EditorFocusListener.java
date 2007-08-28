@@ -35,17 +35,12 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 	IJavaElement last;
 	int lastCaret;
 
-	public EditorFocusListener(IEditorPart part) {
-		if (part instanceof JavaEditor)
-			register((JavaEditor)part);
-	}
-
 	// retruns a suitable name for the given element
 	String name(IJavaElement element) {
 		return new ElementLabelProvider().getText(element);
 	}
 
-	void register(JavaEditor part) {
+	public void register(JavaEditor part) {
 		unregister();
 		editor = part;
 		selectionProvider = editor.getSelectionProvider();
@@ -60,7 +55,7 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 		}
 	}
 
-	void unregister() {
+	public void unregister() {
 		if (selectionProvider != null) {
 			selectionProvider.removeSelectionChangedListener(this);
 		}

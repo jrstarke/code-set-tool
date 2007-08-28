@@ -783,15 +783,21 @@ public class NodeSetViewBuilder extends ASTVisitor {
 				;
 				
 			} else {
-				StringBuffer buf = new StringBuffer();
-				for (String line : lines)
-					buf.append(line + "\n");
-				lines.clear();
-				indent--;
 				if (level >= 2) {
+					StringBuffer buf = new StringBuffer();
+					if (lines.size() == 1 && lines.peek().equals("..."))
+						buf.append("{... }");
+					
+					else 
+						for (String line : lines)
+							buf.append(line + "\n");
+					
 					CombinedView.methodBodyWidget(composites.peek(),
 							buf.toString(), this.lastListener);
 				}
+				
+				lines.clear();
+				indent--;
 				lastListener = null;
 				composites.pop();
 			}
