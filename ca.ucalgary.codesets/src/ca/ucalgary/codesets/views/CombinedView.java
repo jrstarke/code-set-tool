@@ -89,8 +89,8 @@ public class CombinedView extends ViewPart  {
 		result.setLayout(layout);
 
 		String text = labelProvider.getText(element);
-		Label label = label(result, text, SWT.BOLD, 11, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
-//		label.setBackground(classBGColor);
+		Label label = label(result, text, SWT.NORMAL, 12, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
+		label.setBackground(classBGColor);
 		return result;
 	}
 	public static Composite methodView(Composite parent, String text, Listener listener) {
@@ -100,7 +100,7 @@ public class CombinedView extends ViewPart  {
 		layout.marginWidth = 0;
 		layout.spacing = 0;
 		result.setLayout(layout);
-		label(result, text, SWT.NORMAL, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
+		label(result, text, SWT.NORMAL, 12, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
 		return result;
 	}
 	public static Composite fieldView(Composite parent, String text, Listener listener) {
@@ -111,7 +111,7 @@ public class CombinedView extends ViewPart  {
 		layout.spacing = 0;
 //		layout.fill = true;
 		result.setLayout(layout);
-		label(result, text, SWT.NORMAL, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
+		label(result, text, SWT.NORMAL, 12, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
 		return result;
 	}
 	public static Widget methodBodyWidget(Composite parent, String text, Listener listener) {

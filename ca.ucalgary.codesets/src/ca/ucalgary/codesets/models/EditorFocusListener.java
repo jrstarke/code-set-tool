@@ -102,6 +102,13 @@ public class EditorFocusListener implements ISelectionChangedListener, IPartList
 
 		try {
 			IJavaElement element = getElementAt(unit, caret, false);
+			
+			// we want to ignore package decls and the like
+			if (element != null && element.getElementType() == IJavaElement.PACKAGE_DECLARATION)
+				return null;
+			if (element != null && element.getElementType() == IJavaElement.IMPORT_DECLARATION)
+				return null;
+			
 			if(element == null)
 				return null;
 			while (element.getElementType() == IJavaElement.TYPE &&
