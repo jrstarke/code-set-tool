@@ -27,7 +27,7 @@ public class NodeSetLabel extends Composite {
 	Label iconLabel = new Label(this, SWT.NONE);
 
 	// images for indicating the state of the set
-	Image[] images = new Image[] {getImage("blank.png"), getImage("plus.png"), getImage("x.png"), getImage("full.png")};
+	Image[] images = new Image[] {getImage("blank.png"), getImage("plus.png"), getImage("x.png"), getImage("check.png")};
 		
 	public NodeSetLabel(Composite parent, NodeSet set) {
 		super(parent, SWT.NO_BACKGROUND);
