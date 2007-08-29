@@ -57,9 +57,11 @@ public class ReferenceToSearch implements ISearchResultListener {
 			boolean empty = set.size() == 0;
 			for (Match m:matches) {
 				ICompilationUnit unit = (ICompilationUnit)((IJavaElement)m.getElement()).getAncestor(IJavaElement.COMPILATION_UNIT);
-				ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
-				if (!element.equals(m.getElement())) { //removes any self references
-					set.add(node);
+				if (unit != null) { //it is possible to not have a compilation unit
+					ASTNode node = ASTHelper.getNodeAtPosition(unit, m.getOffset());
+					if (!element.equals(m.getElement())) { //removes any self references
+						set.add(node);
+					}
 				}
 			}
 			if (empty && set.size() > 0)
