@@ -8,7 +8,7 @@ The tool is not open by default in Eclipse.  It is separated into 2 separate vie
 "Window" menu -> Scroll down to "Show View" -> Select "Other ...".  At this point the "Show View" window will display.  Scroll
 down to the "Code Sets" folder, and click the expansion arrow, and select "All Sets".  At this point, the "All Sets" view will
 be added to the Eclipse workbench.  Repeat the steps above, and from the "Show View" window, after expanding the "Code Sets" 
-folder, select "Code Set". At this point, the Code Set Tool will be active in Eclipse.
+folder, select "Combined Set". At this point, the Code Set Tool will be active in Eclipse.
 
 Rearranging the Tool Views:  
 The "Code Sets" views can be rearranged in any manner, just like any native Eclipse views.  By clicking and dragging the Tab
@@ -29,17 +29,17 @@ To add elements from a debug session is easy.  From a breakpoint or when a metho
 be added to a new set that will be labeled with the start time of the debugging session.  
 
 Setting set the current set to include elements of a set:
-To set a set to be included, just click on the name of the set until the box beside the name changes to have a +
+To set a set to be included, hold the command key and click on the name of the set, in which the box beside the name changes to a +
 
 Setting the current set to excluded elements of a set:
-To set a set to be excluded, click on the name of the set until the box beside the name changes to an x
+To set a set to be excluded, hold alt and click on the name of the set, in which the box beside the name changes to an x
 
 Setting the current set to exclusively contain elements of a set:
-To set a set to be exclusive, click on the name of the set until the box beside the name changes to filled in
+To set a set to be exclusive, click on the name of the set, if the box is an x, blank, or a plus, it will change to a check mark
 
 Setting the current set to ignore a set:
 by default, all new sets will be ignored, with the exception of the navigation set.  To ignore a set, click on the sets name
-until the box beside it changes to an empty box. 
+until the box beside it changes to an empty box.
 
 Creating more sophisticated sets:
 To create more sophicated sets, you can set multiple sets to either included, excluded, or exclusive.  For instance, you can
@@ -47,7 +47,7 @@ can create a set that has all members of a type that have not yet been visited, 
 of type set for that type to included, the navigation set to excluded, and set reference to the method to exclusive.
 
 Clearing the current set:
-To clear the current set, click on the "Set all sets to be ignored" button.
+To clear the current set, click on the "Set all sets to be ignored" button. This will set all sets to being ignored
 
 Naming the Current Set:
 With the current set (simple or sophisticated), you can create a new set from it.  By clicking the name this set button, a
@@ -56,10 +56,14 @@ clicked this by mistake, click cancel.  Once you have given a name to the curren
 the All Sets view, with the name provided.
 
 Change the Summary Detail level:
-Above the Current Set view, there is a slider.  This slider can be moved from left to right.  When the slider is moved towards
-the left, less details will be displayed in the summary.  When the slider is moved towards the right, more details will be
-shown in the summary.
+Above the Current Set view, there are two buttons; a plus and a minus sign. When you press the plus, you will be given more detail
+in the view below. If you press the minus sign, you will be given less detail. There are only three levels of detail. Methods and classes, Methods, classes and Javadoc,
+Methods, classes, javadoc, and some source code.
 
 Going to an element of the current set:
 To jump to an element of the current set, first find it in the Current Set view, then double click on its name.  If the type
 is not yet open, it will be opened in a new editor window.  The cursor will then be set to this element in the editor window.
+
+Removing sets from the All Sets view:
+When you click on the the minus sign at the top of the All Sets view, it will remove all the sets from the view, except the 
+navigation history. But it will also clear the navigation history and set it back to zero. 
