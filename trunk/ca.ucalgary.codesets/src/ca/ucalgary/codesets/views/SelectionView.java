@@ -77,7 +77,6 @@ public class SelectionView extends ViewPart {
 	private void makeActions() {
 		ignoreAllSetAction = new Action() {
 			public void run(){
-				
 				NodeSetManager.instance().allCleared = true;
 				NodeSetManager.instance().clearStates();
 				NodeSetManager.instance().allCleared = false;
@@ -85,12 +84,12 @@ public class SelectionView extends ViewPart {
 		};
 
 		ignoreAllSetAction.setToolTipText("Sets all sets to being ignored");  //change this for specified tooltip
-//		ignoreAllSetAction.setText("Clear");
 		ignoreAllSetAction.setImageDescriptor(getImageDescriptor("blanks.png"));
 		
 		removeAllSets = new Action() {
 			public void run() {
 				NodeSetManager.instance().removeAll();
+				Logger.instance().addEvent("All Sets" +'\t'+ "Removed");
 			}
 		};
 		removeAllSets.setToolTipText("Removes all sets from the list");  //change this for specified tooltip

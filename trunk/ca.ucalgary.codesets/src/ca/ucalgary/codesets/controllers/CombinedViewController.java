@@ -86,17 +86,19 @@ public class CombinedViewController implements INodeSetListener  {
 	}
 	
 	public void incLevel() {
-		if (level < 2)
+		if (level < 2){
 			level++;
-		changeDisplaySet();
-//		System.out.println(level);
+			Logger.instance().addEvent("Comments Changed"+'\t'+level);
+			changeDisplaySet();
+		}
 	}
 	
 	public void decLevel() {
-		if (level > 0)
+		if (level > 0){
 			level--;
-		changeDisplaySet();
-//		System.out.println(level);
+			Logger.instance().addEvent("Comments Changed"+'\t'+level);
+			changeDisplaySet();
+		}
 	}
 	
 }

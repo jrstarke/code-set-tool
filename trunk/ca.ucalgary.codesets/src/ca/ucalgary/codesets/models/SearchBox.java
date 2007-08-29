@@ -83,6 +83,7 @@ public class SearchBox extends Composite{
 		if(name!=null)
 			name = name.trim();
 		button.setText("Search");  //positive feedback... hopefully
+		Logger.instance().addEvent("Searched For:"+'\t'+name);
 		search();
 	}
 
@@ -146,7 +147,7 @@ public class SearchBox extends Composite{
 									searchSet.add(node);
 								}	
 								NodeSetManager.instance.addSet(searchSet);
-								Logger.instance().addEvent("Searched For:"+'\t'+name);
+								
 								text.setText("Enter Search");
 							}
 						}
@@ -160,8 +161,8 @@ public class SearchBox extends Composite{
 					e2.printStackTrace();
 				}
 			}
+			
 		}	
-		
 		text.setText("Enter Search");
 		
 	}
@@ -184,8 +185,6 @@ public class SearchBox extends Composite{
 					getTextBoxText();
 				}
 			}
-			
 		});
-		
 	}	
 }

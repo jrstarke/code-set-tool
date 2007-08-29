@@ -45,6 +45,10 @@ public class Logger implements INodeSetListener {
 	 * DATE	Searched For	Search Entry
 	 * DATE	All Sets		Ignored
 	 * DATE	Set Named 		Name of set
+	 * DATE All Sets		Removed
+	 * DATE Comments Changed	level
+	 * DATE Started
+	 * DATE Stopped
 	 * 
 	 * @param action : A string representing the action
 	 */
@@ -97,11 +101,10 @@ public class Logger implements INodeSetListener {
 	}
 
 	public void stateChanged(NodeSet set) {
-		// TODO Auto-generated method stub
-		if(!NodeSetManager.instance().allCleared)
+		if(!NodeSetManager.instance().allCleared)  //When a state change has occurred
 			Logger.instance().addEvent("State Changed" + "\t" + set.name +"\t"+set.state.toString());
 		else
-			Logger.instance().addEvent("All Sets" + "\t" + "IGNORED");
+			Logger.instance().addEvent("All Sets" + "\t" + "IGNORED");  //When the ignore sets button pressed
 	}
 
 	public void statesCleared() {
