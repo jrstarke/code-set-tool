@@ -11,6 +11,8 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration;
+import org.eclipse.jdt.internal.core.SourceField;
 
 
 //keeps track of all node sets and dispatches events to listeners about 
@@ -55,9 +57,12 @@ public class NodeSetManager {
 		// that we are just saving the most recently visited node for each method)
 		if (key == null)
 			return;
+		if(newFocus.getNodeType() == ASTNode.TYPE_DECLARATION)
+			return;
+		if(key instanceof SourceField)
+			return;
 		
 		NodeSet navigationSet = navigationHistorySet();
-
 //		ASTNode method = ASTHelper.getAncestorByType(newFocus, ASTNode.METHOD_DECLARATION);;
 //		while (method != null && method.getParent().getNodeType() == ASTNode.ANONYMOUS_CLASS_DECLARATION)
 //			method = ASTHelper.getAncestorByType(method.getParent(), ASTNode.METHOD_DECLARATION);
