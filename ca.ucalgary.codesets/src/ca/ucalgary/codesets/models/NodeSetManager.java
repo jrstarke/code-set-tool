@@ -137,7 +137,7 @@ public class NodeSetManager {
 		
 		int listPosition = list.size();
 		
-		while(listPosition > -1 ){
+		while(listPosition > 0 ){
 			NodeSet set = list.get(listPosition -1);
 			
 			if(set.category != "history"){

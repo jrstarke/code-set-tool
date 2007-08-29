@@ -37,6 +37,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		Logger log = Logger.instance();
+		Logger.instance().addEvent("Started");
 
 		// start listening to editor events 
 		IEditorPart part = null; //= getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
@@ -68,6 +69,7 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		Logger.instance().addEvent("Stopped");
 		super.stop(context);
 	}
 
