@@ -1,18 +1,7 @@
-Training:
+9Training:
 
 During the training, we will show the participants how to use the features of our tool.  These features can be broken into 4 
 groups: Creation of new Sets, Setting interest for a set, Accessing information, and viewing information.  
-
-Opening the Tool:
-The tool is not open by default in Eclipse.  It is separated into 2 separate views, which can be accessed by selecting the
-"Window" menu -> Scroll down to "Show View" -> Select "Other ...".  At this point the "Show View" window will display.  Scroll
-down to the "Code Sets" folder, and click the expansion arrow, and select "All Sets".  At this point, the "All Sets" view will
-be added to the Eclipse workbench.  Repeat the steps above, and from the "Show View" window, after expanding the "Code Sets" 
-folder, select "Combined Set". At this point, the Code Set Tool will be active in Eclipse.
-
-Rearranging the Tool Views:  
-The "Code Sets" views can be rearranged in any manner, just like any native Eclipse views.  By clicking and dragging the Tab
-labeled with the name of a view, it can arbitrarily be moved to any point on the Eclipse workbench
 
 Creating new sets with the cursor:
 From an open editor, to designate a place of interest, all you need to do is click on that point.  When the cursor gets moved 
@@ -28,18 +17,18 @@ Creating new sets using debug:
 To add elements from a debug session is easy.  From a breakpoint or when a method is stepped into, everything on the stack will
 be added to a new set that will be labeled with the start time of the debugging session.  
 
-Setting set the current set to include elements of a set:
-To set a set to be included, hold the command key and click on the name of the set, in which the box beside the name changes to a +
-
-Setting the current set to excluded elements of a set:
-To set a set to be excluded, hold alt and click on the name of the set, in which the box beside the name changes to an x
-
 Setting the current set to exclusively contain elements of a set:
 To set a set to be exclusive, click on the name of the set, if the box is an x, blank, or a plus, it will change to a check mark
 
 Setting the current set to ignore a set:
 by default, all new sets will be ignored, with the exception of the navigation set.  To ignore a set, click on the sets name
 until the box beside it changes to an empty box.
+
+Setting set the current set to include elements of a set:
+To set a set to be included, hold the command key and click on the name of the set, in which the box beside the name changes to a +
+
+Setting the current set to excluded elements of a set:
+To set a set to be excluded, hold alt and click on the name of the set, in which the box beside the name changes to an x
 
 Creating more sophisticated sets:
 To create more sophicated sets, you can set multiple sets to either included, excluded, or exclusive.  For instance, you can
