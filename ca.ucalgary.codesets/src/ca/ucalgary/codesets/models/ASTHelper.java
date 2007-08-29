@@ -22,11 +22,13 @@ import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 public class ASTHelper {
 	private static HashMap<ICompilationUnit,CompilationUnit> ASTCache = new HashMap<ICompilationUnit,CompilationUnit>();
 	private static Cache queue = new Cache();
-	
+
 	// returns the IJavaElement corresponding to the given node
 	public static IJavaElement getJavaElement(MethodDeclaration node) {
 		IMethodBinding binding = node.resolveBinding();
-		return binding.getJavaElement();
+		if (binding != null) // Bindings can be null
+			return binding.getJavaElement();
+		return null;
 	}
 	public static IJavaElement getJavaElement(FieldDeclaration node) {
 		TypeDeclaration typeNode = (TypeDeclaration)getAncestorByType(node, ASTNode.TYPE_DECLARATION);
@@ -46,9 +48,11 @@ public class ASTHelper {
 	}
 	public static IJavaElement getJavaElement(TypeDeclaration node) {
 		ITypeBinding binding = node.resolveBinding();
-		return binding.getJavaElement();
+		if (binding != null) // Bindings can be null
+			return binding.getJavaElement();
+		return null;
 	}
-	
+
 	public static IJavaElement getJavaElement(ASTNode node) {
 		int type = node.getNodeType();
 		if (type == ASTNode.TYPE_DECLARATION)
@@ -66,28 +70,28 @@ public class ASTHelper {
 		CompilationUnit compUnit = queue.get(unit);  //this get will always return not null
 		//ASTCache.get(unit);  
 //		if (compUnit == null) {
-//			queue.Add(unit);
-//			compUnit = queue.get(unit);
-			
-//			ASTParser parser = ASTParser.newParser(AST.JLS3);
-//			parser.setSource(unit);
-//			parser.setResolveBindings(true);
-//			compUnit = (CompilationUnit) parser.createAST(null);
-//			ASTCache.put(unit, compUnit);
-			
+//		queue.Add(unit);
+//		compUnit = queue.get(unit);
+
+//		ASTParser parser = ASTParser.newParser(AST.JLS3);
+//		parser.setSource(unit);
+//		parser.setResolveBindings(true);
+//		compUnit = (CompilationUnit) parser.createAST(null);
+//		ASTCache.put(unit, compUnit);
+
 //		}
 //		Logger.instance().stop("ASTHelper.getStartNode(ICompilationUnit)");
 
 //		System.out.println("Size of cache: " + queue.size());
 		return compUnit;
 	}
-	
+
 	// returns the most specific ASTNode for the given compilation unit and
 	// position
 	public static ASTNode getNodeAtPosition(ICompilationUnit unit, int position) {
 		return getNodeAtPosition(unit, position, false);
 	}
-	
+
 	public static ASTNode getNodeAtPosition(ICompilationUnit unit, int position, boolean lookForDeclaration) {
 //		Logger.instance().start("ASTHelper.getNodeAtPosition(ICompilationUnit,int)");
 		ASTNode node = new Visitor(lookForDeclaration).findNode(unit,position);
@@ -112,7 +116,7 @@ public class ASTHelper {
 		if (element instanceof ISourceReference) {
 			ISourceReference ref = (ISourceReference)element;
 			ICompilationUnit unit = (ICompilationUnit)element.getAncestor(IJavaElement.COMPILATION_UNIT);
-			
+
 			if (unit != null)
 				try {
 					return getNodeAtPosition(unit, ref.getSourceRange().getOffset(), true);
@@ -123,7 +127,7 @@ public class ASTHelper {
 
 		return null;
 	}
-	
+
 	// returns the most specific ASTNode for the given compilation unit and
 	// line
 	public static ASTNode getNodeAtLine(ICompilationUnit unit, int line) {
@@ -176,7 +180,7 @@ public class ASTHelper {
 		Visitor(boolean lookForDeclaration) {
 			this.lookForDeclaration = lookForDeclaration;
 		}
-		
+
 		public void preVisit(ASTNode node) {
 			if (contains(node.getStartPosition(), node.getLength(), position)) {
 				if (!lookForDeclaration)
