@@ -55,7 +55,7 @@ public class ReferenceFromSearch extends GenericVisitor {
 		IJavaElement element = binding.getJavaElement();
 		if (element != null) {
 			ICompilationUnit unit = (ICompilationUnit) element.getAncestor(IJavaElement.COMPILATION_UNIT);
-			if (unit == null)
+			if (unit == null) 
 				return !visitNode(node);
 			ISourceReference isr = (ISourceReference) element;
 			try {

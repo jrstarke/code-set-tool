@@ -44,7 +44,7 @@ public class DebugEventListener implements IDebugEventSetListener {
 				
 				if (event.getKind() == DebugEvent.CREATE && source instanceof IProcess) {
 					// start recording new set
-					String name = new SimpleDateFormat("hh:mm a").format(new Date());
+					String name = new SimpleDateFormat("hh:mm:ss a").format(new Date());
 					nodeSet = new NodeSet(name, "debugging session");
 					
 				} else if (source instanceof IThread) {
