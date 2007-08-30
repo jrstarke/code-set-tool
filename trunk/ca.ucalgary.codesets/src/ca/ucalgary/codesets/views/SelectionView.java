@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -111,6 +112,7 @@ public class SelectionView extends ViewPart {
     private void createToolbar() {
             IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
             mgr.add(ignoreAllSetAction);
+            mgr.add(new Separator());
             mgr.add(removeAllSets);
     }
 	

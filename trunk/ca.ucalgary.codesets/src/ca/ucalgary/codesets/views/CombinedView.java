@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -177,6 +178,7 @@ public class CombinedView extends ViewPart  {
 		IToolBarManager mgr = getViewSite().getActionBars().getToolBarManager();
 		mgr.add(decDefAction);
 		mgr.add(incDefAction);
+		mgr.add(new Separator());
 		mgr.add(nameSetAction);
 	}
 
