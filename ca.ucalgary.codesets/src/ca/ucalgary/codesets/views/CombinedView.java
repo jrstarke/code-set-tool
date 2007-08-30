@@ -158,6 +158,8 @@ public class CombinedView extends ViewPart  {
 		incDefAction = new Action() {
 			public void run() {
 				cvc.incLevel();
+				incDefAction.setEnabled(cvc.getInc());
+				decDefAction.setEnabled(cvc.getDec());
 			}
 		};
 		incDefAction.setToolTipText("Increase Detail");
@@ -167,6 +169,9 @@ public class CombinedView extends ViewPart  {
 		decDefAction = new Action() {
 			public void run() {
 				cvc.decLevel();
+				decDefAction.setEnabled(cvc.getDec());  //checks whether it should enable/disable these actions
+				incDefAction.setEnabled(cvc.getInc());	//since they get to a min/max point
+				
 			}
 		};
 		decDefAction.setToolTipText("Decrease Detail");

@@ -22,6 +22,8 @@ public class CombinedViewController implements INodeSetListener  {
 	ScrolledComposite sc;
 	CombinedView view;
 	int level = 2;
+	private boolean incEna = true;
+	private boolean decEna = true;
 	
 	Color background = new Color(null,255,255,255);
 
@@ -85,6 +87,7 @@ public class CombinedViewController implements INodeSetListener  {
 	public void setRemoved(NodeSet set) {
 	}
 	
+	//increases the level of comments
 	public void incLevel() {
 		if (level < 2){
 			level++;
@@ -93,12 +96,29 @@ public class CombinedViewController implements INodeSetListener  {
 		}
 	}
 	
+	//decrease the level of comments
 	public void decLevel() {
 		if (level > 0){
 			level--;
 			Logger.instance().addEvent("Comments Changed"+'\t'+level);
 			changeDisplaySet();
 		}
+	}
+	
+	//returns if the level comments is at the max or not
+	public boolean getInc(){
+		if(level == 2)
+			return   false;
+		else
+			return  true;
+	}
+	
+	//returns if the level comments is at the min or not
+	public boolean getDec() {
+		if(level == 0)
+			return   false;
+		else
+			return  true;
 	}
 	
 }
