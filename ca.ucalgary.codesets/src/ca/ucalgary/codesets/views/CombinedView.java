@@ -66,7 +66,7 @@ public class CombinedView extends ViewPart  {
 		label.setForeground(color);
 		return label;
 	}
-	
+
 	static void fontStyle(Control widget, int style, int height) {
 		Font f = widget.getFont();
 		FontData[] fd = f.getFontData();
@@ -160,7 +160,7 @@ public class CombinedView extends ViewPart  {
 				cvc.decLevel();
 				decDefAction.setEnabled(cvc.getDec());  //checks whether it should enable/disable these actions
 				incDefAction.setEnabled(cvc.getInc());	//since they get to a min/max point
-				
+
 			}
 		};
 		decDefAction.setToolTipText("Decrease Detail");
@@ -186,12 +186,16 @@ public class CombinedView extends ViewPart  {
 		URL url = FileLocator.find(bundle, path, null);
 		return ImageDescriptor.createFromURL(url);
 	}
-	
+
 	public void setNumberElements (int numEntities, int numClasses) {
 		//show nothing if there is no classes
-		if (numEntities < 1 || numClasses < 1)
+		if (numClasses < 1)
 			this.setContentDescription("");
+		else if (numEntities == 1 && numClasses == 1)
+			this.setContentDescription(numEntities + " entity in " + numClasses + " class");
+		else if (numEntities > 1 && numClasses == 1)
+			this.setContentDescription(numEntities + " entities in " + numClasses + " class");
 		else
-		this.setContentDescription(numEntities + " entities in " + numClasses + " classes");
+			this.setContentDescription(numEntities + " entities in " + numClasses + " classes");
 	}
 }
