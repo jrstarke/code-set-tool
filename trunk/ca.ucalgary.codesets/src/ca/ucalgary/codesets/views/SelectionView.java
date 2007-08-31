@@ -94,7 +94,7 @@ public class SelectionView extends ViewPart {
 			}
 		};
 		removeAllSets.setToolTipText("Removes all sets from the list");  //change this for specified tooltip
-		removeAllSets.setImageDescriptor(getImageDescriptor("decdetail.png"));
+		removeAllSets.setImageDescriptor(getImageDescriptor("xtool.png"));
 		
 	}
 	

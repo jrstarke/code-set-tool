@@ -36,6 +36,244 @@
 			<array>
 				<dict>
 					<key>Bounds</key>
+					<string>{{142.563, 90.62}, {7.875, 1.50391}}</string>
+					<key>Class</key>
+					<string>ShapedGraphic</string>
+					<key>ID</key>
+					<integer>129</integer>
+					<key>Rotation</key>
+					<real>135</real>
+					<key>Shape</key>
+					<string>Rectangle</string>
+					<key>Style</key>
+					<dict>
+						<key>fill</key>
+						<dict>
+							<key>Color</key>
+							<dict>
+								<key>archive</key>
+								<data>
+								YnBsaXN0MDDU
+								AQIDBAUGBwpZ
+								JGFyY2hpdmVy
+								WCR2ZXJzaW9u
+								VCR0b3BYJG9i
+								amVjdHNfEA9O
+								U0tleWVkQXJj
+								aGl2ZXISAAGG
+								oNEICVRyb290
+								gAGlCwwVGR5V
+								JG51bGzUDQ4P
+								EBESExRfEBJO
+								U0N1c3RvbUNv
+								bG9yU3BhY2VX
+								TlNXaGl0ZVxO
+								U0NvbG9yU3Bh
+								Y2VWJGNsYXNz
+								gAJFMC4yNQAQ
+								A4AE0hYQFxhU
+								TlNJRBACgAPS
+								GhscD1gkY2xh
+								c3Nlc1okY2xh
+								c3NuYW1log8d
+								WE5TT2JqZWN0
+								0hobHyCjICEd
+								V05TQ29sb3JY
+								JU5TQ29sb3II
+								ERskKTJESUxR
+								U1lfaH2Fkpmb
+								oaOlqq+xs7jB
+								zM/Y3eHpAAAA
+								AAAAAQEAAAAA
+								AAAAIgAAAAAA
+								AAAAAAAAAAAA
+								API=
+								</data>
+								<key>b</key>
+								<string>0.250004</string>
+								<key>g</key>
+								<string>0.250004</string>
+								<key>r</key>
+								<string>0.250004</string>
+							</dict>
+						</dict>
+						<key>shadow</key>
+						<dict>
+							<key>Draws</key>
+							<string>NO</string>
+						</dict>
+						<key>stroke</key>
+						<dict>
+							<key>Draws</key>
+							<string>NO</string>
+						</dict>
+					</dict>
+				</dict>
+				<dict>
+					<key>Bounds</key>
+					<string>{{142.563, 90.62}, {7.875, 1.50391}}</string>
+					<key>Class</key>
+					<string>ShapedGraphic</string>
+					<key>ID</key>
+					<integer>130</integer>
+					<key>Rotation</key>
+					<real>45</real>
+					<key>Shape</key>
+					<string>Rectangle</string>
+					<key>Style</key>
+					<dict>
+						<key>fill</key>
+						<dict>
+							<key>Color</key>
+							<dict>
+								<key>archive</key>
+								<data>
+								YnBsaXN0MDDU
+								AQIDBAUGBwpZ
+								JGFyY2hpdmVy
+								WCR2ZXJzaW9u
+								VCR0b3BYJG9i
+								amVjdHNfEA9O
+								U0tleWVkQXJj
+								aGl2ZXISAAGG
+								oNEICVRyb290
+								gAGlCwwVGR5V
+								JG51bGzUDQ4P
+								EBESExRfEBJO
+								U0N1c3RvbUNv
+								bG9yU3BhY2VX
+								TlNXaGl0ZVxO
+								U0NvbG9yU3Bh
+								Y2VWJGNsYXNz
+								gAJFMC4yNQAQ
+								A4AE0hYQFxhU
+								TlNJRBACgAPS
+								GhscD1gkY2xh
+								c3Nlc1okY2xh
+								c3NuYW1log8d
+								WE5TT2JqZWN0
+								0hobHyCjICEd
+								V05TQ29sb3JY
+								JU5TQ29sb3II
+								ERskKTJESUxR
+								U1lfaH2Fkpmb
+								oaOlqq+xs7jB
+								zM/Y3eHpAAAA
+								AAAAAQEAAAAA
+								AAAAIgAAAAAA
+								AAAAAAAAAAAA
+								API=
+								</data>
+								<key>b</key>
+								<string>0.250004</string>
+								<key>g</key>
+								<string>0.250004</string>
+								<key>r</key>
+								<string>0.250004</string>
+							</dict>
+						</dict>
+						<key>shadow</key>
+						<dict>
+							<key>Draws</key>
+							<string>NO</string>
+						</dict>
+						<key>stroke</key>
+						<dict>
+							<key>Draws</key>
+							<string>NO</string>
+						</dict>
+					</dict>
+				</dict>
+			</array>
+			<key>ID</key>
+			<integer>128</integer>
+			<key>Rotation</key>
+			<real>45</real>
+		</dict>
+		<dict>
+			<key>Bounds</key>
+			<string>{{140.381, 85.252}, {12.24, 12.24}}</string>
+			<key>Class</key>
+			<string>ShapedGraphic</string>
+			<key>ID</key>
+			<integer>131</integer>
+			<key>Shape</key>
+			<string>Rectangle</string>
+			<key>Style</key>
+			<dict>
+				<key>fill</key>
+				<dict>
+					<key>FillType</key>
+					<integer>2</integer>
+					<key>GradientAngle</key>
+					<real>109</real>
+					<key>GradientColor</key>
+					<dict>
+						<key>w</key>
+						<string>0.9</string>
+					</dict>
+					<key>MiddleFraction</key>
+					<real>0.88095235824584961</real>
+				</dict>
+				<key>shadow</key>
+				<dict>
+					<key>Draws</key>
+					<string>NO</string>
+					<key>Fuzziness</key>
+					<real>1.3811873197555542</real>
+					<key>ShadowVector</key>
+					<string>{-1, 1}</string>
+				</dict>
+				<key>stroke</key>
+				<dict>
+					<key>Color</key>
+					<dict>
+						<key>archive</key>
+						<data>
+						YnBsaXN0MDDUAQIDBAUGBwpZJGFy
+						Y2hpdmVyWCR2ZXJzaW9uVCR0b3BY
+						JG9iamVjdHNfEA9OU0tleWVkQXJj
+						aGl2ZXISAAGGoNEICVRyb290gAGl
+						CwwVGR5VJG51bGzUDQ4PEBESExRf
+						EBJOU0N1c3RvbUNvbG9yU3BhY2VX
+						TlNXaGl0ZVxOU0NvbG9yU3BhY2VW
+						JGNsYXNzgAJFMC4yNQAQA4AE0hYQ
+						FxhUTlNJRBACgAPSGhscD1gkY2xh
+						c3Nlc1okY2xhc3NuYW1log8dWE5T
+						T2JqZWN00hobHyCjICEdV05TQ29s
+						b3JYJU5TQ29sb3IIERskKTJESUxR
+						U1lfaH2FkpmboaOlqq+xs7jBzM/Y
+						3eHpAAAAAAAAAQEAAAAAAAAAIgAA
+						AAAAAAAAAAAAAAAAAPI=
+						</data>
+						<key>b</key>
+						<string>0.250004</string>
+						<key>g</key>
+						<string>0.250004</string>
+						<key>r</key>
+						<string>0.250004</string>
+					</dict>
+					<key>Join</key>
+					<integer>0</integer>
+					<key>Width</key>
+					<real>0.5</real>
+				</dict>
+			</dict>
+			<key>Text</key>
+			<dict>
+				<key>Align</key>
+				<integer>0</integer>
+			</dict>
+			<key>TextPlacement</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>Class</key>
+			<string>Group</string>
+			<key>Graphics</key>
+			<array>
+				<dict>
+					<key>Bounds</key>
 					<string>{{89.6453, 100.798}, {7.55948, 1.75464}}</string>
 					<key>Class</key>
 					<string>ShapedGraphic</string>
@@ -2679,7 +2917,7 @@
 		</dict>
 	</array>
 	<key>ModificationDate</key>
-	<string>2007-08-29 13:56:38 -0600</string>
+	<string>2007-08-31 08:58:38 -0600</string>
 	<key>Modifier</key>
 	<string>Jonathan Sillito</string>
 	<key>NotesVisible</key>
@@ -2757,7 +2995,7 @@
 		<key>ShowStatusBar</key>
 		<true/>
 		<key>VisibleRegion</key>
-		<string>{{50.5, 23}, {118.75, 95.5}}</string>
+		<string>{{51.25, 23}, {118.75, 95.5}}</string>
 		<key>Zoom</key>
 		<string>8</string>
 	</dict>
