@@ -9,11 +9,14 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -26,7 +29,7 @@ import ca.ucalgary.codesets.views.SideBarSection;
 //of events that they are interested in
 public class SideBarController implements INodeSetListener {
 	// the ui is a simple series of SideBarSections
-	
+
 	HashMap<String, SideBarSection> sections = new HashMap<String, SideBarSection>();
 	Composite sideBar;
 	ScrolledComposite sc;
@@ -38,16 +41,8 @@ public class SideBarController implements INodeSetListener {
 		for (NodeSet set : NodeSetManager.instance().sets()) 
 			setAdded(set);
 		NodeSetManager.instance().addListener(this);
-//		addKeyListeners();
 	}
 
-//	private void addKeyListeners() {
-//		sc.addListener(SWT.KeyDown, new Listener() {
-//			public void handleEvent(Event event) {
-//				System.out.println(event);
-//			}
-//		});
-//	}
 
 	private void addTextBox() {
 		new SearchBox(sideBar);
@@ -70,13 +65,41 @@ public class SideBarController implements INodeSetListener {
 
 	void addLink(final SideBarSection section, final NodeSet set) {
 		final NodeSetLabel label = section.addSet(set);
+		Label icon = label.getIcon();
+		Label sizeLabel = label.getLabel();
+
+		icon.addMouseListener(new MouseListener() {
+			public void mouseDoubleClick(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			public void mouseDown(MouseEvent e) {
+				// TODO Auto-generated method stub
+				mouseClick(e, set);
+			}
+			public void mouseUp(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
+
+		sizeLabel.addMouseListener(new MouseListener() {
+			public void mouseDoubleClick(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			public void mouseDown(MouseEvent e) {
+				// TODO Auto-generated method stub
+				mouseClick(e, set);
+			}
+			public void mouseUp(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+		});
+
 		label.getLink().addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
 				// the state we transition to depends on which keys were held down and
 				// also on the current state. 
 				int mask = e.getStateMask();
 				NodeSet.State newState = NodeSet.State.IGNORED;
-				
 				if ((mask & SWT.COMMAND) != 0) {
 					if (set.state != NodeSet.State.INCLUDED)
 						newState = NodeSet.State.INCLUDED;
@@ -87,7 +110,6 @@ public class SideBarController implements INodeSetListener {
 					if (set.state != NodeSet.State.RESTRICTEDTO)
 						newState = NodeSet.State.RESTRICTEDTO;
 				}
-				
 				NodeSetManager.instance().changeState(set, newState);
 			}
 			public void linkEntered(HyperlinkEvent e) {
@@ -97,7 +119,29 @@ public class SideBarController implements INodeSetListener {
 		});
 		sideBar.layout();
 	}
-	
+
+	//Changes the state of the NodeSetLabel to the appropriate state, according to if 
+	//alt/command/ or nothing was held when the mouseEvent occurred
+	private void mouseClick(MouseEvent e, NodeSet set){
+		int mask = e.stateMask; 
+		
+		NodeSet.State newState = NodeSet.State.IGNORED;
+
+		if ((mask & SWT.COMMAND) != 0) {
+			if (set.state != NodeSet.State.INCLUDED)
+				newState = NodeSet.State.INCLUDED;
+		} else if ((mask & SWT.ALT) != 0) {
+			if (set.state != NodeSet.State.EXCLUDED)
+				newState = NodeSet.State.EXCLUDED;
+		} else {
+			if (set.state != NodeSet.State.RESTRICTEDTO)
+				newState = NodeSet.State.RESTRICTEDTO;
+		}
+
+		NodeSetManager.instance().changeState(set, newState);
+	}
+
+
 	void addLinks(String category, List<NodeSet> sets) {
 		SideBarSection section = sections.get(category);
 		section.clear();
@@ -113,7 +157,7 @@ public class SideBarController implements INodeSetListener {
 			links.addAll(section.labels());
 		return links;
 	}
-	
+
 	NodeSetLabel findLabel(NodeSet set) {
 		for (NodeSetLabel label : labels()) 
 			if (label.getSet() == set) return label;
@@ -131,7 +175,7 @@ public class SideBarController implements INodeSetListener {
 			}
 		});
 	}
-	
+
 	public void setChanged(NodeSet set) {
 		NodeSetLabel label = findLabel(set);
 		if (label != null) {
@@ -139,21 +183,21 @@ public class SideBarController implements INodeSetListener {
 			label.layout();
 		}
 	}
-	
+
 //	public void focusChanged(IJavaElement focus) {
-		
-		
-//		for (NodeSetLabel label : labels()) {
-//			if (label.getSet().containsNode(focus))
-//				label.emphasizeLink();
-//			else
-//				label.demphasizeLink();
-//		}
-//		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-//		sideBar.layout();
+
+
+//	for (NodeSetLabel label : labels()) {
+//	if (label.getSet().containsNode(focus))
+//	label.emphasizeLink();
+//	else
+//	label.demphasizeLink();
 //	}
-	
-	
+//	sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+//	sideBar.layout();
+//	}
+
+
 	public void focusChanged(IJavaElement element) {
 		List<NodeSet> list = NodeSetManager.instance().sets();
 		for(NodeSetLabel label : labels()) {
@@ -166,7 +210,7 @@ public class SideBarController implements INodeSetListener {
 		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sideBar.layout();
 	}
-	
+
 	public void stateChanged(NodeSet set) {
 		NodeSetLabel label = findLabel(set);
 		if (label != null) {
@@ -174,11 +218,11 @@ public class SideBarController implements INodeSetListener {
 			label.layout();
 		}
 	}
-	
+
 	public Composite getSideBar() {
 		return this.sideBar;
 	}
-	
+
 	public void setRemoved(NodeSet set){
 		SideBarSection sect;
 		if(set != null){
@@ -186,7 +230,7 @@ public class SideBarController implements INodeSetListener {
 			for (NodeSetLabel label : sect.labels())
 				if (label.getSet() == set)
 					label.dispose();
-			
+
 			if (sect.labels().size()==0) {
 				sections.remove(set.category);
 				sect.dispose();

@@ -7,11 +7,15 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.osgi.framework.Bundle;
 
@@ -30,7 +34,7 @@ public class NodeSetLabel extends Composite {
 	Image[] images = new Image[] {getImage("blank.png"), getImage("plus.png"), getImage("x.png"), getImage("check.png")};
 		
 	public NodeSetLabel(Composite parent, NodeSet set) {
-		super(parent, SWT.NO_BACKGROUND);
+		super(parent, SWT.NO_BACKGROUND );
 		this.set = set;
 		
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
@@ -77,4 +81,15 @@ public class NodeSetLabel extends Composite {
 	public NodeSet getSet() {
 		return set;
 	}
+	
+	//Returns the icon label for this NodeSetLabel, so that I listener can be added to it
+	public Label getIcon() {
+		return this.iconLabel;
+	}
+	
+	//Returns the size label for this NodeSetLabel, so that I listener can be added to it
+	public Label getLabel() {
+		return this.sizeLabel;
+	}
+	
 }
