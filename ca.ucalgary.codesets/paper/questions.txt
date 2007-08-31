@@ -1,0 +1,76 @@
+Describe study questions for paper (has to be very clear)
+
+Question 1
+The first question that we used for the study was this: "Method (a) invoke(Object test) in the TheoryMethod 
+class, calls a method (b) which calls method (c) signatures(Method method) in the ParameterSignature 
+class. What is that method?" This question was an easy question that would let the users start to get used
+to using this new tool.  The question 
+
+Answer
+Code Perspective	
+		The answer to this is that method (a) invoke(Object test) calls method (b) signatures()
+		which calls method (c) signatures(Method method).
+					
+Tool Perspective
+		To do this using the tool the user would follow these steps. First search for invoke(Object which 
+		bring up a search result with 3 enitites. They would then click on the invoke search so that it showed
+		the entities in the Combined Set view. Next, they would click on invoke(Object) which is under the 
+		TheoryMethod class. This would show it in the JavaEditor, and add three more sets to the All Sets view; A 
+		references from, to, and add the members of type for the TheoryMethod class. After this, the user would 
+		deselect the invoke search, and search for signatures(Method. This adds another set to the search results. They
+		then select the set, which shows the entites in the Combined Set view. It only has one entity in it, so 
+		they double click on that, which brings that up that method in the JavaEditor. This has now added two more sets
+		to the All Sets view; a reference from set, and memebers of type for the ParameterSignature class. Now, 
+		they deselect the search for the signatures method, and select the reference from invoke(Object) and the 
+		references to signatures(Method) which gives a resulting set of one method: signatures() in the Function class.
+
+			
+Question 2
+
+Find all methods from the AnnotationTest class who access asserEquals(int,int) and assertTrue(boolean).
+
+Answer
+Code Perspective
+
+
+
+Tool Perspective
+
+
+
+Question 3
+
+Find all methods from the AnnotationTest class which call assertFalse(boolean), and also calls 
+run(Class<?>... classes), but do not call assertEquals(Object, Object).
+
+Answer
+Code Perspective
+
+
+
+Tool Perspective
+
+
+
+
+Question 4
+
+When running the tests in AssertTest, Assert.assertTrue(boolean) and Assert.assertFalse(Boolean) are
+ both executed. What is different about how they are reached during that execution?
+ 
+ Answer
+Code Perspective
+
+
+
+Tool Perspective
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ oh and you should include the "answer" as well. the answer should have two perspectives one 
+ from a code perspective (this calls that, etc) and the other from a tool perspective
+  (click on this and then that and the tool will show ...)
