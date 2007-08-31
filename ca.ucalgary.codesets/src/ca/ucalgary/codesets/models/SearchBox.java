@@ -1,37 +1,19 @@
 package ca.ucalgary.codesets.models;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.eclipse.core.internal.resources.File;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.search.IJavaSearchConstants;
-import org.eclipse.jdt.core.search.IJavaSearchScope;
-import org.eclipse.jdt.core.search.SearchEngine;
-import org.eclipse.jdt.core.search.SearchParticipant;
-import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.internal.core.ResolvedSourceMethod;
 import org.eclipse.jdt.internal.ui.search.JavaSearchQuery;
-import org.eclipse.jdt.ui.search.PatternQuerySpecification;
 import org.eclipse.search.internal.ui.text.FileMatch;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResultListener;
-import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
-import org.eclipse.search.ui.text.RemoveAllEvent;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
 import org.eclipse.search.ui.text.TextSearchQueryProvider.TextSearchInput;
 import org.eclipse.swt.SWT;
@@ -154,14 +136,11 @@ public class SearchBox extends Composite{
 					});
 					query.run(new NullProgressMonitor());
 				} catch (IllegalArgumentException e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				} catch (CoreException e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
 			}
-			
 		}	
 		text.setText("Enter Search");
 		

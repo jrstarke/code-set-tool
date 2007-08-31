@@ -1,11 +1,9 @@
 package ca.ucalgary.codesets.models;
 
-import java.util.HashMap;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ISourceReference;
-import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -16,11 +14,9 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.internal.corext.dom.GenericVisitor;
 
 
 public class ASTHelper {
-	private static HashMap<ICompilationUnit,CompilationUnit> ASTCache = new HashMap<ICompilationUnit,CompilationUnit>();
 	private static Cache queue = new Cache();
 
 	// returns the IJavaElement corresponding to the given node.

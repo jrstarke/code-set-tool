@@ -5,7 +5,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -14,7 +13,6 @@ import ca.ucalgary.codesets.models.NodeSetManager;
 import ca.ucalgary.codesets.models.INodeSetListener;
 import ca.ucalgary.codesets.models.TypeMembers;
 import ca.ucalgary.codesets.views.CombinedView;
-import ca.ucalgary.codesets.views.ElementLabelProvider;
 
 // controls what is shown in the CombinedView by listening to the NodeSetManager.
 public class CombinedViewController implements INodeSetListener  {
@@ -22,8 +20,6 @@ public class CombinedViewController implements INodeSetListener  {
 	ScrolledComposite sc;
 	CombinedView view;
 	int level = 2;
-	private boolean incEna = true;
-	private boolean decEna = true;
 	
 	Color background = new Color(null,255,255,255);
 
