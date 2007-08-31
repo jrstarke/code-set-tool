@@ -30,9 +30,8 @@ public class NodeSetLabel extends Composite {
 	Image[] images = new Image[] {getImage("blank.png"), getImage("plus.png"), getImage("x.png"), getImage("check.png")};
 		
 	public NodeSetLabel(Composite parent, NodeSet set) {
-		super(parent, SWT.NO_BACKGROUND );
+		super(parent, SWT.INHERIT_DEFAULT );
 		this.set = set;
-		
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.wrap = false;
 		layout.fill = true;
@@ -40,9 +39,9 @@ public class NodeSetLabel extends Composite {
 		layout.marginBottom = 0;
 		layout.marginTop = 0;
 		this.setLayout(layout);
-		
 		setIcon(set.state);
 		getLink().setText(set.name);
+		getLink().setBackground(getLink().getParent().getBackground());
 		setSizeText();
 		sizeLabel.setForeground(demphasizeColor);
 		
@@ -51,9 +50,11 @@ public class NodeSetLabel extends Composite {
 
 	public void setSizeText() {
 		sizeLabel.setText("- " + getSet().size());
+		sizeLabel.setBackground(sizeLabel.getParent().getBackground());
 	}
 	public void setIcon(NodeSet.State state) {
 		iconLabel.setImage(images[state.ordinal()]);
+		iconLabel.setBackground(sizeLabel.getParent().getBackground());
 	}
 	public void emphasizeLink() {
 		getLink().setForeground(emphasizeColor);

@@ -19,7 +19,7 @@ public class SideBarSection extends Composite {
 	String name;
 	
 	public SideBarSection(Composite parent, String name) {
-		super(parent, SWT.NO_BACKGROUND);
+		super(parent, SWT.INHERIT_DEFAULT);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.fill = false;
 		this.setLayout(layout);
