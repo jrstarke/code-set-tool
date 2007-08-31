@@ -17,7 +17,6 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 
 // Listens to debug events and creates a CodeSet for each debugging session
 public class DebugEventListener implements IDebugEventSetListener {

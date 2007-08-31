@@ -1,12 +1,11 @@
 package ca.ucalgary.codesets.models;
 
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.internal.core.ResolvedSourceMethod;
-import org.eclipse.jdt.internal.ui.search.JavaSearchQuery;
 import org.eclipse.search.internal.ui.text.FileMatch;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResultListener;
@@ -33,13 +32,10 @@ public class SearchBox extends Composite{
 	private String name = null;
 
 	public SearchBox(Composite parent) {
-
-		super(parent,SWT.NO_BACKGROUND);
-
+		super(parent,SWT.INHERIT_DEFAULT);
 		GridLayout grid = new GridLayout();
 		grid.numColumns = 2;
 		this.setLayout( grid);
-
 		GridData data = new GridData();
 		data.widthHint = 100;
 		text.setLayoutData(data);

@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -30,9 +31,13 @@ public class SideBarController implements INodeSetListener {
 	Composite sideBar;
 	ScrolledComposite sc;
 	IToolBarManager toolBarManager;
+	Color background = new Color(null,255,255,255);
 
 	public SideBarController(Composite parent) {
 		sideBar = view(parent);		
+		sideBar.setBackground(null);
+		sideBar.setBackgroundMode(SWT.BACKGROUND);
+		
 		addTextBox();
 		for (NodeSet set : NodeSetManager.instance().sets()) 
 			setAdded(set);
@@ -57,6 +62,7 @@ public class SideBarController implements INodeSetListener {
 		layout.spacing  = 5;
 		sideBar.setLayout(layout);
 		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		sideBar.setBackgroundMode(SWT.INHERIT_FORCE);
 		return sideBar;
 	}
 
