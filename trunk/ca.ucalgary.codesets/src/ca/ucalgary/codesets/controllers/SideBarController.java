@@ -29,7 +29,7 @@ import ca.ucalgary.codesets.views.SideBarSection;
 //of events that they are interested in
 public class SideBarController implements INodeSetListener {
 	// the ui is a simple series of SideBarSections
-
+	
 	HashMap<String, SideBarSection> sections = new HashMap<String, SideBarSection>();
 	Composite sideBar;
 	ScrolledComposite sc;
@@ -50,6 +50,7 @@ public class SideBarController implements INodeSetListener {
 
 	Composite view(Composite parent) {
 		// sc is a scrolled Composite, basically a container with scroll bars for the sidebar content
+		// the sc requires that the min size be set whenever the content size is changed
 		sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
@@ -183,21 +184,7 @@ public class SideBarController implements INodeSetListener {
 			label.layout();
 		}
 	}
-
-//	public void focusChanged(IJavaElement focus) {
-
-
-//	for (NodeSetLabel label : labels()) {
-//	if (label.getSet().containsNode(focus))
-//	label.emphasizeLink();
-//	else
-//	label.demphasizeLink();
-//	}
-//	sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-//	sideBar.layout();
-//	}
-
-
+	
 	public void focusChanged(IJavaElement element) {
 		List<NodeSet> list = NodeSetManager.instance().sets();
 		for(NodeSetLabel label : labels()) {
@@ -210,7 +197,7 @@ public class SideBarController implements INodeSetListener {
 		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sideBar.layout();
 	}
-
+	
 	public void stateChanged(NodeSet set) {
 		NodeSetLabel label = findLabel(set);
 		if (label != null) {
@@ -218,11 +205,11 @@ public class SideBarController implements INodeSetListener {
 			label.layout();
 		}
 	}
-
+	
 	public Composite getSideBar() {
 		return this.sideBar;
 	}
-
+	
 	public void setRemoved(NodeSet set){
 		SideBarSection sect;
 		if(set != null){
@@ -230,7 +217,7 @@ public class SideBarController implements INodeSetListener {
 			for (NodeSetLabel label : sect.labels())
 				if (label.getSet() == set)
 					label.dispose();
-
+			
 			if (sect.labels().size()==0) {
 				sections.remove(set.category);
 				sect.dispose();
