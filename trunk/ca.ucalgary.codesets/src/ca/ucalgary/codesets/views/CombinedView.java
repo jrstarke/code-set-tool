@@ -42,6 +42,7 @@ public class CombinedView extends ViewPart  {
 	public void createPartControl(Composite parent) {
 		cvc = new CombinedViewController(parent, this);
 		makeActions();
+		incDefAction.setEnabled(false);
 		createToolbar();
 		this.setContentDescription("Number of elements: 0");
 	}
