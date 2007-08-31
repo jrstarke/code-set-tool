@@ -1,7 +1,6 @@
 package ca.ucalgary.codesets.models;
 
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.ISourceReference;
 
 // classes that want to respond to code set events should implement this
 // interface and should register themselves like so:

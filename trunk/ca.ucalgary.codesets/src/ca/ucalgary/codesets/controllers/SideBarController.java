@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -13,11 +12,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 
@@ -186,7 +182,6 @@ public class SideBarController implements INodeSetListener {
 	}
 	
 	public void focusChanged(IJavaElement element) {
-		List<NodeSet> list = NodeSetManager.instance().sets();
 		for(NodeSetLabel label : labels()) {
 			NodeSet set = label.getSet();
 			if(set.containsKey(element))

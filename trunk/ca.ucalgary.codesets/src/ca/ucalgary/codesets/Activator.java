@@ -1,15 +1,10 @@
 package ca.ucalgary.codesets;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import ca.ucalgary.codesets.models.DebugEventListener;
-import ca.ucalgary.codesets.models.EditorFocusListener;
 import ca.ucalgary.codesets.controllers.Logger;
 
 /**
