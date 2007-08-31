@@ -34,7 +34,6 @@ import ca.ucalgary.codesets.models.NodeSet;
 import ca.ucalgary.codesets.models.NodeSetManager;
 
 public class SelectionView extends ViewPart {
-//	Action nameSetAction;   
 	Action ignoreAllSetAction;
 	Action removeAllSets;
 	
@@ -48,6 +47,7 @@ public class SelectionView extends ViewPart {
 		createToolbar();
 		
 		IViewSite site = getViewSite();
+		// Used to attach the ElementLabelProvider to any editors that get opened
 		site.getWorkbenchWindow().addPageListener(new IPageListener() {
 			void connect(IWorkbenchPage page) {
 				IEditorPart part = page.getActiveEditor();
@@ -68,8 +68,6 @@ public class SelectionView extends ViewPart {
 	
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/**

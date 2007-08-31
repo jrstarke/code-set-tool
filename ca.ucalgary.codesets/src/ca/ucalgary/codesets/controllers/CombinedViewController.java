@@ -52,7 +52,7 @@ public class CombinedViewController implements INodeSetListener  {
 			w.dispose();
 		
 		NodeSet combined = NodeSetManager.instance().combinedSet();
-		this.view.setNumberElements(combined.size());
+		this.view.setNumberElements(combined.size(), combined.elementsByType().size());
 		for (TypeMembers tm : combined.elementsByType()) {
 			Composite classView = CombinedView.classView(parent, tm.type, "");
 			for (TypeMembers.Entry entry : tm.entries)

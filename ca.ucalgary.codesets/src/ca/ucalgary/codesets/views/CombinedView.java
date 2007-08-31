@@ -44,7 +44,7 @@ public class CombinedView extends ViewPart  {
 		makeActions();
 		incDefAction.setEnabled(false);
 		createToolbar();
-		this.setContentDescription("Number of elements: 0");
+		this.setContentDescription("");
 	}
 
 	public void setFocus() {
@@ -56,7 +56,7 @@ public class CombinedView extends ViewPart  {
 	static Color methodColor = new Color(null, 140,140,140);
 	static Color commentColor = new Color(null, 175,140,140);
 	static Color methodNameColor = new Color(null, 0,0,0);
-	static Color classNameColor = methodNameColor; //new Color(null, 100,100,100);
+	static Color classNameColor = methodNameColor;
 	static Color classBGColor = new Color(null, 250,250,200);
 
 	static Label label(Composite parent, String text, int style, int height, Color color) {
@@ -66,14 +66,6 @@ public class CombinedView extends ViewPart  {
 		label.setForeground(color);
 		return label;
 	}
-
-//	static Composite iconAndText(Composite parent, String text, Image i) {
-//		Composite result = new Composite(parent, SWT.NONE);
-//		Label icon = new Label(result, SWT.NONE);
-//		label(result, text, SWT.BOLD, 11, classNameColor);
-//		icon.setImage(i);
-//		return result;
-//	}
 	
 	static void fontStyle(Control widget, int style, int height) {
 		Font f = widget.getFont();
@@ -83,7 +75,7 @@ public class CombinedView extends ViewPart  {
 		widget.setFont(new Font(f.getDevice(), fd));
 	}
 
-	public static Composite classView(Composite parent, IType element, String comment) { //, Listener listener) {
+	public static Composite classView(Composite parent, IType element, String comment) {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
@@ -91,15 +83,13 @@ public class CombinedView extends ViewPart  {
 		layout.spacing = 0;
 		result.setLayout(layout);
 		String text = labelProvider.getText(element);
-		Label label = label(result, text, SWT.BOLD, 11, classNameColor); //.addListener(SWT.MouseDoubleClick, listener);
-//		label.setBackground(classBGColor);
+		Label label = label(result, text, SWT.BOLD, 11, classNameColor);
 		return result;
 	}
 	public static Composite methodView(Composite parent, String text, Listener listener) {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
-//		layout.marginWidth = 10;
 		layout.marginLeft = 12;
 		layout.spacing = 0;
 		result.setLayout(layout);
@@ -110,10 +100,8 @@ public class CombinedView extends ViewPart  {
 		Composite result = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.marginHeight = 0;
-//		layout.marginWidth = 0;
 		layout.marginLeft = 12;
 		layout.spacing = 0;
-//		layout.fill = true;
 		result.setLayout(layout);
 		label(result, text, SWT.NORMAL, 11, methodNameColor).addListener(SWT.MouseDoubleClick, listener);
 		return result;
@@ -159,13 +147,13 @@ public class CombinedView extends ViewPart  {
 		incDefAction = new Action() {
 			public void run() {
 				cvc.incLevel();
-				incDefAction.setEnabled(cvc.getInc());
-				decDefAction.setEnabled(cvc.getDec());
+				incDefAction.setEnabled(cvc.getInc()); //checks whether it should enable/disable these actions
+				decDefAction.setEnabled(cvc.getDec()); //since they get to a min/max point
 			}
 		};
 		incDefAction.setToolTipText("Increase Detail");
 		incDefAction.setText("Increase Detail");
-		incDefAction.setImageDescriptor(getImageDescriptor("plustool.png")); //("incdetail.png")); 
+		incDefAction.setImageDescriptor(getImageDescriptor("plustool.png"));
 
 		decDefAction = new Action() {
 			public void run() {
@@ -177,7 +165,7 @@ public class CombinedView extends ViewPart  {
 		};
 		decDefAction.setToolTipText("Decrease Detail");
 		decDefAction.setText("Decrease Detail");
-		decDefAction.setImageDescriptor(getImageDescriptor("minustool.png")); //("decdetail.png"));
+		decDefAction.setImageDescriptor(getImageDescriptor("minustool.png"));
 	}
 
 	private void createToolbar() {
@@ -199,7 +187,11 @@ public class CombinedView extends ViewPart  {
 		return ImageDescriptor.createFromURL(url);
 	}
 	
-	public void setNumberElements (int numElements) {
-		this.setContentDescription("Number of elements: " + numElements);
+	public void setNumberElements (int numEntities, int numClasses) {
+		//show nothing if there is no classes
+		if (numEntities < 1 || numClasses < 1)
+			this.setContentDescription("");
+		else
+		this.setContentDescription(numEntities + " entities in " + numClasses + " classes");
 	}
 }

@@ -27,10 +27,6 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 //	// in a previous display set, in which case it is one of the highlight
 //	// colors (a shade of blue)
 	public Color getBackground(Object obj) {
-//		ISourceReference element = (ISourceReference)obj;
-//		int offset = CodeSetManager.instance().displaySetsAgo(element);
-//		if (offset != -1 && offset < highlightColors.length)
-//			return highlightColors[offset];
 		return null;
 	}
 
@@ -54,7 +50,7 @@ public class ElementLabelProvider extends JavaElementLabelProvider implements IC
 	}
 	
 	public String getText(Object element) {
-		if (element instanceof IType) {
+		if (element instanceof IType) { // Used to display package names
 			IType type = (IType) element;
 			IPackageFragment currentPackage = type.getPackageFragment();
 			return (super.getText(currentPackage) + "." + super.getText(type));

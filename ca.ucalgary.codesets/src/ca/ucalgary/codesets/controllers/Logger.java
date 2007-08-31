@@ -86,18 +86,8 @@ public class Logger implements INodeSetListener {
 		}
 	}
 
-	public void focusChanged(ISourceReference focus) {
-		// TODO Auto-generated method stub
-	}
-
 	public void setAdded(NodeSet set) {
-		// TODO Auto-generated method stub
 		Logger.instance().addEvent("Set Added"+  "\t" + set.name + "\t" + set.category);
-	}
-
-	public void setChanged(NodeSet set) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void stateChanged(NodeSet set) {
@@ -107,19 +97,22 @@ public class Logger implements INodeSetListener {
 			Logger.instance().addEvent("All Sets" + "\t" + "IGNORED");  //When the ignore sets button pressed
 	}
 
+	// The methods below here are auto generated methods required for the
+	// INodeSetListener.  At this point, they are all stubs
+	
+	public void focusChanged(ISourceReference focus) {
+	}
+	
+	public void setChanged(NodeSet set) {
+	}
+
 	public void statesCleared() {
-		// TODO Auto-generated method stub
-//		Logger.instance().addEvent("All sets IGNORED");
 	}
 
 	public void focusChanged(IJavaElement focus) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setRemoved(NodeSet set) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 }

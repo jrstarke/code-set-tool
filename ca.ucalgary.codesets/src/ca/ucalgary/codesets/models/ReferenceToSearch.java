@@ -32,7 +32,7 @@ public class ReferenceToSearch implements ISearchResultListener {
 		this.element = element;
 		set = new NodeSet(labelProvider.getFullText(element), "references to");
 
-		// TODO: really we should just add to the existing set if there is one
+		// If we already have the references for a given set, there is no need to re-search them
 		if (NodeSetManager.instance().containsSet(set))
 			return;
 
@@ -41,9 +41,8 @@ public class ReferenceToSearch implements ISearchResultListener {
 			query.getSearchResult().addListener(this);
 			query.run(new NullProgressMonitor());
 			query.getSearchResult().removeListener(this);
-			//SearchUtil.runQueryInBackground(query);
 		} catch (JavaModelException ex) {
-			// TODO what should we do here?
+			ex.printStackTrace();
 		}
 	}
 
@@ -54,6 +53,7 @@ public class ReferenceToSearch implements ISearchResultListener {
 	public void searchResultChanged (SearchResultEvent event) {
 		if (event instanceof MatchEvent) {
 			Match[] matches = ((MatchEvent)event).getMatches();
+			// Have we already added elements to the set
 			boolean empty = set.size() == 0;
 			for (Match m:matches) {
 				ICompilationUnit unit = (ICompilationUnit)((IJavaElement)m.getElement()).getAncestor(IJavaElement.COMPILATION_UNIT);
@@ -64,6 +64,7 @@ public class ReferenceToSearch implements ISearchResultListener {
 					}
 				}
 			}
+			// If this is the first time adding elements, add it to the nodeSetManager
 			if (empty && set.size() > 0)
 				NodeSetManager.instance().addSet(set);
 		}

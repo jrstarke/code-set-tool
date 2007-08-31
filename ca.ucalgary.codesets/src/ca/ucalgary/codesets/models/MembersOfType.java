@@ -36,23 +36,31 @@ public class MembersOfType extends GenericVisitor {
 	public void search(IJavaElement element, ASTNode node) {
 		key = element;
 		TypeDeclaration typeNode = (TypeDeclaration) ASTHelper.getAncestorByType(node, ASTNode.TYPE_DECLARATION);
+		// If the node does not have a TypeDeclaration, it is not a sufficient element to add, so we can stop now
 		if (typeNode == null)
 			return;
 		set = new NodeSet(labelProvider.getFullText(element.getParent()), "Members of Type");
 
+		// If we already have a set for this type, don't recompute it
 		if (NodeSetManager.instance().containsSet(set))
 			return;
 		typeNode.accept(this);
 
+		// Only add those sets that actually have elements
 		if (set.size() != 0)
 			NodeSetManager.instance().addSet(set);
 	}
 
 	void add(ASTNode node) {
 		IJavaElement element = ASTHelper.getJavaElement(node);
+		// There may not be a JavaElement associated with this specific node.  Adding null elements will cause 
+		// display issues
 		if (element != null)
 			set.add(element, node);
 	}
+	
+	// The methods below are the ASTVisitor method required to traverse the tree.  Once we have reached a method or a
+	// Field, we have everything that we're interested in the tree, so traverse no further
 	
 	protected boolean visitNode(ASTNode node) {
 		return true;

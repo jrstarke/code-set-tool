@@ -36,16 +36,12 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	Composite parent;
 	Stack<Composite> composites = new Stack<Composite>();
 	
-//	Composite classView;
-//	Composite methodView;
 	Listener lastListener;
-
-//	HashMap<ASTNode,Composite> compositeTracker = new HashMap<ASTNode,Composite>();
 
 	HashSet<ASTNodePlaceholder> includeSet;
 
 	// used to determine what elements we want to show
-	int level;
+	int detailLevel;
 
 	// used to temporarily store lines from method bodies until they are
 	// added to the UI as labels
@@ -59,7 +55,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 		this.parent = parent;
 		this.includeSet = includeSet;
 		composites.push(parent);
-		this.level = level;
+		this.detailLevel = level;
 	}
 
 	// this is the main entry point
@@ -130,7 +126,6 @@ public class NodeSetViewBuilder extends ASTVisitor {
 
 	boolean printIf(ASTNode node, String content) {
 		if (shouldVisit(node)) {
-//			System.out.println(content);
 			addLine(content);
 			return true;
 		} else {
@@ -220,8 +215,6 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(AnonymousClassDeclaration node) {
-//		System.out.println(node);
-//		return blockStatement(node, "new " + "X" +  "()");
 		return false;
 	}
 
@@ -379,9 +372,9 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(Javadoc node) {
-		if (this.level >= 1) {
+		// If level sufficient, include Javadoc
+		if (this.detailLevel >= 1) {
 			String commentLine = getFirstLine(node.toString());
-//			Composite parent = methodView != null ? methodView : classView;
 			CombinedView.commentLabel(composites.peek(), commentLine, this.lastListener);
 		}
 		return false;
@@ -538,17 +531,6 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	// start a new composite corresponding to this type declaration
 	public boolean visit(TypeDeclaration node) {
 		return true;
-//		if (shouldVisit(node)) {
-//			if(classView == null){
-//				IJavaElement element = ASTHelper.getJavaElement(node);
-//				String line = labelProvider.getText(element);
-//				this.lastListener = makeListener(element,line);
-//				classView = CombinedView.classView(parent, line, "", this.lastListener);
-//			}
-//			return true;
-//		}
-//		return false;
-		
 	}
 	
 	// start a new composite corresponding to this method declaration
@@ -783,7 +765,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 				;
 				
 			} else {
-				if (level >= 2) {
+				if (detailLevel >= 2) {
 					StringBuffer buf = new StringBuffer();
 					if (lines.size() == 1 && lines.peek().equals("..."))
 						buf.append("{... }");
@@ -968,6 +950,8 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	private void openElement(IJavaElement element) {
 		try {
 			IJavaElement unit = element.getAncestor(IJavaElement.COMPILATION_UNIT);
+			// the above call does not always return an element, and when it does not, it returns null.
+			// this will usually happen if it is in a library
 			if (unit != null)
 				JavaUI.revealInEditor(JavaUI.openInEditor(unit), element);
 		} catch (Exception e) {
