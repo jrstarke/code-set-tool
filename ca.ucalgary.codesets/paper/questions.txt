@@ -27,15 +27,29 @@ Tool Perspective
 			
 Question 2
 
-Find all methods from the AnnotationTest class who access asserEquals(int,int) and assertTrue(boolean).
+Find all methods from the AnnotationTest class who access assertEquals(int,int) and assertTrue(boolean).
 
 Answer
 Code Perspective
-
+	The answer to this question will be a result set in the Combined Set view, which contains 3 methods.
+	These methods are methods that are in the AnnotationTest class, which call assertTrue(Boolean) 
+	and also call the method assertEquals(int,int). The three methods are testRunAllAftersRegardless(),
+	testRunAllAfterClassesRegardless(), and testErrorInAfterClass(). 
 
 
 Tool Perspective
 
+	Using the tool to get the given answer, you would perform these steps. First search for 
+	the assertEquals(int which will return a search set of one result. When clicking on it, 
+	it will show one method in the Combined Set view. Double-clicking this method will add a 
+	reference to set and a reference from set to the All Sets view. Now, searching for 
+	assertTrue(Boolean will return a search set result with two results. Clicking on this set
+	will place two methods in the Combined Set view. Double-Clicking on the first result will 
+	add a reference to and a reference from set for the assertTrue method. Now, opening the
+	AnnotationTest class with the Eclipse Open Type, will add a members of type set. After 
+	clicking on AnnotationTest in the members of type section, and the assertTrue, assertEquals
+	in the reference to section, will do an intersection between the three sets, and return
+	the methods to the Combined Set view. Which is three methods.    
 
 
 Question 3
