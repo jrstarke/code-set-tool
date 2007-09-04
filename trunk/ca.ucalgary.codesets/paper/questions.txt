@@ -59,7 +59,11 @@ run(Class<?>... classes), but do not call assertEquals(Object, Object).
 
 Answer
 Code Perspective
-
+	To answer this question the user needed to have three methods show up in the Combined Set 
+	view. The methods that show up, will all be in the AnnotationTest class, call 
+	assertFalse(Boolean)  and run(Class<?>… classes) but do not call assertEquals(Object, Object). 
+	There are three methods which exemplify these clauses. They are: testTestinheritance(), 
+	testErrorInBeforeClass(), and the method testSetupFailure(). 
 
 
 Tool Perspective
@@ -74,7 +78,10 @@ When running the tests in AssertTest, Assert.assertTrue(boolean) and Assert.asse
  
  Answer
 Code Perspective
-
+	To answer this question, the user had to have a Combined Set with just one element in it. 
+	This would be a method that is in the Assert class, but is different between two debugging 
+	sessions. This tells the user that both of these methods were called, but it followed a 
+	different path to each method. Or that the stacks were different for the method.
 
 
 Tool Perspective
