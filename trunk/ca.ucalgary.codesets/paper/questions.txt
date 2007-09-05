@@ -12,6 +12,10 @@ Code Perspective
 		which calls method (c) signatures(Method method).
 					
 Tool Perspective
+
+One way to do this using the Code Set tool...
+The most direct way to answer this questions using the Code Set tool is to first, ...
+
 		To do this using the tool the user would follow these steps. First search for invoke(Object which 
 		bring up a search result with 3 enitites. They would then click on the invoke search so that it showed
 		the entities in the Combined Set view. Next, they would click on invoke(Object) which is under the 
