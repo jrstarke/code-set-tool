@@ -1,32 +1,28 @@
 Describe study questions for paper (has to be very clear)
 
 Question 1
+
 The first question that we used for the study was this: "Method (a) invoke(Object test) in the TheoryMethod 
 class, calls a method (b) which calls method (c) signatures(Method method) in the ParameterSignature 
 class. What is that method?" This question was an easy question that would let the users start to get used
 to using this new tool.  The question 
 
 Answer
-Code Perspective	
-		The answer to this is that method (a) invoke(Object test) calls method (b) signatures()
-		which calls method (c) signatures(Method method).
+Code Perspective
+	
+The answer to this is that method (a) invoke(Object test) calls method (b) signatures()
+which calls method (c) signatures(Method method).
 					
 Tool Perspective
 
-One way to do this using the Code Set tool...
-The most direct way to answer this questions using the Code Set tool is to first, ...
-
-		To do this using the tool the user would follow these steps. First search for invoke(Object which 
-		bring up a search result with 3 enitites. They would then click on the invoke search so that it showed
-		the entities in the Combined Set view. Next, they would click on invoke(Object) which is under the 
-		TheoryMethod class. This would show it in the JavaEditor, and add three more sets to the All Sets view; A 
-		references from, to, and add the members of type for the TheoryMethod class. After this, the user would 
-		deselect the invoke search, and search for signatures(Method. This adds another set to the search results. They
-		then select the set, which shows the entites in the Combined Set view. It only has one entity in it, so 
-		they double click on that, which brings that up that method in the JavaEditor. This has now added two more sets
-		to the All Sets view; a reference from set, and memebers of type for the ParameterSignature class. Now, 
-		they deselect the search for the signatures method, and select the reference from invoke(Object) and the 
-		references to signatures(Method) which gives a resulting set of one method: signatures() in the Function class.
+The most direct way to answer this question using the Code Set tool is to, first search for invoke(Object which 
+will bring up a search result with 3 enitities. Open the set in the Combined Set using the combine operator. 
+This will show the three methods that are in the set. Opening the invoke(Object) in the TheoryMethod class in the 
+JavaEditor, three more sets will be added to the All Sets view. Next the user would search for the method 
+signatures(Method, which will add a set of one method. Opening it in the Combined View, the user would select the 
+one method, which will add two more sets to the All Sets view. After doing this, the user would then use the
+combine set option on the reference from set for invoke(Object) and the reference to set for signatures(Method) 
+giving a result of one method in the Combined Set view, which is the signatures() method in the Function class.
 
 			
 Question 2
@@ -35,25 +31,26 @@ Find all methods from the AnnotationTest class who access assertEquals(int,int) 
 
 Answer
 Code Perspective
-	The answer to this question will be a result set in the Combined Set view, which contains 3 methods.
-	These methods are methods that are in the AnnotationTest class, which call assertTrue(Boolean) 
-	and also call the method assertEquals(int,int). The three methods are testRunAllAftersRegardless(),
-	testRunAllAfterClassesRegardless(), and testErrorInAfterClass(). 
+
+The answer to this question will be a result set in the Combined Set view, which contains 3 methods.
+These methods are methods that are in the AnnotationTest class, which call assertTrue(Boolean) 
+and also call the method assertEquals(int,int). The three methods are testRunAllAftersRegardless(),
+testRunAllAfterClassesRegardless(), and testErrorInAfterClass(). 
 
 
 Tool Perspective
 
-	Using the tool to get the given answer, you would perform these steps. First search for 
-	the assertEquals(int which will return a search set of one result. When clicking on it, 
-	it will show one method in the Combined Set view. Double-clicking this method will add a 
-	reference to set and a reference from set to the All Sets view. Now, searching for 
-	assertTrue(Boolean will return a search set result with two results. Clicking on this set
-	will place two methods in the Combined Set view. Double-Clicking on the first result will 
-	add a reference to and a reference from set for the assertTrue method. Now, opening the
-	AnnotationTest class with the Eclipse Open Type, will add a members of type set. After 
-	clicking on AnnotationTest in the members of type section, and the assertTrue, assertEquals
-	in the reference to section, will do an intersection between the three sets, and return
-	the methods to the Combined Set view. Which is three methods.    
+One way to answer this question using the Code Set tool, would be to perform the
+following steps: first, search for the method assertEquals(int which will add a 
+set to the All Sets view. Opening this set in the Combined Set view, and opening the 
+method in the JavaEditor will add three sets to the All Sets view. Now search for 
+assertTrue(boolean which adds another set to All Sets view. Opening this set in the
+Combined Set view, and opening the method assertTrue(boolean) in the JavaEditor will
+add three more sets to the All Sets view. Now, opening the AnnotationTest class with
+the Eclipse Open Type will add a set called AnnotationTest to the members of type section
+in the All Sets view. Doing an intersection between the AnnotationTest set from the members 
+of type section and the assertTrue and assertEquals sets in the reference to section will 
+give the user the answer.    
 
 
 Question 3
@@ -63,16 +60,25 @@ run(Class<?>... classes), but do not call assertEquals(Object, Object).
 
 Answer
 Code Perspective
-	To answer this question the user needed to have three methods show up in the Combined Set 
-	view. The methods that show up, will all be in the AnnotationTest class, call 
-	assertFalse(Boolean)  and run(Class<?>… classes) but do not call assertEquals(Object, Object). 
-	There are three methods which exemplify these clauses. They are: testTestinheritance(), 
-	testErrorInBeforeClass(), and the method testSetupFailure(). 
+
+To answer this question the user needed to have two methods show up in the Combined Set 
+view. The methods that show up, will all be in the AnnotationTest class, and call 
+assertFalse(Boolean)  and run(Class<?>... classes) but do not call assertEquals(Object, Object). 
+There are two methods which exemplify these clauses. They are: testTestinheritance() and 
+testErrorInBeforeClass(). 
 
 
 Tool Perspective
 
-
+One way to answer this question using the Code Set tool is by following these steps: 
+search for the methods run(Class<?>... classes, assertFalse(boolean, and 
+assertEquals(Object. Open each of the sets in the Combined Set view and open that
+method in the JavaEditor. This will add a methods of type,reference to, and a reference 
+from set to the All Sets method. Now open the AnnotationTest class using the Eclipse
+Open Type, which will add a set to the members of type section in the All Sets view. 
+Now by using the include operator on the AnnotationTest set, the assertFalse(boolean) set,
+and the run(Class<?>... classes) set, and using the exclude operator on the 
+assertEquals(Object, Object) will return the answer in the Combined Set View.
 
 
 Question 4
@@ -80,21 +86,30 @@ Question 4
 When running the tests in AssertTest, Assert.assertTrue(boolean) and Assert.assertFalse(Boolean) are
  both executed. What is different about how they are reached during that execution?
  
- Answer
+Answer
 Code Perspective
-	To answer this question, the user had to have a Combined Set with just one element in it. 
-	This would be a method that is in the Assert class, but is different between two debugging 
-	sessions. This tells the user that both of these methods were called, but it followed a 
-	different path to each method. Or that the stacks were different for the method.
+
+To answer this question, the user had to have a Combined Set with just one element in it. 
+This would be a method that is in the Assert class, but is different between two debugging 
+sessions. This tells the user that both of these methods were called, but it followed a 
+different path to each method. Or that the stacks were different for the method.
 
 
 Tool Perspective
  
+ Using the Code Set tool, you could answer the question with the following steps: first, search for the 
+methods assertTrue(boolean) and assertFalse(boolean). Place a breakpoint at one of the methods. Debug the
+AssertTest as a JUnit test. Then remove the breakpoint and place it on the second method. Run the debug session
+again, resuming on each breakpoint. After each debug session, a set will have been added to the All Sets view,
+which contain the methods on the stack when the breakpoints were hit. Now using the include operation on the 
+AssertTest set in members of type, and on one of the debug sessions, while using the exclusion operation on the 
+other debug session will give the result in the Combined Set view of the difference between how each method was 
+reached.
  
  
  
- 
- 
+ One way to do this using the Code Set tool...
+The most direct way to answer this questions using the Code Set tool is to first, ...
  
  oh and you should include the "answer" as well. the answer should have two perspectives one 
  from a code perspective (this calls that, etc) and the other from a tool perspective
