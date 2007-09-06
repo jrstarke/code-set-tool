@@ -1,0 +1,18 @@
+session one consisted of 2 participants.  P1 and P2 were both undergraduate males.  
+
+After first reading question one, P1 suggested that they first start by searching for invoke.  They opened the results
+of the search and found the invoke(Object) method.  They then attempted to double click on the TheoryMethod class title,
+which failed.  P2 after a few attempts, attempted to double click on invoke(Object) method in the CombinedSet, which opened
+invoke(Object) in the editor.  P1 noted a bit of confusion as to what referencesFrom actually ment.  The meanings of both
+references from and references to was reexplained to the participants.  The participants then continued to open the 
+references from invoke(Object).  The participants found a method signatures() in the combinedSet view, and decided to look
+at it to figure out what it was.  After examining the method, they decided to return to the Theories.java class. The
+participants then discussed what they were looking for.  P1 suggested that they search for signatures, noting that they 
+want the references from.  P1 noted that they wanted to open the search results, but that the box doesn't do anything.
+P2 attempted to put the sets together, combining references from invoke(Object) and references to signatures(), but quickly noted that couldn't be 
+correct as the sets was empty.  They then attempted to try to do the inverse, but acknowledged that was also incorrect.
+P1 asked if that was the correct method.  They both quickly noticed the the method had the wrong signature.  They deselected
+all the sets and attempted to correct it.  They went back to the signatures search, found the signatures(Method) block, and 
+went to it.  They then selected references to signatures(Method) and references from invoke(Object).  After checking with 
+the researchers, they had found the set they were looking for.
+
