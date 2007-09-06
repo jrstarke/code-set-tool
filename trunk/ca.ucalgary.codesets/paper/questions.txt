@@ -1,11 +1,11 @@
-Describe study questions for paper (has to be very clear)
+
 
 Question 1
 
 The first question that we used for the study was this: "Method (a) invoke(Object test) in the TheoryMethod 
 class, calls a method (b) which calls method (c) signatures(Method method) in the ParameterSignature 
-class. What is that method?" This question was an easy question that would let the users start to get used
-to using this new tool.  The question 
+class. What is that method?" This question was to be the least difficult question where it would help the users 
+in getting used to using the reference to and the reference from sets in the Code Set tool.  
 
 Answer
 Code Perspective
@@ -26,11 +26,14 @@ giving a result of one method in the Combined Set view, which is the signatures(
 
 			
 Question 2
-
-Find all methods from the AnnotationTest class who access assertEquals(int,int) and assertTrue(boolean).
+Question 2, "Find all methods from the AnnotationTest class who access assertEquals(int,int) and 
+assertTrue(boolean)" is a different question from the first. This question is to help users better 
+understand how they can relate different sets to each other. 
+. 
 
 Answer
 Code Perspective
+
 
 The answer to this question will be a result set in the Combined Set view, which contains 3 methods.
 These methods are methods that are in the AnnotationTest class, which call assertTrue(Boolean) 
@@ -55,8 +58,10 @@ give the user the answer.
 
 Question 3
 
-Find all methods from the AnnotationTest class which call assertFalse(boolean), and also calls 
-run(Class<?>... classes), but do not call assertEquals(Object, Object).
+Question 3, "Find all methods from the AnnotationTest class which call assertFalse(boolean), and also calls 
+run(Class<?>... classes), but do not call assertEquals(Object, Object)" is a more difficult question then 
+the previous two. The users will not only need to understand what they did in the first two questions,
+but also understand how to use the exclusion property of Code Set tool. 
 
 Answer
 Code Perspective
@@ -83,8 +88,8 @@ assertEquals(Object, Object) will return the answer in the Combined Set View.
 
 Question 4
 
-When running the tests in AssertTest, Assert.assertTrue(boolean) and Assert.assertFalse(Boolean) are
- both executed. What is different about how they are reached during that execution?
+Question 4, "When running the tests in AssertTest, Assert.assertTrue(boolean) and Assert.assertFalse(Boolean)
+ are both executed. What is different about how they are reached during that execution"
  
 Answer
 Code Perspective
@@ -106,11 +111,3 @@ AssertTest set in members of type, and on one of the debug sessions, while using
 other debug session will give the result in the Combined Set view of the difference between how each method was 
 reached.
  
- 
- 
- One way to do this using the Code Set tool...
-The most direct way to answer this questions using the Code Set tool is to first, ...
- 
- oh and you should include the "answer" as well. the answer should have two perspectives one 
- from a code perspective (this calls that, etc) and the other from a tool perspective
-  (click on this and then that and the tool will show ...)
