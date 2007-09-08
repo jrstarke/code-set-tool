@@ -1,0 +1,60 @@
+Question 1:
+p6 - "this is useless"
+misunderstood the question
+
+were including assertTrue in the method, which had nothing to do with the question
+Once the figured out that the question didn't have anything to do with assertTrue
+
+think that the calls to/from is counter intuative... 
+
+think that it's references From this to here...
+
+
+question 2:
+
+searched for assertEquals
+searched for assertTrue
+
+expect that when searching for something, that the references to and from are added for every
+set.
+
+opened annotationTest with eclipse open type
+cleared everything
+searched for assertEquals
+opened AnnotationTest
+
+want the search to open the method in the JavaEditor 
+
+suggestion: "want to click on the check box"
+
+
+question 3:
+
+they would have had the answer, but they clicked on too many things, and the set that they 
+needed was removed from the list. So they had to start all over again
+
+"we lost our run in the references to thing" p6
+
+
+Question 4:
+couldn't get anything for Question 4:
+
+
+
+interview:
+p5 - "i think i found the ref from and ref to very confusing"
+
+p5 - "i like this idea of like finding subsets through your tool, that how i visualize"
+
+p6 - "i like how you can approach the problem from two sides"
+
+p6 didn't like how things would disappear, and if they were clicked and you were searching for
+things then you woulnd't be able to "search" for things.
+
+p5 - "I didn't like how we had to like search for a thing click on it, then click another thing to
+	find a reference to be able to open the declaration, being able to open the declaration quicker
+	would be good"
+
+
+
+
