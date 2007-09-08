@@ -1,0 +1,76 @@
+Study 2
+
+Question 1
+"Are we looking for method B"
+p3 "search for invoke, i'm thinking"
+p3 "then if we search for signatures"
+	tried to do the intersection b/w the searches
+
+Confused between ref to / ref from
+p3 "I'm def.. lost in what we're trying to do"
+needed a little help figuring out how to get to the ref to/ ref from up
+p3 "we want ref from invoke and ref to signatures" 
+no questions after the first question
+
+
+
+Tried clicking on the square in the All Sets view
+Question 2
+
+wanted to be able to search for classes
+
+
+searched for assertEquals
+searched for assertTrue
+
+
+combined the assertEquals and assertTrue searches, and found the ones that were in 
+AnnotationTest class, and asked if those are the ones they wanted.
+They then added the annotationtest class to the filter and found the 3 methods 
+that we were looking for.
+
+
+
+found the second question less difficult 
+Question 3
+
+searched for assertFalse
+searched for assertEquals
+searched for run found a lot of results for run
+
+combined the search sets from assertFalse and run,excluded the search for assertEquals,
+then intersected it with the AnnotationTest class and found the results
+
+Not how we were looking to do it, but one way of doing it.
+
+Question 4
+
+
+*very confused about what they were supposed to do for this question*
+
+
+Comments in the interview
+p4 " trying to find who calls what and who does it call"
+p3 " i definetely liked seeing the references to a method, because a lot of time 
+you might be trying to work on a program that makes calls all over the place 
+to one particular method, and found it quite handy"
+
+p3"i don't think i found anything irrelevant, i could def find uses for it"
+p4 "nothing irrelevant"
+p4 "nothing glaringly handy"
+p3 "trying to click on the check box"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
