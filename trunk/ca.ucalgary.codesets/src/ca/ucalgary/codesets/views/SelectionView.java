@@ -33,9 +33,9 @@ public class SelectionView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 		barController = new SideBarController(parent);
+		this.setTitleImage(getImageDescriptor("icon.png").createImage());
 		makeActions();
 		createToolbar();
-		
 		IViewSite site = getViewSite();
 		// Used to attach the ElementLabelProvider to any editors that get opened
 		site.getWorkbenchWindow().addPageListener(new IPageListener() {

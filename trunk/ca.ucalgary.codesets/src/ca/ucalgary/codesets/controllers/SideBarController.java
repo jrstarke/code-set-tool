@@ -34,7 +34,7 @@ public class SideBarController implements INodeSetListener {
 	Color background = new Color(null,255,255,255);
 
 	public SideBarController(Composite parent) {
-		sideBar = view(parent);		
+		sideBar = view(parent);
 		sideBar.setBackground(null);
 		sideBar.setBackgroundMode(SWT.BACKGROUND);
 		
@@ -61,6 +61,7 @@ public class SideBarController implements INodeSetListener {
 		layout.wrap = true;
 		layout.spacing  = 5;
 		sideBar.setLayout(layout);
+		sideBar.setBackground(new Color(null, 255,255,255));
 		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sideBar.setBackgroundMode(SWT.INHERIT_FORCE);
 		return sideBar;
@@ -97,29 +98,42 @@ public class SideBarController implements INodeSetListener {
 			}
 		});
 
-		label.getLink().addHyperlinkListener(new IHyperlinkListener() {
-			public void linkActivated(HyperlinkEvent e) {
-				// the state we transition to depends on which keys were held down and
-				// also on the current state. 
-				int mask = e.getStateMask();
-				NodeSet.State newState = NodeSet.State.IGNORED;
-				if ((mask & SWT.COMMAND) != 0) {
-					if (set.state != NodeSet.State.INCLUDED)
-						newState = NodeSet.State.INCLUDED;
-				} else if ((mask & SWT.ALT) != 0) {
-					if (set.state != NodeSet.State.EXCLUDED)
-						newState = NodeSet.State.EXCLUDED;
-				} else {
-					if (set.state != NodeSet.State.RESTRICTEDTO)
-						newState = NodeSet.State.RESTRICTEDTO;
-				}
-				NodeSetManager.instance().changeState(set, newState);
+		label.getLink().addMouseListener(new MouseListener() {
+			public void mouseDoubleClick(MouseEvent e) {
+				// TODO Auto-generated method stub
 			}
-			public void linkEntered(HyperlinkEvent e) {
+			public void mouseDown(MouseEvent e) {
+				// TODO Auto-generated method stub
+				mouseClick(e, set);
 			}
-			public void linkExited(HyperlinkEvent e) {
+			public void mouseUp(MouseEvent e) {
+				// TODO Auto-generated method stub
 			}
 		});
+		
+//		label.getLink().addHyperlinkListener(new IHyperlinkListener() {
+//			public void linkActivated(HyperlinkEvent e) {
+//				// the state we transition to depends on which keys were held down and
+//				// also on the current state. 
+//				int mask = e.getStateMask();
+//				NodeSet.State newState = NodeSet.State.IGNORED;
+//				if ((mask & SWT.COMMAND) != 0) {
+//					if (set.state != NodeSet.State.INCLUDED)
+//						newState = NodeSet.State.INCLUDED;
+//				} else if ((mask & SWT.ALT) != 0) {
+//					if (set.state != NodeSet.State.EXCLUDED)
+//						newState = NodeSet.State.EXCLUDED;
+//				} else {
+//					if (set.state != NodeSet.State.RESTRICTEDTO)
+//						newState = NodeSet.State.RESTRICTEDTO;
+//				}
+//				NodeSetManager.instance().changeState(set, newState);
+//			}
+//			public void linkEntered(HyperlinkEvent e) {
+//			}
+//			public void linkExited(HyperlinkEvent e) {
+//			}
+//		});
 		sideBar.layout();
 	}
 
@@ -188,12 +202,19 @@ public class SideBarController implements INodeSetListener {
 	}
 	
 	public void focusChanged(IJavaElement element) {
-		for(NodeSetLabel label : labels()) {
+		for (NodeSetLabel label : labels()) {
 			NodeSet set = label.getSet();
-			if(set.containsKey(element))
-				label.emphasizeLink();
-			else
-				label.demphasizeLink();
+			if (set == NodeSetManager.instance().navigationHistorySet()) {
+				if (NodeSetManager.instance().containedLast)
+					label.emphasizeLink();
+				else
+					label.demphasizeLink();
+			} else {
+				if (set.containsKey(element))
+					label.emphasizeLink();
+				else
+					label.demphasizeLink();
+			}
 		}
 		sc.setMinSize(sideBar.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sideBar.layout();

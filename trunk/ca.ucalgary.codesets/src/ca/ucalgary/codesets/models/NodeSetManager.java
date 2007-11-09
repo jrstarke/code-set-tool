@@ -19,12 +19,14 @@ public class NodeSetManager {
 
 	// the element that is the current focus in the editor
 	ASTNode currentFocus = null;
+	// true if the current focus was already in the navigation set 
+	public boolean containedLast = false;
 
 	// a collection of objects that are listening to code set events
 	HashSet<INodeSetListener> listeners = new HashSet<INodeSetListener>();
 
 	public boolean allCleared = false;
-
+	
 	// the maximum number of raw sets that will be saved per category
 	static int MAX_SETS_PER_CATEGORY = 3;
 	static NodeSetManager instance = new NodeSetManager();
@@ -60,8 +62,13 @@ public class NodeSetManager {
 		
 		NodeSet navigationSet = navigationHistorySet();
 
-		if (navigationSet.containsKey(key))
+		if (navigationSet.containsKey(key)) {
 			navigationSet.get(key).clear();
+			containedLast = true;
+		}
+		else {
+			containedLast = false;
+		}
 		navigationSet.add(key, newFocus);
 		
 		// notify listeners

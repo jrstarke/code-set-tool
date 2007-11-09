@@ -5,18 +5,18 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Code Sets"
+            name="Code Set"
             id="ca.ucalgary.codesets">
       </category>
       <view
-            name="All Sets"
+            name="Code Sets"
             icon="icons/sample.gif"
             category="ca.ucalgary.codesets"
             class="ca.ucalgary.codesets.views.SelectionView"
             id="ca.ucalgary.codesets.views.SelectionView">
       </view>
       <view
-            name="Combined set"
+            name="Set Contents"
             icon="icons/sample.gif"
             category="ca.ucalgary.codesets"
             class="ca.ucalgary.codesets.views.CombinedView"

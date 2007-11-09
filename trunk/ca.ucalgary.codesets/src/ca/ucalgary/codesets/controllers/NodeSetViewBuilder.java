@@ -520,7 +520,7 @@ public class NodeSetViewBuilder extends ASTVisitor {
 	}
 
 	public boolean visit(ThrowStatement node) {
-		return printIf(node, "throw ");
+		return printIf(node, node.toString());
 	}
 
 	public boolean visit(TryStatement node) {
