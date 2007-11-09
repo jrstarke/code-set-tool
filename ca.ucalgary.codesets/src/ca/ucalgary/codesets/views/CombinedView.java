@@ -45,6 +45,7 @@ public class CombinedView extends ViewPart  {
 		incDefAction.setEnabled(false);
 		createToolbar();
 		this.setContentDescription("");
+		this.setTitleImage(getImageDescriptor("icon.png").createImage());
 	}
 
 	public void setFocus() {
@@ -189,13 +190,13 @@ public class CombinedView extends ViewPart  {
 
 	public void setNumberElements (int numEntities, int numClasses) {
 		//show nothing if there is no classes
-		if (numClasses < 1)
-			this.setContentDescription("");
-		else if (numEntities == 1 && numClasses == 1)
-			this.setContentDescription(numEntities + " entity in " + numClasses + " class");
-		else if (numEntities > 1 && numClasses == 1)
-			this.setContentDescription(numEntities + " entities in " + numClasses + " class");
-		else
-			this.setContentDescription(numEntities + " entities in " + numClasses + " classes");
+//		if (numClasses < 1)
+//			this.setContentDescription("");
+//		else if (numEntities == 1 && numClasses == 1)
+//			this.setContentDescription(numEntities + " entity in " + numClasses + " class");
+//		else if (numEntities > 1 && numClasses == 1)
+//			this.setContentDescription(numEntities + " entities in " + numClasses + " class");
+//		else
+//			this.setContentDescription(numEntities + " entities in " + numClasses + " classes");
 	}
 }

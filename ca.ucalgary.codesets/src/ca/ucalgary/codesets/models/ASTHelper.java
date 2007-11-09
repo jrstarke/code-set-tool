@@ -72,6 +72,12 @@ public class ASTHelper {
 	public static ASTNode getNodeAtPosition(ICompilationUnit unit, int position) {
 		return getNodeAtPosition(unit, position, false);
 	}
+	
+	// returns the most specific ASTNode for the given compilation unit and
+	// position
+	public static ASTNode getNodeAtPositionForward(ICompilationUnit unit, int position) {
+		return new Visitor(false).findNodeForward(unit, position);
+	}
 
 	public static ASTNode getNodeAtPosition(ICompilationUnit unit, int position, boolean lookForDeclaration) {
 		ASTNode node = new Visitor(lookForDeclaration).findNode(unit,position);
@@ -174,7 +180,7 @@ public class ASTHelper {
 		public void postVisit(ASTNode node) {
 		}
 
-		char precedingChar(char[] source, int position) {
+		char nextChar(char[] source, int position) {
 			for (int i = position; i >= 0; i--)
 				if (!Character.isWhitespace(source[i]))
 					return source[i];
@@ -196,8 +202,22 @@ public class ASTHelper {
 				char[] source = unit.getSource().toCharArray();
 				doSearch(unit, position);
 				while (found != null && found.getNodeType() == ASTNode.BLOCK && 
-						precedingChar(source, position) == ';')
+						nextChar(source, position) == ';')
 					doSearch(unit, --position);
+			} catch (JavaModelException e) {
+				e.printStackTrace();
+			}
+			return found;
+		}
+		
+		// warning, duplicate code ...
+		public ASTNode findNodeForward(ICompilationUnit unit, int position) {
+			try {
+				char[] source = unit.getSource().toCharArray();
+				doSearch(unit, position);
+				while (found != null && found.getNodeType() == ASTNode.BLOCK && 
+						position < source.length)
+					doSearch(unit, ++position);
 			} catch (JavaModelException e) {
 				e.printStackTrace();
 			}

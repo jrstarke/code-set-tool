@@ -22,9 +22,10 @@ public class NodeSetLabel extends Composite {
 	static Color emphasizeColor = new Color(null, 200, 50, 50);
 	
 	NodeSet set = null;
-	Hyperlink link = new Hyperlink(this, SWT.NONE);
-	Label sizeLabel = new Label(this, SWT.NONE);
 	Label iconLabel = new Label(this, SWT.NONE);
+//	Hyperlink link = new Hyperlink(this, SWT.NONE);
+	Label link = new Label(this, SWT.NONE);
+	Label sizeLabel = new Label(this, SWT.NONE);
 
 	// images for indicating the state of the set
 	Image[] images = new Image[] {getImage("blank.png"), getImage("plus.png"), getImage("x.png"), getImage("check.png")};
@@ -49,7 +50,7 @@ public class NodeSetLabel extends Composite {
 	}
 
 	public void setSizeText() {
-		sizeLabel.setText("- " + getSet().size());
+		sizeLabel.setText("(" + getSet().size() + ")");
 		sizeLabel.setBackground(sizeLabel.getParent().getBackground());
 	}
 	public void setIcon(NodeSet.State state) {
@@ -71,7 +72,7 @@ public class NodeSetLabel extends Composite {
 		return ImageDescriptor.createFromURL(url).createImage();
 	}
 	
-	public Hyperlink getLink() {
+	public Label getLink() {
 		return link;
 	}
 	

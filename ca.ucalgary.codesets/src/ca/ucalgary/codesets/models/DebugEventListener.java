@@ -67,8 +67,15 @@ public class DebugEventListener implements IDebugEventSetListener {
 			
 			if (source instanceof IFile) {
 				ICompilationUnit unit = (ICompilationUnit) JavaCore.create((IFile) source);
-				return ASTHelper.getNodeAtPosition(unit, 
-						ASTHelper.getPosition(unit.getSource(), frame.getLineNumber()));
+				
+				int lineNumber = frame.getLineNumber();
+				int position = ASTHelper.getPosition(unit.getSource(), frame.getLineNumber());
+				ASTNode node =  ASTHelper.getNodeAtPositionForward(unit, position);
+				System.out.println(unit.getElementName());
+				System.out.println("  " + position + "/" + lineNumber + "/" + node.getClass().getName());// + "\n  " + node);
+				
+				
+				return node;
 			}
 		} catch (CoreException e) {
 			e.printStackTrace();
