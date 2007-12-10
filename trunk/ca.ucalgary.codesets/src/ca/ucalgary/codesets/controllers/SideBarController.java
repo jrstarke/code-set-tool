@@ -144,7 +144,7 @@ public class SideBarController implements INodeSetListener {
 		
 		NodeSet.State newState = NodeSet.State.IGNORED;
 
-		if ((mask & SWT.COMMAND) != 0) {
+		if ((mask & SWT.COMMAND) != 0 || (mask & SWT.SHIFT)!= 0) {
 			if (set.state != NodeSet.State.INCLUDED)
 				newState = NodeSet.State.INCLUDED;
 		} else if ((mask & SWT.ALT) != 0) {
